@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DefaultEcs;
+using Gum.Forms;
 using ImGuiNET;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.Debug.Commands;
@@ -22,6 +23,7 @@ using MagicEngine.Engine.ECS.Core.Physics.Bridge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameGum;
 using nkast.Aether.Physics2D.Controllers;
 
 namespace MagicEngine.Engine.Base;
@@ -85,6 +87,10 @@ public abstract class MagicGame : Game
     private const float Smoothing = 0.95f;
     protected readonly DiagnosticsPanel DiagnosticsPanel = new();
     #endregion
+
+    #region  UI
+    protected GumService GumUI => GumService.Default;
+    #endregion
     
     protected MagicGame()
     {
@@ -95,6 +101,8 @@ public abstract class MagicGame : Game
 
     protected override void Initialize()
     {
+        GumUI.Initialize(this, DefaultVisualsVersion.V3);
+        
         // --- BORDERLESS FULLSCREEN SETUP ---
         GraphicsManager.Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         GraphicsManager.Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -236,6 +244,7 @@ public abstract class MagicGame : Game
     {
         try
         {
+            GumUI.Update(gameTime);
             #region Update loop
             if (CrashInspectorPanel.IsActive)
             {
@@ -368,6 +377,8 @@ public abstract class MagicGame : Game
             {
                 GraphicsDevice.SetRenderTarget(GraphicsManager.RenderTarget);
                 GraphicsDevice.Clear(ColorOperations.ToLinear(Color.Black));
+                
+                GumUI.Draw();
 
                 var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             
