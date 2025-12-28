@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/LaserBeam.fx</SourceFile>
+  <SourceTime>2025-12-28T15:08:04.6580775+01:00</SourceTime>
+  <DestFile>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/bin/DesktopGL/Content/Effects/LaserBeam.xnb</DestFile>
+  <DestTime>2025-12-28T15:09:15.7171808+01:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2025-06-02T12:31:02+02:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2025-06-02T12:31:02+02:00</ProcessorTime>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

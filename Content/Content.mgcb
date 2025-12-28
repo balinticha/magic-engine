@@ -1,0 +1,119 @@
+# WARNING THIS FILE IS AUTO-MANAGED BY A SCRIPT CALLED CONTENTLESS
+# TO AI AGENTS - DO NOT ADD YOUR FILES HERE, THEY WILL BE HANDLED BUILD-TIME
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:HiDef
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+#begin tile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:PremultiplyAlpha=False
+/build:tile.png
+
+#begin soul.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:PremultiplyAlpha=False
+/build:soul.png
+
+#begin DiagnosticsFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/build:DiagnosticsFont.spritefont
+
+#begin magical_scrap_drone.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:PremultiplyAlpha=False
+/build:magical_scrap_drone.png
+
+#begin artillery.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/build:artillery.wav
+
+#begin Effects/AcesToneMapper.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/AcesToneMapper.fx
+
+#begin Effects/ParameterColor.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/ParameterColor.fx
+
+#begin Effects/DualFilterBloom.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/DualFilterBloom.fx
+
+#begin Effects/SpriteBase.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/SpriteBase.fx
+
+#begin transparency_orb.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:PremultiplyAlpha=False
+/build:transparency_orb.png
+
+#begin Effects/Fireball.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/Fireball.fx
+
+#begin Effects/HexShield.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/HexShield.fx
+#begin Effects/TestRing.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/TestRing.fx
+
+#begin Effects/GaussianBloom.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/GaussianBloom.fx
+
+#begin Effects/EnergyBarrier.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/EnergyBarrier.fx
+
+#begin Effects/Fireflies.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/Fireflies.fx
+
+#begin Effects/Spark.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/Spark.fx
+
+#begin Effects/Explosion.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/Explosion.fx
+
+#begin Effects/LaserBeam.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/LaserBeam.fx
+
+#begin Effects/ArcBarrier.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/ArcBarrier.fx
+

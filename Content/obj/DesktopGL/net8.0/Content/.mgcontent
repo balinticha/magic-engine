@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>HiDef</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/tile.png</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/soul.png</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/DiagnosticsFont.spritefont</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/magical_scrap_drone.png</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/artillery.wav</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/AcesToneMapper.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/ParameterColor.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/DualFilterBloom.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/SpriteBase.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/transparency_orb.png</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/Fireball.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/HexShield.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/TestRing.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/GaussianBloom.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/EnergyBarrier.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/Fireflies.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/Spark.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/Explosion.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/LaserBeam.fx</File>
+    <File>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/ArcBarrier.fx</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>

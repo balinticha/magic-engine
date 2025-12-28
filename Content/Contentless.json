@@ -1,0 +1,9 @@
+{
+  "overrides": {
+    "*.png": {
+      "processorParams": {
+        "PremultiplyAlpha": "False"
+      }
+    }
+  }
+}

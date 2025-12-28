@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/Effects/ParameterColor3.fx</SourceFile>
+  <SourceTime>2025-12-27T19:09:06.7549077+01:00</SourceTime>
+  <DestFile>/Users/ichabalint/RiderProjects/MagicThing/MagicThing/Content/bin/DesktopGL/Content/Effects/ParameterColor3.xnb</DestFile>
+  <DestTime>2025-12-28T00:30:44.7152242+01:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2025-06-02T12:31:02+02:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2025-06-02T12:31:02+02:00</ProcessorTime>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
