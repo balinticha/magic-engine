@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework.Input;
 
-namespace MagicThing.Engine.ECS.Core.Input
+namespace MagicEngine.Engine.ECS.Core.Input
 {
     /// <summary>
     /// Abstract base class for any physical input that can be bound to an action.

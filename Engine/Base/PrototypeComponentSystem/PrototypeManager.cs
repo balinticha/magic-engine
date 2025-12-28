@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using DefaultEcs;
-using MagicThing.Engine.Base.Debug;
-using MagicThing.Engine.Base.Scene;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.Scene;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.Debug;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace MagicThing.Engine.Base.PrototypeComponentSystem;
+namespace MagicEngine.Engine.Base.PrototypeComponentSystem;
 
 /// <summary>
 /// Manages loading entity prototypes from YAML files and spawning entities from them.

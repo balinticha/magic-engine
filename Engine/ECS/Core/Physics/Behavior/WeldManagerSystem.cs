@@ -1,14 +1,14 @@
 using System;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Parenting.Components;
-using MagicThing.Engine.ECS.Core.Physics.Behavior.Components;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Parenting.Components;
+using MagicEngine.Engine.ECS.Core.Physics.Behavior.Components;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Behavior;
+namespace MagicEngine.Engine.ECS.Core.Physics.Behavior;
 
 /// <summary>
 /// This system is responsible for

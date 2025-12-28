@@ -1,9 +1,9 @@
-using MagicThing.Engine.Base.Debug.Attributes;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.Debug.Attributes;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 
 // TODO make these serializable
 /// <summary>

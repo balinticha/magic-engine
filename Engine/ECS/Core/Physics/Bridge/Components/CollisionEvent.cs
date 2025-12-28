@@ -1,7 +1,7 @@
 using DefaultEcs;
 using nkast.Aether.Physics2D.Dynamics.Contacts;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 
 public class CollisionEvent(in Entity self, in Entity other, Contact contact)
 {

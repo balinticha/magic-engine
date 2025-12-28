@@ -1,8 +1,8 @@
 using System;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntityWrappers;
 
-namespace MagicThing.Engine.Base.Debug.Commands.Implementations;
+namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 
 public class DespawnEntityCommand : ConsoleCommand
 {

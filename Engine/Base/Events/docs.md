@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Event System in MagicThing uses a **directed, immediate, component-based** approach. Unlike global message busses, events here are raised *on specific entities*.
+The Event System in MagicEngine uses a **directed, immediate, component-based** approach. Unlike global message busses, events here are raised *on specific entities*.
 
 Systems subscribe to events that occur on entities possessing specific components. This ensures type safety and reduces unnecessary event filtering logic in your game code.
 

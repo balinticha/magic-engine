@@ -1,6 +1,6 @@
 # Shader Writing Guide
 
-This document details how to write HLSL shaders for the **MagicThing** rendering engine.
+This document details how to write HLSL shaders for the **MagicEngine** rendering engine.
 
 ## 1. Input Layout
 

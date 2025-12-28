@@ -1,12 +1,12 @@
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
-namespace MagicThing.Engine.ECS.Core.Render.Primitives;
+namespace MagicEngine.Engine.ECS.Core.Render.Primitives;
 
 [UpdateInBucket(ExecutionBucket.Render)]
 public sealed class DrawPrimitiveSystem : EntitySystem

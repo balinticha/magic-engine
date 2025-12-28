@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MagicThing.Engine.Base.Debug.Commands;
+namespace MagicEngine.Engine.Base.Debug.Commands;
 
 [BuiltInCommand]
 public class HelpCommand : ConsoleCommand

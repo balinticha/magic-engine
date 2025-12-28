@@ -1,3 +1,3 @@
-namespace MagicThing.Engine.ECS.Core.Lifecycle.Components;
+namespace MagicEngine.Engine.ECS.Core.Lifecycle.Components;
 
 public struct MarkedForDeath { }

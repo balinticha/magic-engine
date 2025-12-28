@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Entity System in MagicThing is the core framework for game logic execution. It integrates with `DefaultEcs` to provide a structured way to manage and run "Systems" — classes that operate on entities or manage specific game functionality.
+The Entity System in MagicEngine is the core framework for game logic execution. It integrates with `DefaultEcs` to provide a structured way to manage and run "Systems" — classes that operate on entities or manage specific game functionality.
 
 The system is orchestrated by the `SystemManager`, which handles the discovery, initialization, dependency injection, and execution loop of all `EntitySystem` instances.
 
@@ -52,10 +52,10 @@ To create a new system, inherit from `EntitySystem`.
 
 #### Basic Example
 ```csharp
-using MagicThing.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem;
 using DefaultEcs;
 
-namespace MagicThing.Systems;
+namespace MagicEngine.Systems;
 
 public class PlayerMovementSystem : EntitySystem
 {

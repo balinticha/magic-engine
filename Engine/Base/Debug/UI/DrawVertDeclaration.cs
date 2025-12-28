@@ -1,7 +1,7 @@
 using ImGuiNET;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MagicThing.Engine.Base.Debug.UI
+namespace MagicEngine.Engine.Base.Debug.UI
 {
     public static class DrawVertDeclaration
     {

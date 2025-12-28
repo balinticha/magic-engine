@@ -1,13 +1,13 @@
 using DefaultEcs;
 using DefaultEcs.System;
-using MagicThing.Engine.Base.Events;
-using MagicThing.Engine.ECS.Core.Events;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.Events;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Events;
 using nkast.Aether.Physics2D.Dynamics;
 using World = DefaultEcs.World;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge;
 
 // System to synchronize state FROM Physics TO ECS, after the physics step.
 public class PostPhysicsSyncSystem : ISystem<float>

@@ -1,11 +1,11 @@
 using System;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Parenting.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Parenting.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 
-namespace MagicThing.Engine.ECS.Core.Parenting;
+namespace MagicEngine.Engine.ECS.Core.Parenting;
 
 /// <summary>
 /// This system is responsible for:

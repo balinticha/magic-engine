@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Debug Command system in MagicThing provides a runtime console interface for developers and users to interact with the game engine. It allows for executing commands to manipulate game state, spawn entities, debug systems, and configure settings without restarting the game.
+The Debug Command system in MagicEngine provides a runtime console interface for developers and users to interact with the game engine. It allows for executing commands to manipulate game state, spawn entities, debug systems, and configure settings without restarting the game.
 
 The system is managed by `CommandManager`, which parses input and dispatches valid commands to their respective handlers.
 
@@ -20,7 +20,7 @@ The raw interface that all commands must implement.
 
 ### 2. ConsoleCommand
 
-A convenience base class (`MagicThing.Engine.Base.Debug.Commands.ConsoleCommand`) that inherits from `IConsoleCommand`. It is highly recommended to inherit from this class as it provides:
+A convenience base class (`MagicEngine.Engine.Base.Debug.Commands.ConsoleCommand`) that inherits from `IConsoleCommand`. It is highly recommended to inherit from this class as it provides:
 
 *   **Automatic Injection**: Core system references are automatically populated:
     *   `SceneManager`
@@ -40,7 +40,7 @@ A convenience base class (`MagicThing.Engine.Base.Debug.Commands.ConsoleCommand`
 
 To add a new debug command:
 
-1.  **Create a Class**: Create a new class ensuring it inherits from `MagicThing.Engine.Base.Debug.Commands.ConsoleCommand` (or implements `IConsoleCommand`).
+1.  **Create a Class**: Create a new class ensuring it inherits from `MagicEngine.Engine.Base.Debug.Commands.ConsoleCommand` (or implements `IConsoleCommand`).
 2.  **Implement Abstract Members**:
     *   `Name`: The command keyword (e.g., "godmode").
     *   `Description`: A short usage guide.
@@ -50,7 +50,7 @@ To add a new debug command:
 #### Example Implementation
 
 ```csharp
-using MagicThing.Engine.Base.Debug.Commands;
+using MagicEngine.Engine.Base.Debug.Commands;
 
 public class HealCommand : ConsoleCommand
 {

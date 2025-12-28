@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Scene System manages the high-level context of the game. A **Scene** in MagicThing is a container for:
+The Scene System manages the high-level context of the game. A **Scene** in MagicEngine is a container for:
 *   **ECS World** (`DefaultEcs.World`): Holds all game entities.
 *   **Physics World** (`Aether.Physics2D`): Manages physics bodies and simulation.
 *   **Event Manager**: Handles scene-local events.

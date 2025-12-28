@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.ECS.Core.Render.Components;
+namespace MagicEngine.Engine.ECS.Core.Render.Components;
 
 public enum MaterialBlendMode
 {

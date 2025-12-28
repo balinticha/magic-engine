@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.Base.Debug.Commands;
+namespace MagicEngine.Engine.Base.Debug.Commands;
 
 public interface IConsoleCommand
 {

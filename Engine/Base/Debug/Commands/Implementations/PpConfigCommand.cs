@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.Base.Debug.Commands.Implementations;
+namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 
 public class PpConfigCommand : ConsoleCommand
 {

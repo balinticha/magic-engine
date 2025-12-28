@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.Base.Utilities;
+namespace MagicEngine.Engine.Base.Utilities;
 
 public static class ColorOperations
 {

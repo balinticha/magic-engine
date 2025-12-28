@@ -1,9 +1,9 @@
 using DefaultEcs;
 using DefaultEcs.System;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge;
 
 // System to synchronize state FROM ECS TO Physics, before the physics step.
 public class PrePhysicsSyncSystem : AEntitySetSystem<float>

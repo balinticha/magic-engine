@@ -1,7 +1,7 @@
 using DefaultEcs;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 
-namespace MagicThing.Engine.Base.EntityWrappers
+namespace MagicEngine.Engine.Base.EntityWrappers
 {
     /// <summary>
     /// Provides extension methods for safely creating wrappers.

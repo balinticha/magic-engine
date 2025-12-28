@@ -4,9 +4,9 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using ImGuiNET;
-using MagicThing.Engine.Base.Debug.Commands;
+using MagicEngine.Engine.Base.Debug.Commands;
 
-namespace MagicThing.Engine.Base.Debug.UI;
+namespace MagicEngine.Engine.Base.Debug.UI;
 
 public unsafe class DebugConsoleWindow
 {

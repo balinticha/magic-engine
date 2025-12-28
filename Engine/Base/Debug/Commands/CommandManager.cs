@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.Events;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.Base.Scene;
-using MagicThing.Engine.Base.Shaders.PostProcessing;
-using MagicThing.Engine.ECS.Core.Camera;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.Scene;
+using MagicEngine.Engine.Base.Shaders.PostProcessing;
+using MagicEngine.Engine.ECS.Core.Camera;
+using MagicEngine.Engine.Base.Events;
 
-namespace MagicThing.Engine.Base.Debug.Commands;
+namespace MagicEngine.Engine.Base.Debug.Commands;
 
 public class CommandManager
 {

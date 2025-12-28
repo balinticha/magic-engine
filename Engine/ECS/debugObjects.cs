@@ -1,17 +1,17 @@
 using DefaultEcs;
-using MagicThing.Engine.Base.Debug.Attributes;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.ECS.Core.Audio;
-using MagicThing.Engine.ECS.Core.Input;
-using MagicThing.Engine.ECS.Core.Physics.Behavior.Components;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
-using MagicThing.Engine.ECS.Core.Session;
+using MagicEngine.Engine.Base.Debug.Attributes;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntityWrappers;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.ECS.Core.Audio;
+using MagicEngine.Engine.ECS.Core.Input;
+using MagicEngine.Engine.ECS.Core.Physics.Behavior.Components;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Session;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS;
+namespace MagicEngine.Engine.ECS;
 
 [Component]
 struct PlayerController

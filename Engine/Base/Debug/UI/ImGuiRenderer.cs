@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Vector2 = System.Numerics.Vector2;
 
-namespace MagicThing.Engine.Base.Debug.UI
+namespace MagicEngine.Engine.Base.Debug.UI
 {
     /// <summary>
     /// ImGui renderer for use with XNA-likes (FNA & MonoGame)

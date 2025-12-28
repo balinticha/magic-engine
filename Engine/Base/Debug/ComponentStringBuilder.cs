@@ -3,7 +3,7 @@ using System.Text;
 using DefaultEcs;
 using DefaultEcs.Serialization;
 
-namespace MagicThing.Engine.Base.Debug;
+namespace MagicEngine.Engine.Base.Debug;
 
 // This class implements the interface DefaultECS needs to read components.
 public class ComponentStringBuilder : IComponentReader

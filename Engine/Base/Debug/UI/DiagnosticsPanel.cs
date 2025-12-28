@@ -4,7 +4,7 @@ using ImGuiNET;
 using Microsoft.Xna.Framework.Graphics;
 using System.Numerics;
 
-namespace MagicThing.Engine.Base.Debug.UI;
+namespace MagicEngine.Engine.Base.Debug.UI;
 
 public class DiagnosticsPanel
 {

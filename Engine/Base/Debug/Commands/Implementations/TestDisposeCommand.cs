@@ -1,8 +1,8 @@
 using System;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.Base.Debug.Commands.Implementations;
+namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 
 public class TestDisposeCommand : ConsoleCommand
 {

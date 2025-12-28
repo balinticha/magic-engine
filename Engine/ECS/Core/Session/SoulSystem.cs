@@ -1,9 +1,9 @@
 using System;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.ECS.Core.Session.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Session.Components;
 
-namespace MagicThing.Engine.ECS.Core.Session;
+namespace MagicEngine.Engine.ECS.Core.Session;
 
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public sealed class SoulSystem : EntitySystem

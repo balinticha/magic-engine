@@ -1,6 +1,6 @@
-using MagicThing.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 
-namespace MagicThing.Engine.ECS.Core.Session.Components;
+namespace MagicEngine.Engine.ECS.Core.Session.Components;
 
 [Component]
 public struct Soul;

@@ -1,6 +1,6 @@
 using DefaultEcs;
 
-namespace MagicThing.Engine.Base.EntityWrappers;
+namespace MagicEngine.Engine.Base.EntityWrappers;
 
 /// <summary>
 /// A pair of a DefaultECS <see cref="Entity"/> and one of its components.

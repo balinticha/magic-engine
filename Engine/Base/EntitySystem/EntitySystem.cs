@@ -1,14 +1,14 @@
 using System;
 using DefaultEcs;
-using MagicThing.Engine.Base.Debug;
-using MagicThing.Engine.Base.Events;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.Base.Scene;
-using MagicThing.Engine.ECS.Core.Camera;
-using MagicThing.Engine.ECS.Core.Events;
+using MagicEngine.Engine.Base.Debug;
+using MagicEngine.Engine.Base.Events;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.Scene;
+using MagicEngine.Engine.ECS.Core.Camera;
+using MagicEngine.Engine.ECS.Core.Events;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MagicThing.Engine.Base.EntitySystem;
+namespace MagicEngine.Engine.Base.EntitySystem;
 
 public abstract class EntitySystem
 {

@@ -1,10 +1,10 @@
 using System;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS.Core.Positioning;
+namespace MagicEngine.Engine.ECS.Core.Positioning;
 
 [UpdateInBucket(ExecutionBucket.PreRender)]
 public sealed class SyncRenderPositionSystem : EntitySystem

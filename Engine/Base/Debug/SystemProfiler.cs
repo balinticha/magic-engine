@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace MagicThing.Engine.Base.Debug;
+namespace MagicEngine.Engine.Base.Debug;
 
 public class SystemProfiler
 {

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.ECS.Core.Events.EntityDeath;
-using MagicThing.Engine.ECS.Core.Lifecycle.Components;
+using MagicEngine.Engine.ECS.Core.Events.EntityDeath;
+using MagicEngine.Engine.ECS.Core.Lifecycle.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 
-namespace MagicThing.Engine.Base.EntityWrappers;
+namespace MagicEngine.Engine.Base.EntityWrappers;
 
 public class EntityOperationHelpers : EntitySystem.EntitySystem
 {

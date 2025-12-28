@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using DefaultEcs;
 using DefaultEcs.System;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 using nkast.Aether.Physics2D.Dynamics;
 using World = nkast.Aether.Physics2D.Dynamics.World;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge;
 
 /// <summary>
 /// Reacts to the removal of PhysicsBodyComponent from entities and safely

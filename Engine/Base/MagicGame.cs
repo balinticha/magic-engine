@@ -2,29 +2,29 @@ using System;
 using System.Collections.Generic;
 using DefaultEcs;
 using ImGuiNET;
-using MagicThing.Engine.Base.Debug;
-using MagicThing.Engine.Base.Debug.Commands;
-using MagicThing.Engine.Base.Debug.UI;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.Events;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.Base.Scene;
-using MagicThing.Engine.Base.Shaders.PostProcessing;
-using MagicThing.Engine.Base.Utilities;
-using MagicThing.Engine.ECS.Core.Camera;
-using MagicThing.Engine.ECS.Core.Events;
-using MagicThing.Engine.ECS.Core.Input;
-using MagicThing.Engine.ECS.Core.Physics;
-using MagicThing.Engine.ECS.Core.Physics.Behavior;
-using MagicThing.Engine.ECS.Core.Physics.Bridge;
-using MagicThing.Engine.ECS.Core.Positioning;
-using MagicThing.Engine.ECS.Core.Session;
+using MagicEngine.Engine.Base.Debug;
+using MagicEngine.Engine.Base.Debug.Commands;
+using MagicEngine.Engine.Base.Debug.UI;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.Events;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.Scene;
+using MagicEngine.Engine.Base.Shaders.PostProcessing;
+using MagicEngine.Engine.Base.Utilities;
+using MagicEngine.Engine.ECS.Core.Camera;
+using MagicEngine.Engine.ECS.Core.Input;
+using MagicEngine.Engine.ECS.Core.Physics;
+using MagicEngine.Engine.ECS.Core.Physics.Behavior;
+using MagicEngine.Engine.ECS.Core.Positioning;
+using MagicEngine.Engine.ECS.Core.Session;
+using MagicEngine.Engine.ECS.Core.Events;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using nkast.Aether.Physics2D.Controllers;
 
-namespace MagicThing.Engine.Base;
+namespace MagicEngine.Engine.Base;
 
 public abstract class MagicGame : Game
 {

@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MagicThing.Engine.Base.Shaders.PostProcessing.Implementations
+namespace MagicEngine.Engine.Base.Shaders.PostProcessing.Implementations
 {
     public class AcesToneMapper : PostProcessStep
     {

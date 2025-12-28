@@ -1,14 +1,14 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.Base.Scene;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
-using MagicThing.Engine.ECS.Core.Session.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.Scene;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Session.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS.Core.Session;
+namespace MagicEngine.Engine.ECS.Core.Session;
 
 [UpdateInBucket(ExecutionBucket.LateUpdate)]
 public class SessionManager : EntitySystem

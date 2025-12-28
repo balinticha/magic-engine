@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ImGuiNET;
-using MagicThing.Engine.Base.Shaders.PostProcessing;
+using MagicEngine.Engine.Base.Shaders.PostProcessing;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.Base.Debug.UI;
+namespace MagicEngine.Engine.Base.Debug.UI;
 
 public class PostProcessDebugOverlay
 {

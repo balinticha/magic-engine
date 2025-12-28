@@ -1,9 +1,9 @@
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge;
 
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public class ResyncBodyType : EntitySystem

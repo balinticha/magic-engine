@@ -1,8 +1,8 @@
-using MagicThing.Engine.Base.Debug.Attributes;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.Debug.Attributes;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS.Core.Positioning.Components;
+namespace MagicEngine.Engine.ECS.Core.Positioning.Components;
 
 [Component]
 struct Velocity

@@ -1,7 +1,7 @@
-using MagicThing.Engine.Base.Debug.Attributes;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.Debug.Attributes;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Behavior.Components;
+namespace MagicEngine.Engine.ECS.Core.Physics.Behavior.Components;
 
 [Component]
 public struct Drag

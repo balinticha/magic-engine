@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Render System in MagicThing uses `DefaultEcs` to draw entities during the game's draw cycle. Unlike standard `Update` systems, rendering systems run in the `ExecutionBucket.Render` stage, which corresponds to the MonoGame `Draw` call.
+The Render System in MagicEngine uses `DefaultEcs` to draw entities during the game's draw cycle. Unlike standard `Update` systems, rendering systems run in the `ExecutionBucket.Render` stage, which corresponds to the MonoGame `Draw` call.
 
 The architecture decouples the **Logic Position** (`Position` component) from the **Render Position** (`RenderPosition` component). This rendering layer solely consumes `RenderPosition`.
 

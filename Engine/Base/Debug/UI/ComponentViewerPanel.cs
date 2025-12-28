@@ -5,15 +5,15 @@ using System.Reflection;
 using DefaultEcs;
 using DefaultEcs.Serialization;
 using ImGuiNET;
-using MagicThing.Engine.Base.Debug.Attributes;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.ECS.Core.Parenting.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.Debug.Attributes;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.ECS.Core.Parenting.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using Microsoft.Xna.Framework;
 using Vector2 = System.Numerics.Vector2;
 using Vector4 = System.Numerics.Vector4;
 
-namespace MagicThing.Engine.Base.Debug.UI;
+namespace MagicEngine.Engine.Base.Debug.UI;
 
 /// <summary>
 /// A helper class that implements IComponentReader to extract all component instances from an entity.

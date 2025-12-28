@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace MagicThing.Engine.Base.Debug;
+namespace MagicEngine.Engine.Base.Debug;
 
 // This class redirects console output to both the original console and a list of strings.
 public class ConsoleInterceptor : TextWriter

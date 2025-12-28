@@ -1,6 +1,6 @@
 using DefaultEcs;
 
-namespace MagicThing.Engine.ECS.Core.Events.EntityDeath;
+namespace MagicEngine.Engine.ECS.Core.Events.EntityDeath;
 
 /// <summary>
 /// The event raised before an entity dies.

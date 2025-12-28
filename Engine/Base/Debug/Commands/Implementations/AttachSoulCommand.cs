@@ -1,8 +1,8 @@
 using System;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.ECS.Core.Session;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Session;
 
-namespace MagicThing.Engine.Base.Debug.Commands.Implementations;
+namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 
 public class AttachSoulCommand : ConsoleCommand
 {

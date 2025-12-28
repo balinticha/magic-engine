@@ -1,6 +1,6 @@
 using DefaultEcs;
 
-namespace MagicThing.Engine.ECS.Core.Parenting.Components;
+namespace MagicEngine.Engine.ECS.Core.Parenting.Components;
 
 public struct HierarchyChangeEvent()
 {

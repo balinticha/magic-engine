@@ -1,6 +1,6 @@
 using System;
 
-namespace MagicThing.Engine.Base.PrototypeComponentSystem;
+namespace MagicEngine.Engine.Base.PrototypeComponentSystem;
 
 /// <summary>
 /// An attribute to mark a field loadable from YAML

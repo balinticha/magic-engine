@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MagicThing.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem;
 using Microsoft.Xna.Framework.Input;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace MagicThing.Engine.ECS.Core.Input;
+namespace MagicEngine.Engine.ECS.Core.Input;
 
 
 [UpdateInBucket(ExecutionBucket.Input)]

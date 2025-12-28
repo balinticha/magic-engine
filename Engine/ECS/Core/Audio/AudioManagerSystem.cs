@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using DefaultEcs;
-using MagicThing.Engine.Base.Debug;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Audio.Components;
-using MagicThing.Engine.ECS.Core.Events.EntityDeath;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
-using MagicThing.Engine.ECS.Core.Session;
+using MagicEngine.Engine.Base.Debug;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntityWrappers;
+using MagicEngine.Engine.ECS.Core.Audio.Components;
+using MagicEngine.Engine.ECS.Core.Events.EntityDeath;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Session;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 
-namespace MagicThing.Engine.ECS.Core.Audio;
+namespace MagicEngine.Engine.ECS.Core.Audio;
 
 // Every frame!
 [UpdateInBucket(ExecutionBucket.Audio)]

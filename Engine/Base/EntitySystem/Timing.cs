@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.Base.EntitySystem;
+namespace MagicEngine.Engine.Base.EntitySystem;
 
 public readonly struct Timing(float deltaTime, float alpha, double gameTime)
 {

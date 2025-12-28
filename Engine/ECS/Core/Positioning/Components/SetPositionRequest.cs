@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS.Core.Positioning.Components;
+namespace MagicEngine.Engine.ECS.Core.Positioning.Components;
 
 struct SetPositionRequest
 {

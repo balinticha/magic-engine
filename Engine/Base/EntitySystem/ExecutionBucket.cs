@@ -1,6 +1,6 @@
 using System;
 
-namespace MagicThing.Engine.Base.EntitySystem;
+namespace MagicEngine.Engine.Base.EntitySystem;
 
 /// <summary>
 /// Defines the different execution "buckets" or stages within the game loop.

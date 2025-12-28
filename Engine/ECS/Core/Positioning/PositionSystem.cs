@@ -1,8 +1,8 @@
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
 
-namespace MagicThing.Engine.ECS.Core.Positioning;
+namespace MagicEngine.Engine.ECS.Core.Positioning;
 
 // This system's only job is to snapshot the final position from the previous
 // tick so the InterpolateSystem can use it later.

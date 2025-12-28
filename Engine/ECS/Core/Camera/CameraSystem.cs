@@ -1,7 +1,7 @@
-using MagicThing.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS.Core.Camera;
+namespace MagicEngine.Engine.ECS.Core.Camera;
 
 public class CameraSystem : EntitySystem
 {

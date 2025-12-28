@@ -1,14 +1,14 @@
 using System;
 using DefaultEcs;
 using DefaultEcs.System;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 using World = nkast.Aether.Physics2D.Dynamics.World;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge;
 
 public class PhysicsBodyCreationSystem: AEntitySetSystem<float>
 {

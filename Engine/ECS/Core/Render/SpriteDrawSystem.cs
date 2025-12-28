@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using DefaultEcs;
-using MagicThing.Engine.Base;
-using MagicThing.Engine.Base.Debug;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
-using MagicThing.Engine.ECS.Core.Render.Components;
+using MagicEngine.Engine.Base;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.ECS.Core.Render.Components;
+using MagicEngine.Engine.Base.Debug;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MagicThing.Engine.ECS.Core.Render;
+namespace MagicEngine.Engine.ECS.Core.Render;
 
 // TODO This renderer implementation is just fine for now, HOWEVER:
 // In the long run, two critical features must be implemented:

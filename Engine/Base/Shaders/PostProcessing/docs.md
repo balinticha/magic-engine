@@ -2,7 +2,7 @@
 
 ## Overview
 
-The PostProcessing system in MagicThing allows for applying visual effects to the game's rendered output. It supports a multi-pass pipeline where effects can be chained together.
+The PostProcessing system in MagicEngine allows for applying visual effects to the game's rendered output. It supports a multi-pass pipeline where effects can be chained together.
 
 The system is managed by `PostProcessingManager` and uses a "Ping-Pong" rendering strategy, swapping between two render targets (`dest` and `swap`) to apply effects sequentially.
 
@@ -25,7 +25,7 @@ The pipeline is divided into two distinct processing layers, controlled by the `
 
 To add a new post-processing effect:
 
-1.  **Create a Class**: Inherit from `MagicThing.Engine.Base.Shaders.PostProcessing.PostProcessStep`.
+1.  **Create a Class**: Inherit from `MagicEngine.Engine.Base.Shaders.PostProcessing.PostProcessStep`.
 2.  **Constructor**:
     *   Set the `Type` property to either `EffectType.TexelLayer` or `EffectType.PixelLayer`.
     *   Load or assign the Monogame `Effect` instance.

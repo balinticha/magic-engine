@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using DefaultEcs;
 using DefaultEcs.System;
-using MagicThing.Engine.Base.Debug.UI;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.Events;
-using MagicThing.Engine.ECS.Core.Physics.Bridge;
+using MagicEngine.Engine.Base.Debug.UI;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.Events;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Diagnostics;
 
-namespace MagicThing.Engine.Base.Scene;
+namespace MagicEngine.Engine.Base.Scene;
 
 public struct Scene(SceneCreationResources creationResources, string name, World world, EventManager eventManager, nkast.Aether.Physics2D.Dynamics.World physicsWorld)
 {

@@ -4,11 +4,11 @@ using System.Numerics;
 using System.Text;
 using DefaultEcs;
 using ImGuiNET;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
-using MagicThing.Engine.ECS.Core.Parenting.Components;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.ECS.Core.Parenting.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 
-namespace MagicThing.Engine.Base.Debug.UI;
+namespace MagicEngine.Engine.Base.Debug.UI;
 
 public class SceneGraphPanel
 {

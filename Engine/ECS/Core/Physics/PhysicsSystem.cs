@@ -1,7 +1,7 @@
-using MagicThing.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem;
 using Microsoft.Xna.Framework;
 
-namespace MagicThing.Engine.ECS.Core.Physics;
+namespace MagicEngine.Engine.ECS.Core.Physics;
 
 [UpdateInBucket(ExecutionBucket.Update)]
 public sealed class PhysicsSystem : EntitySystem

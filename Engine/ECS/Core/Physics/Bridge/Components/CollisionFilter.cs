@@ -1,7 +1,7 @@
 using System;
-using MagicThing.Engine.Base.PrototypeComponentSystem;
+using MagicEngine.Engine.Base.PrototypeComponentSystem;
 
-namespace MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
+namespace MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 
 [Component]
 public struct CollisionFilterComponent

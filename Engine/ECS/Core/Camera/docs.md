@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Camera System in MagicThing uses a specialized "Low-Res + Sub-Pixel Smoothing" approach.
+The Camera System in MagicEngine uses a specialized "Low-Res + Sub-Pixel Smoothing" approach.
 It is designed for games using low-resolution pixel art (e.g., 640x360) that need to be upscaled to modern screens without jittering or pixel shimmering.
 
 ## Architecture (For Engine Developers)

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MagicThing.Engine.Base.Debug;
+namespace MagicEngine.Engine.Base.Debug;
 
 #nullable enable
 

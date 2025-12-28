@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.Base;
+namespace MagicEngine.Engine.Base;
 
 public enum LookupResult
 {

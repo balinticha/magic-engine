@@ -1,7 +1,7 @@
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.ECS.Core.Lifecycle.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Lifecycle.Components;
 
-namespace MagicThing.Engine.ECS.Core.Lifecycle;
+namespace MagicEngine.Engine.ECS.Core.Lifecycle;
 
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public class DeferredEntityDisposalSystem : EntitySystem

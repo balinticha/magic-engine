@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Positioning System in MagicThing handles how entities move in space, how their position is synchronized with the Physics engine, and how that position is smoothed for rendering (Interpolation).
+The Positioning System in MagicEngine handles how entities move in space, how their position is synchronized with the Physics engine, and how that position is smoothed for rendering (Interpolation).
 
 It separates the concept of **Logic Position** (`Position` component) from **Render Position** (`RenderPosition` component) to allow for fixed-timestep logical updates and variable-timestep smooth rendering.
 

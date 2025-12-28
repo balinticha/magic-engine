@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Vector2 = System.Numerics.Vector2;
 using Vector4 = System.Numerics.Vector4;
 
-namespace MagicThing.Engine.Base.Debug.UI;
+namespace MagicEngine.Engine.Base.Debug.UI;
 
 public class CrashInspectorPanel
 {

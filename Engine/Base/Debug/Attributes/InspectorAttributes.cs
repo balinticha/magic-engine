@@ -1,8 +1,8 @@
-// MagicThing/Debug/Attributes/InspectorAttributes.cs
+// MagicEngine/Debug/Attributes/InspectorAttributes.cs
 
 using System;
 
-namespace MagicThing.Engine.Base.Debug.Attributes;
+namespace MagicEngine.Engine.Base.Debug.Attributes;
 
 /// <summary>
 /// Base class for all inspector-related attributes. Good practice but not strictly required.

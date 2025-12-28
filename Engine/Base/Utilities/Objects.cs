@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.Base.Utilities;
+namespace MagicEngine.Engine.Base.Utilities;
 
 public enum Direction
 {

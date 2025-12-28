@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultEcs;
-using MagicThing.Engine.Base.EntityWrappers;
+using MagicEngine.Engine.Base.EntityWrappers;
 
-namespace MagicThing.Engine.Base.Events;
+namespace MagicEngine.Engine.Base.Events;
 
 /// <summary>
 /// A non-generic interface for an event subscription. This allows us to store

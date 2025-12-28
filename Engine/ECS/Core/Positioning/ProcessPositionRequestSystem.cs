@@ -1,11 +1,11 @@
 using DefaultEcs;
-using MagicThing.Engine.Base.EntitySystem;
-using MagicThing.Engine.Base.EntityWrappers;
-using MagicThing.Engine.ECS.Core.Physics;
-using MagicThing.Engine.ECS.Core.Physics.Bridge.Components;
-using MagicThing.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.ECS.Core.Physics;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
+using MagicEngine.Engine.ECS.Core.Positioning.Components;
+using MagicEngine.Engine.Base.EntityWrappers;
 
-namespace MagicThing.Engine.ECS.Core.Positioning;
+namespace MagicEngine.Engine.ECS.Core.Positioning;
 
 [UpdateInBucket(ExecutionBucket.Update)]
 public sealed class ProcessPositionRequestSystem : EntitySystem

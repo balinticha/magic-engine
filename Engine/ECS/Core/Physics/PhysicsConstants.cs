@@ -1,4 +1,4 @@
-namespace MagicThing.Engine.ECS.Core.Physics;
+namespace MagicEngine.Engine.ECS.Core.Physics;
 
 public static class PhysicsConstants
 {

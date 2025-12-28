@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MagicThing.Engine.Base;
+namespace MagicEngine.Engine.Base;
 
 public class GraphicsManager
 {
