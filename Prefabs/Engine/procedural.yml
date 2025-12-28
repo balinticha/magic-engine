@@ -1,0 +1,196 @@
+- id: BaseProcedural
+  name: "Base Procedural"
+  components:
+    - PreviousPosition: {}
+    - RectangleColliderComponent:
+        width: 10
+        height: 10
+        offset: { x: 0, y: 0}
+        isSensor: false
+    - CollisionFilterComponent:
+        category: Structure
+    - Drag:
+        amount: 0.1
+
+- id: ProceduralParameterColor
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 100
+        height: 100
+        layer: 1
+    - Material:
+        effect: "Effects/ParameterColor"
+        blendMode: AlphaBlend
+        parameters:
+          TargetColor: "1.0, 1.0, 0.0, 1.0"
+
+- id: ProceduralAdditiveColor
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 100
+        height: 100
+        layer: 1
+    - Material:
+        effect: "Effects/ParameterColor"
+        blendMode: Additive
+        parameters:
+          TargetColor: "1.0, 1.0, 0.0, 1.0"
+
+- id: ProceduralFireball
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 30
+        height: 30
+        layer: 1
+    - Material:
+        effect: "Effects/Fireball"
+        blendMode: AlphaBlend
+        parameters:
+          CenterColor: "8.5, 6.8, 1.7, 1.0"
+          EdgeColor: "4.0, 0.2, 0.0, 1.0"
+
+- id: ProceduralHexShield
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 128
+        height: 128
+        layer: 1
+    - Material:
+        effect: "Effects/HexShield"
+        blendMode: AlphaBlend
+        parameters:
+          ColorHigh: "0.4, 0.8, 1.0, 1.0"
+          ColorLow: "0.0, 0.1, 0.3, 1.0"
+          GridScale: 10.0
+          BorderWidth: 0.1
+          PulseSpeed: 2.0
+          MaxBrightness: 4.0
+
+- id: ProceduralTestRing
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 100
+        height: 100
+        layer: 1
+    - Material:
+        effect: "Effects/TestRing"
+        blendMode: AlphaBlend
+        parameters:
+          RingColor: "2.0, 2.0, 2.0, 1.0"
+          Thickness: 0
+
+- id: ProceduralEnergyBarrier
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 150
+        height: 150
+        layer: 1
+    - Material:
+        effect: "Effects/EnergyBarrier"
+        blendMode: AlphaBlend
+        parameters:
+          BarrierColor: "0.7, 1.2, 2.6, 1.0"
+          VoidColor: "0.1, 0.0, 0.2, 1.0"
+          VisibleAngle: 90.0
+          Thickness: 0.05
+          EdgeWidth: 0
+          GapWidth: 0.013
+          Speed: 1.0
+
+- id: ProceduralFireflies
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 100
+        height: 100
+        layer: 1
+    - Material:
+        effect: "Effects/Fireflies"
+        blendMode: AlphaBlend
+        parameters:
+          Density: 4.0
+          Size: 0.03
+          Speed: 0.3
+          BaseColor: "0.8, 1.0, 0.2, 1.0"
+          HDRBoost: 3.5
+          FadeSpeed: 0.65
+
+- id: ProceduralSpark
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 100
+        height: 100
+        layer: 1
+    - Material:
+        effect: "Effects/Spark"
+        blendMode: AlphaBlend
+        parameters:
+          Density: 4.0
+          Size: 0.01
+          Speed: 2.0
+          BaseColor: "1.0, 0.8, 0.2, 1.0"
+          HDRBoost: 10.0
+          FadeSpeed: 0.0
+
+- id: ProceduralExplosion
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 40
+        height: 40
+        layer: 1
+    - Material:
+        effect: "Effects/Explosion"
+        blendMode: AlphaBlend
+        parameters:
+          ColorHot: "1.0, 0.7, 0.2"
+          ColorCool: "1.0, 0.2, 0.05"
+          LoopDuration: 2.0
+          MaxRadius: 0.45
+          ShockwaveHDRBoost: 30.0
+          ExplosionDuration: 0.9
+          ShockwaveCoolDown: 10.0
+
+- id: ProceduralLaserBeam
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 5
+        height: 200
+        layer: 1
+    - Material:
+        effect: "Effects/LaserBeam"
+        blendMode: AlphaBlend
+        parameters:
+          LaserSpeed: 3.0
+          PulseIntensity: 0.4
+          Wobble: 0.02
+          HDRBoost: 10.0
+          Color: "0.2, 0.8, 1.0, 1.0"
+          CoreHotness: 3.5
+
+- id: ProceduralArcBarrier
+  parent: BaseProcedural
+  components:
+    - RenderBounds:
+        width: 256
+        height: 256
+        layer: 1
+    - Material:
+        effect: "Effects/ArcBarrier"
+        blendMode: AlphaBlend
+        parameters:
+          ColorCore: "0.2, 1.0, 1.0"
+          ColorEdge: "0.0, 0.1, 0.8"
+          Angle: 140.0
+          Radius: 0.4
+          Thickness: 0.08
+          Softness: 0.02
+          Speed: 1.0

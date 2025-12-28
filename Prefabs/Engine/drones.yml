@@ -1,0 +1,32 @@
+- id: BaseDrone
+  name: "Base Drone"
+  components:
+    - PreviousPosition: {}
+    - RectangleColliderComponent:
+        width: 10
+        height: 10
+        offset: { x: 0, y: 0}
+        isSensor: false
+    - CollisionFilterComponent:
+        category: Structure
+    - Sprite:
+        texture: "magical_scrap_drone"
+        color: "White"
+    - Drag:
+        amount: 0.05
+
+- id: PlayerDrone
+  name: "Player Scrap Drone"
+  parent: BaseDrone
+  components:
+    - AttachSoulOnLoad: {}
+    - DelOnCollision: {}
+    - PlayerController:
+        acceleration: 400
+        dashSpeed: 1
+        dashVelocityBonus: 1
+    - CameraFollowAhead:
+        amount: 0.7
+        interpolation: 0.8
+    - SoundListener:
+        masterVolume: 1

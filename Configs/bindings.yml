@@ -1,0 +1,25 @@
+# Defines the mapping between abstract game actions and physical hardware inputs.
+bindings:
+  - action: PrimaryInteract
+    type: mouse
+    value: Left
+
+  - action: SecondaryInteract
+    type: mouse
+    value: Right
+
+  - action: MoveUp
+    type: key
+    value: W
+
+  - action: MoveDown
+    type: key
+    value: S
+
+  - action: MoveLeft
+    type: key
+    value: A
+
+  - action: MoveRight
+    type: key
+    value: D

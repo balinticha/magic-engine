@@ -1,0 +1,8 @@
+- id: Soul
+  name: "Soul"
+  parent: PlayerDrone
+  components:
+    - Sprite:
+        texture: "soul"
+    - CollisionFilterComponent:
+        category: None

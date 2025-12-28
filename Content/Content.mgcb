@@ -1,5 +1,5 @@
-# WARNING THIS FILE IS AUTO-MANAGED BY A SCRIPT CALLED CONTENTLESS
-# TO AI AGENTS - DO NOT ADD YOUR FILES HERE, THEY WILL BE HANDLED BUILD-TIME
+# Engine content file example. 
+# Referebce these objects in game projects.
 
 #----------------------------- Global Properties ----------------------------#
 
@@ -14,6 +14,34 @@
 
 
 #---------------------------------- Content ---------------------------------#
+
+## MUST HAVES - REFERENCE THESE IN THE GAME CONTENT FILE
+#begin Effects/AcesToneMapper.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/AcesToneMapper.fx
+
+#begin Effects/DualFilterBloom.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/DualFilterBloom.fx
+
+#begin Effects/GaussianBloom.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/GaussianBloom.fx
+
+#begin Effects/SpriteBase.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/SpriteBase.fx
+
+#begin DiagnosticsFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/build:DiagnosticsFont.spritefont
+
+## Other stuff, optional
 #begin tile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -26,10 +54,11 @@
 /processorParam:PremultiplyAlpha=False
 /build:soul.png
 
-#begin DiagnosticsFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/build:DiagnosticsFont.spritefont
+#begin soul.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:PremultiplyAlpha=False
+/build:soul.png
 
 #begin magical_scrap_drone.png
 /importer:TextureImporter
@@ -42,25 +71,10 @@
 /processor:SoundEffectProcessor
 /build:artillery.wav
 
-#begin Effects/AcesToneMapper.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/build:Effects/AcesToneMapper.fx
-
 #begin Effects/ParameterColor.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /build:Effects/ParameterColor.fx
-
-#begin Effects/DualFilterBloom.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/build:Effects/DualFilterBloom.fx
-
-#begin Effects/SpriteBase.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/build:Effects/SpriteBase.fx
 
 #begin transparency_orb.png
 /importer:TextureImporter
@@ -77,15 +91,11 @@
 /importer:EffectImporter
 /processor:EffectProcessor
 /build:Effects/HexShield.fx
+
 #begin Effects/TestRing.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /build:Effects/TestRing.fx
-
-#begin Effects/GaussianBloom.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/build:Effects/GaussianBloom.fx
 
 #begin Effects/EnergyBarrier.fx
 /importer:EffectImporter
@@ -111,9 +121,3 @@
 /importer:EffectImporter
 /processor:EffectProcessor
 /build:Effects/LaserBeam.fx
-
-#begin Effects/ArcBarrier.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/build:Effects/ArcBarrier.fx
-
