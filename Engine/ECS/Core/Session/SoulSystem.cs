@@ -20,7 +20,7 @@ public sealed class SoulSystem : EntitySystem
         if (!_sessionManager.GetControlledEntity(out _))
         {
             // Not controlling an entity or the entity is dead
-            var ent = Prototypes.SpawnEntity("Engine/Soul", _sessionManager.ControlledEntityLastPosition);
+            var ent = Prototypes.SpawnEntity("Soul", _sessionManager.ControlledEntityLastPosition);
             Console.WriteLine($"[SoulSystem] Session player is deattached from an entity. Soul entity spawned: {ent}");
             
             _sessionManager.SetControlledEntity(ent);

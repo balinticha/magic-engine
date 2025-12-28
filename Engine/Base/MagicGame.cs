@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DefaultEcs;
 using Gum.Forms;
+using Gum.Forms.Controls;
 using ImGuiNET;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.Debug.Commands;
@@ -90,6 +91,15 @@ public abstract class MagicGame : Game
 
     #region  UI
     protected GumService GumUI => GumService.Default;
+    
+    protected virtual void InitializeUI() {}
+    protected virtual void UpdateUI(GameTime gameTime) { }
+    protected virtual void DrawUI() {}
+    
+    // TODO should be exposed to clients eventually
+    protected Texture2D CursorTexture;
+    protected Vector2 CursorHotspot = Vector2.Zero;
+    
     #endregion
     
     protected MagicGame()
@@ -101,8 +111,6 @@ public abstract class MagicGame : Game
 
     protected override void Initialize()
     {
-        GumUI.Initialize(this, DefaultVisualsVersion.V3);
-        
         // --- BORDERLESS FULLSCREEN SETUP ---
         GraphicsManager.Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         GraphicsManager.Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -112,6 +120,8 @@ public abstract class MagicGame : Game
         GraphicsManager.Graphics.SynchronizeWithVerticalRetrace = true;
         GraphicsManager.Graphics.GraphicsProfile = GraphicsProfile.HiDef;
         GraphicsManager.Graphics.ApplyChanges();
+        
+        InitializeUI();
         
         _consoleInterceptor = new ConsoleInterceptor(Console.Out);
         Console.SetOut(_consoleInterceptor);
@@ -228,6 +238,8 @@ public abstract class MagicGame : Game
         
         LogManager.Log("Startup: Calling user content load hooks", LogLevel.Verbose);
         
+        CursorTexture = Content.Load<Texture2D>("Cursor");
+        
         LoadGameContent();
         
         LogManager.Release("Startup: All content loaded.");
@@ -244,13 +256,14 @@ public abstract class MagicGame : Game
     {
         try
         {
-            GumUI.Update(gameTime);
             #region Update loop
             if (CrashInspectorPanel.IsActive)
             {
                 base.Update(gameTime);
                 return;
             }
+            
+            UpdateUI(gameTime);
             
             // ========= Debug stuff start
             if (Keyboard.GetState().IsKeyDown(Keys.F1) && DebugRenderCooldown <= 0)
@@ -377,8 +390,6 @@ public abstract class MagicGame : Game
             {
                 GraphicsDevice.SetRenderTarget(GraphicsManager.RenderTarget);
                 GraphicsDevice.Clear(ColorOperations.ToLinear(Color.Black));
-                
-                GumUI.Draw();
 
                 var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             
@@ -478,8 +489,29 @@ public abstract class MagicGame : Game
             GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
             GraphicsManager.SpriteBatch.Draw(finalTextureWithPP, finalDestination, Color.White);
             GraphicsManager.SpriteBatch.End();
+
+            DrawUI();
+            GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+            if (!DebugActive && CursorTexture != null)
+            {
+                var mouseState = Mouse.GetState();
+                Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
+                float cursorScale = 0.1f; 
+
+                GraphicsManager.SpriteBatch.Draw(
+                    CursorTexture,
+                    mousePos,
+                    null,
+                    Color.White,
+                    0f,
+                    CursorHotspot,
+                    cursorScale,
+                    SpriteEffects.None,
+                    0f
+                );
+            }
+            GraphicsManager.SpriteBatch.End();
             #endregion
-            
             #region DEBUG render loop
             if (DebugActive)
             {
