@@ -325,20 +325,31 @@ public abstract class MagicGame : Game
                     SystemManager.GetSystem<ProcessPositionRequestSystem>().ManualUpdate();
                 
                     // Physics bridge and the system itself ---
-                    SystemManager.Profiler.Profile("Physics: BodyCreation", () => SceneManager.GetScene().AttachedSystems.BodyCreationSystem.Update(FixedTimeStep));
-                    SystemManager.Profiler.Profile("Physics: PreSync", () => SceneManager.GetScene().AttachedSystems.PrePhysicsSyncSystem.Update(FixedTimeStep));
-                
-                    SystemManager.Profiler.Profile("Physics: Simulation", () => 
+                    using (SystemManager.Profiler.Profile("Physics: BodyCreation"))
+                    {
+                        SceneManager.GetScene().AttachedSystems.BodyCreationSystem.Update(FixedTimeStep);
+                    }
+                    using (SystemManager.Profiler.Profile("Physics: PreSync"))
+                    {
+                        SceneManager.GetScene().AttachedSystems.PrePhysicsSyncSystem.Update(FixedTimeStep);
+                    }
+                    using (SystemManager.Profiler.Profile("Physics: Simulation"))
                     {
                         SceneManager.GetScene().PhysicsWorld.Step(FixedTimeStep);
                         SceneManager.GetScene().PhysicsWorld.ClearForces();
-                    });
-                
-                    SystemManager.Profiler.Profile("Physics: PostSync", () => SceneManager.GetScene().AttachedSystems.PostPhysicsSyncSystem.Update(FixedTimeStep));
-                    SystemManager.Profiler.Profile("Physics: BodyDeletion", () => SceneManager.GetScene().AttachedSystems.BodyDeletionSystem.Update(FixedTimeStep));
-                    
-                    // WeldManagerSystem also runs in cleanup but let's run it here to ensure consistent state
-                    SystemManager.Profiler.Profile("Physics: WeldManager", () => SystemManager.GetSystem<WeldManagerSystem>().Update(fixedTiming));
+                    }
+                    using (SystemManager.Profiler.Profile("Physics: PostSync"))
+                    {
+                        SceneManager.GetScene().AttachedSystems.PostPhysicsSyncSystem.Update(FixedTimeStep);
+                    }
+                    using (SystemManager.Profiler.Profile("Physics: BodyDeletion"))
+                    {
+                        SceneManager.GetScene().AttachedSystems.BodyDeletionSystem.Update(FixedTimeStep);
+                    }
+                    using (SystemManager.Profiler.Profile("Physics: WeldManager"))
+                    {
+                        SystemManager.GetSystem<WeldManagerSystem>().Update(fixedTiming);
+                    }
                     // ----------------------------------------
                 
                     SystemManager.RunFixedUpdatePostPhysics(fixedTiming);

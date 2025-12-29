@@ -108,7 +108,10 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
     {
         foreach (var system in _systemsByBucket[bucket])
         {
-            Profiler.Profile(system.GetType().Name, () => system.Update(timing));
+            using (Profiler.Profile(system.GetType().Name))
+            {
+                system.Update(timing);
+            }
         }
     }
     
@@ -219,11 +222,17 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
         
     public void RunDraw(Timing timing, SpriteBatch spriteBatch, Microsoft.Xna.Framework.Matrix transformMatrix)
     {
-        Profiler.Profile("Bucket: Audio", () => RunBucket(ExecutionBucket.Audio, timing));
+        using (Profiler.Profile("Bucket: Audio"))
+        {
+            RunBucket(ExecutionBucket.Audio, timing);
+        }
 
         foreach (var system in _systemsByBucket[ExecutionBucket.Render])
         {
-            Profiler.Profile(system.GetType().Name, () => system.Draw(timing, spriteBatch, transformMatrix));
+            using (Profiler.Profile(system.GetType().Name))
+            {
+                system.Draw(timing, spriteBatch, transformMatrix);
+            }
         }
     }
 

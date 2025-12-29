@@ -19,10 +19,19 @@ namespace MagicEngine.Engine.Base.Shaders.PostProcessing.Implementations
         
         private Effect _effect;
 
+        private BlendState blendState;
+
         public DualFilterBloom(Effect effect)
         {
             _effect = effect;
             Type = EffectType.PixelLayer; // Bloom operates on final high-res but before tonemap ideally?
+            
+            blendState = new BlendState {
+                ColorSourceBlend = Blend.One,
+                ColorDestinationBlend = Blend.One,
+                AlphaSourceBlend = Blend.Zero,
+                AlphaDestinationBlend = Blend.One
+            };
         }
 
         public override void Apply(SpriteBatch sb, Texture2D source, RenderTarget2D destination)
@@ -101,12 +110,7 @@ namespace MagicEngine.Engine.Base.Shaders.PostProcessing.Implementations
             // Set actual user Intensity for the final mix
             _effect.Parameters["Intensity"]?.SetValue(Intensity); 
             
-            var blendState = new BlendState {
-                ColorSourceBlend = Blend.One,
-                ColorDestinationBlend = Blend.One,
-                AlphaSourceBlend = Blend.Zero,
-                AlphaDestinationBlend = Blend.One
-            };
+            
             
             sb.Begin(SpriteSortMode.Immediate, blendState, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, _effect);
             sb.Draw(_mips[0], new Rectangle(0, 0, width, height), Color.White);
