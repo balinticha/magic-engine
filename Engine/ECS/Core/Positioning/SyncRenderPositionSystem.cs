@@ -9,14 +9,24 @@ namespace MagicEngine.Engine.ECS.Core.Positioning;
 [UpdateInBucket(ExecutionBucket.PreRender)]
 public sealed class SyncRenderPositionSystem : EntitySystem
 {
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<Position>()
             .With<RenderPosition>()
             .Without<PreviousPosition>() // That's how we know it's not interpolated
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             ref readonly var position = ref entity.Get<Position>();

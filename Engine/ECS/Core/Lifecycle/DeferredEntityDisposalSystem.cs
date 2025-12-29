@@ -1,3 +1,4 @@
+using DefaultEcs;
 using MagicEngine.Engine.Base.EntitySystem;
 using MagicEngine.Engine.ECS.Core.Lifecycle.Components;
 
@@ -6,12 +7,20 @@ namespace MagicEngine.Engine.ECS.Core.Lifecycle;
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public class DeferredEntityDisposalSystem : EntitySystem
 {
+    private EntitySet? _query;
+    
+    public override void OnSceneLoad()
+    {
+        _query = _query = World.GetEntities().With<MarkedForDeath>().AsSet();;
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query.Dispose();
+    }
+
     public override void Update(Timing timing)
     {
-        var _query = World.GetEntities()
-            .With<MarkedForDeath>()
-            .AsSet();
-
         string removedEntities = "";
         
         foreach (var entity in _query.GetEntities())

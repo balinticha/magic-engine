@@ -54,8 +54,12 @@ public class AudioManagerSystem : EntitySystem
     // this'll have to do.
     private const float PanRange = 640f / 2f;  // Primary render target width
 
+    private EntitySet? _query;
+
     public override void OnSceneLoad()
     {
+        _query = World.GetEntities().With<ContinousSoundEmitter>().With<RenderPosition>().AsSet();
+        
         Events.Subscribe<ContinousSoundEmitter, EntityDeathEvent>(OnEntityDeath);
         PreloadAllSounds();
     }
@@ -133,6 +137,7 @@ public class AudioManagerSystem : EntitySystem
     public override void OnSceneUnload()
     {
         // Todo unsubscibe?
+        _query.Dispose();
         ClearSoundQueue();
         StopAllSounds();
     }
@@ -176,8 +181,7 @@ public class AudioManagerSystem : EntitySystem
         _candidates.Clear();
         
         // handle passive emitters
-        var query = World.GetEntities().With<ContinousSoundEmitter>().With<RenderPosition>().AsSet();
-        foreach (ref readonly var entity in query.GetEntities())
+        foreach (ref readonly var entity in _query.GetEntities())
         {
             // ve use RenderPosition because ExecutionBucket.Audio runs once per frame and therefore we are
             // in a Draw() call
@@ -424,8 +428,7 @@ public class AudioManagerSystem : EntitySystem
         _activeOneShots.Clear();
 
         // emitters
-        var query = World.GetEntities().With<ContinousSoundEmitter>().AsSet();
-        foreach (ref readonly var entity in query.GetEntities())
+        foreach (ref readonly var entity in _query.GetEntities())
         {
             ref var em = ref entity.Get<ContinousSoundEmitter>();
             if (em.ActiveInstance != null)

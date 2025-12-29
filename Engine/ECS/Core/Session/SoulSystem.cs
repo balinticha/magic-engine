@@ -10,12 +10,22 @@ public sealed class SoulSystem : EntitySystem
 {
     [Dependency] private readonly SessionManager _sessionManager;
 
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+    
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<Soul>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         // check if the player no longer controls an entity
         if (!_sessionManager.GetControlledEntity(out _))
         {

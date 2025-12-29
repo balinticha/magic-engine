@@ -8,12 +8,22 @@ namespace MagicEngine.Engine.ECS.Core.Physics.Bridge;
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public class ResyncBodyType : EntitySystem
 {
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<PhysicsBodyComponent>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             RefreshBodyType(entity);

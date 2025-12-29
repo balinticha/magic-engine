@@ -29,14 +29,24 @@ public sealed class PlayerControllerSystem : EntitySystem
     [Dependency] private readonly SessionManager _sessionManager = null!;
     [Dependency] private readonly AudioManagerSystem _audio = null!;
 
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+    
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<PlayerController>()
             .With<Position>()
             .With<Velocity>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         var deltaTime = timing.DeltaTime;
 
         foreach (ref readonly var entity in _query.GetEntities())
@@ -98,14 +108,24 @@ public sealed class CameraFollowPlayer : EntitySystem
 {
     [Dependency] private SessionManager _sessionManager = null!;
 
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<Position>()
             .With<Velocity>()
             .With<CameraFollowAhead>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             if (!_sessionManager.IsControlling(entity))
@@ -137,10 +157,20 @@ public struct CameraFollowAhead
 
 public sealed class DragSystem : EntitySystem
 {
+    private EntitySet? _query;
+
+    public override void OnSceneLoad()
+    {
+        _query = World.GetEntities().With<Drag>().With<Velocity>().AsSet();
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
     public override void Update(Timing timing)
     {
-        var _query = World.GetEntities().With<Drag>().With<Velocity>().AsSet();
-        
         foreach (ref readonly var entity in _query.GetEntities())
         {
             ref var cmp = ref entity.Get<Velocity>();

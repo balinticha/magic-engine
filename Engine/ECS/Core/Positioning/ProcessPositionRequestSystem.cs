@@ -10,14 +10,24 @@ namespace MagicEngine.Engine.ECS.Core.Positioning;
 [UpdateInBucket(ExecutionBucket.Update)]
 public sealed class ProcessPositionRequestSystem : EntitySystem
 {
-    public void ManualUpdate()
+    EntitySet? _query;
+
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<Position>()
             .With<Velocity>()
             .With<SetPositionRequest>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
+    public void ManualUpdate()
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             ref var pos = ref entity.Get<Position>();

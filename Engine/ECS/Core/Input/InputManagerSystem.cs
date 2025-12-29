@@ -46,7 +46,6 @@ public class InputManagerSystem : EntitySystem
     public override void Initialize()
     {
         LoadBindingsFromFile();
-        
         base.Initialize();
     }
 

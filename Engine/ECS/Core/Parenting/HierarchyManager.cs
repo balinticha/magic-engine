@@ -17,13 +17,23 @@ namespace MagicEngine.Engine.ECS.Core.Parenting;
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public class HierarchyManager : EntitySystem
 {
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+    
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .WithEither<IsParent>()
             .Or<IsChildren>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             if (entity.TryGet<IsChildren>(out var parent))

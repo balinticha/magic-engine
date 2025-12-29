@@ -22,10 +22,33 @@ public class SpriteDrawSystem : EntitySystem
     private Effect _defaultShader;
     private int _batchCount = 0;
 
+    private EntitySet? _spriteEntities;
+    private EntitySet? _boundsEntities;
+
+    public override void Initialize()
+    {
+        _defaultShader = Content.Load<Effect>("Effects/SpriteBase");
+    }
+
     public override void OnSceneLoad()
     {
-        // this is not in the constructor because Content seems to not be available at that point
-        _defaultShader = Content.Load<Effect>("Effects/SpriteBase");
+        _spriteEntities = World.GetEntities()
+            .With<RenderPosition>()
+            .With<Sprite>()
+            .AsSet();
+            
+         _boundsEntities = World.GetEntities()
+            .With<RenderPosition>()
+            .With<RenderBounds>()
+            .With<Material>()
+            .Without<Sprite>()
+            .AsSet();
+    }
+
+    public override void OnSceneUnload()
+    {
+        _spriteEntities.Dispose();
+        _boundsEntities.Dispose();
     }
 
     private static readonly BlendState BlendAdditivePremultiplied = new()
@@ -76,18 +99,6 @@ public class SpriteDrawSystem : EntitySystem
 
     public override void Draw(Timing timing, SpriteBatch spriteBatch, Matrix transformMatrix)
     {
-        var spriteEntities = World.GetEntities()
-            .With<RenderPosition>()
-            .With<Sprite>()
-            .AsSet();
-            
-        var boundsEntities = World.GetEntities()
-            .With<RenderPosition>()
-            .With<RenderBounds>()
-            .With<Material>()
-            .Without<Sprite>()
-            .AsSet();
-
         _renderQueue.Clear();
         _batchCount = 0;
         
@@ -183,7 +194,7 @@ public class SpriteDrawSystem : EntitySystem
             });
         }
         
-        foreach (ref readonly var entity in spriteEntities.GetEntities())
+        foreach (ref readonly var entity in _spriteEntities.GetEntities())
         {
             ref var sprite = ref entity.Get<Sprite>();
             if (sprite.Texture == null) continue;
@@ -194,7 +205,7 @@ public class SpriteDrawSystem : EntitySystem
                 sprite.Layer, sprite.SortOffset);
         }
         
-        foreach (ref readonly var entity in boundsEntities.GetEntities())
+        foreach (ref readonly var entity in _boundsEntities.GetEntities())
         {
             ref var bounds = ref entity.Get<RenderBounds>();
             // For material-only entities, we use WhitePixel (1x1)

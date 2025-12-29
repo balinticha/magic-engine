@@ -9,14 +9,24 @@ namespace MagicEngine.Engine.ECS.Core.Positioning;
 [UpdateInBucket(ExecutionBucket.PreRender)]
 public sealed class InterpolateSystem : EntitySystem
 {
-    public override void Update(Timing timing)
+    EntitySet? _query;
+    
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<Position>()
             .With<RenderPosition>()
             .With<PreviousPosition>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         var alpha = timing.Alpha;
 
         foreach (ref readonly var entity in _query.GetEntities())

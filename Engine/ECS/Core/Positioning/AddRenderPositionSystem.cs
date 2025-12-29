@@ -9,13 +9,23 @@ namespace MagicEngine.Engine.ECS.Core.Positioning;
 [UpdateInBucket(ExecutionBucket.Cleanup)]
 public sealed class AddRenderPositionSystem : EntitySystem
 {
-    public override void Update(Timing timing)
+    private EntitySet? _query;
+    
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .With<Position>()
             .Without<RenderPosition>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query.Dispose();
+    }
+
+    public override void Update(Timing timing)
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             ref readonly var pos = ref entity.Get<Position>();

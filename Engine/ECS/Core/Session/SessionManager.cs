@@ -95,6 +95,20 @@ public sealed class EarlyAttachSystem : EntitySystem
 {
     [Dependency] private readonly SessionManager _sessionManager;
 
+    private EntitySet? _query;
+    
+    public override void OnSceneLoad()
+    {
+        _query = World.GetEntities()
+            .With<AttachSoulOnLoad>()
+            .AsSet();
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query.Dispose();
+    }
+
     private bool _isEnabled = true;
 
     public override void Update(Timing timing)
@@ -103,10 +117,6 @@ public sealed class EarlyAttachSystem : EntitySystem
         {
             return;
         }
-        
-        var _query = World.GetEntities()
-            .With<AttachSoulOnLoad>()
-            .AsSet();
         
         foreach (ref readonly var entity in _query.GetEntities())
         {

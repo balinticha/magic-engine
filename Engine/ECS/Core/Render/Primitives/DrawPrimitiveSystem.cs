@@ -11,14 +11,24 @@ namespace MagicEngine.Engine.ECS.Core.Render.Primitives;
 [UpdateInBucket(ExecutionBucket.Render)]
 public sealed class DrawPrimitiveSystem : EntitySystem
 {
-    public override void Draw(Timing timing, SpriteBatch spriteBatch, Matrix transform)
+    private EntitySet? _query;
+
+    public override void OnSceneLoad()
     {
-        var _query = World.GetEntities()
+        _query = World.GetEntities()
             .WithEither<DrawRectangle>()
             .Or<DrawCircle>()
             .With<RenderPosition>()
             .AsSet();
-        
+    }
+
+    public override void OnSceneUnload()
+    {
+        _query?.Dispose();
+    }
+
+    public override void Draw(Timing timing, SpriteBatch spriteBatch, Matrix transform)
+    {
         foreach (ref readonly var entity in _query.GetEntities())
         {
             ref readonly var pos = ref entity.Get<RenderPosition>().Value;

@@ -19,14 +19,19 @@ namespace MagicEngine.Engine.ECS.Core.Physics.Behavior;
 public sealed class WeldManagerSystem : EntitySystem
 {
     private IDisposable _hierarchyChangeEventSubscription;
+    private EntitySet? _query;
 
     public override void OnSceneLoad()
     {
+        _query = World.GetEntities()
+            .With<IsWelded>()
+            .AsSet();
         _hierarchyChangeEventSubscription = World.Subscribe<HierarchyChangeEvent>(OnHierarchyChange);
     }
 
     public override void OnSceneUnload()
     {
+        _query?.Dispose();
         _hierarchyChangeEventSubscription.Dispose();
     }
 
@@ -66,10 +71,6 @@ public sealed class WeldManagerSystem : EntitySystem
     
     public override void Update(Timing timing)
     {
-        var _query = World.GetEntities()
-            .With<IsWelded>()
-            .AsSet();
-        
         foreach (ref readonly var entity in _query.GetEntities())
         {
             // If either the parent or the child dies, their physics bodies get removed
