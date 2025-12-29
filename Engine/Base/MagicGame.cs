@@ -500,8 +500,22 @@ public abstract class MagicGame : Game
             GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
             GraphicsManager.SpriteBatch.Draw(finalTextureWithPP, finalDestination, Color.White);
             GraphicsManager.SpriteBatch.End();
+            
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
 
-            DrawUI();
+            try
+            {
+                DrawUI();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("UI DRAW CRASH: " + ex.Message);
+                // If this prints, that's your leak. 
+                // Gum pushed the state, crashed, and never popped it.
+            }
+            
             GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
             if (!DebugActive && CursorTexture != null)
             {

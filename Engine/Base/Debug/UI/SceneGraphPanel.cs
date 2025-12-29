@@ -59,74 +59,80 @@ public class SceneGraphPanel
     private void DrawEntityNode(Entity entity)
     {
         if (!entity.IsAlive) return;
-
-        // Build the label for the tree node
-        var label = BuildEntityLabel(entity);
+        
+        ImGui.PushID(entity.GetHashCode());
+        
+        string nodeText = BuildEntityLabel(entity); 
 
         IEnumerable<Entity> children = null;
-        
         if (entity.Has<IsParent>())
         {
             children = entity.Get<IsParent>().Childrens;
         }
-
-        var hasChildren = children != null && children.Any();
         
+        var hasChildren = children != null && children.Any();
+
         var nodeFlags = hasChildren 
             ? ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.OpenOnDoubleClick 
             : ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen;
-        
+
         if (SelectedEntity.HasValue && SelectedEntity.Value == entity)
         {
             nodeFlags |= ImGuiTreeNodeFlags.Selected;
         }
-
-        bool isNodeOpen = ImGui.TreeNodeEx(label, nodeFlags);
         
+        bool isNodeOpen = ImGui.TreeNodeEx(nodeText, nodeFlags);
+
         if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
         {
             SelectedEntity = entity;
         }
-        
+    
         if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
         {
             EntityToInspect = entity;
         }
 
-        // If the node is open and it's not a leaf, process its children
         if (isNodeOpen && hasChildren)
         {
-            var childrenCopy = children.ToArray(); 
-            
-            foreach (var child in childrenCopy)
+            foreach (var child in children)
             {
-                DrawEntityNode(child); // Recursive call
+                DrawEntityNode(child); 
             }
             ImGui.TreePop();
         }
+        
+        ImGui.PopID();
     }
 
-    /// <summary>
-    /// Helper function to create a descriptive string label for an entity.
-    /// </summary>
+    // 1. Static cache to reuse memory frame-over-frame
+    private static readonly StringBuilder _labelCache = new StringBuilder(256);
+
     private string BuildEntityLabel(Entity entity)
     {
-        // Using StringBuilder for slightly better performance than string concatenation
-        var sb = new StringBuilder();
-        
-        // DefaultEcs.Entity doesn't have a stable integer ID, but its hash code is unique for its lifetime.
-        sb.Append($"{($"{entity}").Substring(7)}E |");
+        _labelCache.Clear();
+
+        string fullString = entity.ToString();
+        _labelCache.Append(fullString.AsSpan(7));
+
+        // ---------------------------------------------------------
+        // The rest of your logic remains the same, but now it uses
+        // the cached builder, saving 2 more allocations.
+        // ---------------------------------------------------------
         
         if (entity.TryGet<NameComponent>(out var name))
         {
-            sb.Append($" {name.Comp.Value}");
+            _labelCache.Append(' ');
+            _labelCache.Append(name.Comp.Value);
         }
         
         if (entity.TryGet<PrototypeIDComponent>(out var protoId))
         {
-            sb.Append($" [{protoId.Comp.Value}]");
+            _labelCache.Append(" [");
+            _labelCache.Append(protoId.Comp.Value);
+            _labelCache.Append(']');
         }
         
-        return sb.ToString();
+        return _labelCache.ToString();
     }
 }

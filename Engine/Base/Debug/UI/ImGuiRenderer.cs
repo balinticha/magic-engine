@@ -42,10 +42,19 @@ namespace MagicEngine.Engine.Base.Debug.UI
         private readonly float WHEEL_DELTA = 120;
         private Keys[] _allKeys = Enum.GetValues<Keys>();
 
+        private BlendState _blendState;
+
         public ImGuiRenderer(Game game)
         {
             var context = ImGui.CreateContext();
             ImGui.SetCurrentContext(context);
+            
+            _blendState = new BlendState {
+                ColorSourceBlend = Blend.SourceAlpha,
+                AlphaSourceBlend = Blend.SourceAlpha,
+                ColorDestinationBlend = Blend.InverseSourceAlpha,
+                AlphaDestinationBlend = Blend.InverseSourceAlpha
+            };
 
             _game = game ?? throw new ArgumentNullException(nameof(game));
             _graphicsDevice = game.GraphicsDevice;
@@ -305,14 +314,7 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 var lastBlendState = _graphicsDevice.BlendState;
 
                 _graphicsDevice.BlendFactor = Color.White;
-                // Create a new BlendState to ensure we don't have corrupted static state
-                _graphicsDevice.BlendState = new BlendState
-                {
-                    ColorSourceBlend = Blend.SourceAlpha,
-                    AlphaSourceBlend = Blend.SourceAlpha,
-                    ColorDestinationBlend = Blend.InverseSourceAlpha,
-                    AlphaDestinationBlend = Blend.InverseSourceAlpha
-                };
+                _graphicsDevice.BlendState = _blendState;
                 
                 _graphicsDevice.RasterizerState = _rasterizerState;
                 _graphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
