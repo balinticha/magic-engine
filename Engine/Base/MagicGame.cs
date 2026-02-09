@@ -111,37 +111,26 @@ public abstract class MagicGame : Game
 
     protected override void Initialize()
     {
-        // --- BORDERLESS FULLSCREEN SETUP ---
-        GraphicsManager.Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        GraphicsManager.Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        GraphicsManager.Graphics.HardwareModeSwitch = false; // Important for fast switching
-        GraphicsManager.Graphics.IsFullScreen = true;
+        _random = new Random();
+        
+        // Graphcis and UI
+        Console.WriteLine("Initializing graphics and post processing");
+        GraphicsManager.Initialize();
+        GraphicsManager.InitializeRenderTargets(GraphicsDevice);
         Window.IsBorderless = true;
-        GraphicsManager.Graphics.SynchronizeWithVerticalRetrace = true;
-        GraphicsManager.Graphics.GraphicsProfile = GraphicsProfile.HiDef;
-        GraphicsManager.Graphics.ApplyChanges();
-        
         InitializeUI();
+        PostProcessingManager = new PostProcessingManager();
         
+        // Console and logging
         _consoleInterceptor = new ConsoleInterceptor(Console.Out);
         Console.SetOut(_consoleInterceptor);
         Console.WriteLine("[Console] Output redirected to debug window.");
-
         LogManager = new LogManager();
         LogManager.LogMode = LogLevel.VerboseExtra;
         
-        _random = new Random();
-        SceneManager = new SceneManager(GraphicsDevice, Content);
-        
-        SceneManager.RegsiterScene(new Scene.Scene(
-            new SceneCreationResources(GraphicsDevice, Content),
-            "BaseEngineScene",
-            new World(),
-            new EventManager(),
-            new nkast.Aether.Physics2D.Dynamics.World(new Vector2(0, 0))
-        ));
-
+        // Prototypes and core systems
         LogManager.Log("Startup: PrototypeManager", LogLevel.VerboseExtra);
+        SceneManager = new SceneManager(GraphicsDevice, Content);
         PrototypeManager = new PrototypeManager(SceneManager, Content);
         CameraSystem = new CameraSystem();
         
@@ -149,16 +138,20 @@ public abstract class MagicGame : Game
         SystemManager = new SystemManager(SceneManager, _random, PrototypeManager, CameraSystem, LogManager, Content);
         SystemManager.Initialize();
         
-        LogManager.Verbose("Startup: Initializing Post Processing Manager");
-        PostProcessingManager = new PostProcessingManager();
+        // Scene registration
+        SceneManager.RegsiterScene(new Scene.Scene(
+            new SceneCreationResources(GraphicsDevice, Content),
+            "BaseEngineScene",
+            new World(),
+            new EventManager(),
+            new nkast.Aether.Physics2D.Dynamics.World(new Vector2(0, 0))
+        ));
+        SceneManager.FirstLoadSceneUnsafe("BaseEngineScene");
         
+        // Commands
         LogManager.Log("Startup: CommandManager", LogLevel.VerboseExtra);
         _commandManager = new CommandManager(SystemManager, SceneManager, PrototypeManager, _random, CameraSystem, LogManager, PostProcessingManager);
         _commandManager.Initialize();
-        
-        // This action is guaranteed to crash if ran before SystemManager is initialized.
-        // Anything that depends on an initialized scene requires this, though.
-        SceneManager.FirstLoadSceneUnsafe("BaseEngineScene");
         
         LogManager.Log("Startup: DebugConsoleWindow", LogLevel.VerboseExtra);
         _consoleWindow = new DebugConsoleWindow(_commandManager, _consoleInterceptor);
@@ -173,49 +166,8 @@ public abstract class MagicGame : Game
         LogManager.Log("Startup: ImGuiRender", LogLevel.VerboseExtra);
         ImGuiRenderer = new ImGuiRenderer(this);
         ImGuiRenderer.RebuildFontAtlas();
-        
 
         CrashInspectorPanel = new CrashInspectorPanel(this);
-        
-
-        // --- RENDER TARGET SETUP ---
-        // Create the RenderTarget2D with our virtual resolution
-        LogManager.Log("Startup: Creating render target", LogLevel.VerboseExtra);
-        
-        // We use HalfVector4 (R,G,B,A 16-bit float) for HDR support to allow values > 1.0
-        GraphicsManager.RenderTarget = new RenderTarget2D(
-            GraphicsDevice,
-            GraphicsManager.Screen.VirtualWidth + GraphicsManager.Screen.Padding * 2,
-            GraphicsManager.Screen.VirtualHeight + GraphicsManager.Screen.Padding * 2,
-            false,
-            SurfaceFormat.HalfVector4,
-            DepthFormat.None);
-        
-        LogManager.Log("Startup: Creating shadow target", LogLevel.VerboseExtra);
-        GraphicsManager.ShadowTarget = new RenderTarget2D(
-            GraphicsDevice,
-            GraphicsManager.Screen.VirtualWidth + GraphicsManager.Screen.Padding * 2,
-            GraphicsManager.Screen.VirtualHeight + GraphicsManager.Screen.Padding * 2,
-            false,
-            SurfaceFormat.HalfVector4,
-            DepthFormat.None);
-        
-        LogManager.Log("Startup: Creating High-Res render target", LogLevel.VerboseExtra);
-        GraphicsManager.ScreenTarget = new RenderTarget2D(GraphicsDevice, 
-            GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
-            false,
-            SurfaceFormat.HalfVector4,
-            DepthFormat.None);
-        
-        LogManager.Log("Startup: Creating High-Res shadow render target", LogLevel.VerboseExtra);
-        GraphicsManager.ShadowScreenTarget = new RenderTarget2D(GraphicsDevice, 
-            GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
-            false,
-            SurfaceFormat.HalfVector4,
-            DepthFormat.None);
-        
-        
-        LogManager.Log("Startup: Calling user game system hooks", LogLevel.Verbose);
         
         RegisterGameSystemsHook();
         
@@ -315,8 +267,7 @@ public abstract class MagicGame : Game
                 RunPreFixedUpdateContent(preLoopTiming);
                 TimeAccumulator += deltaTime * SystemManager.GetSystem<SessionManager>().GameSpeed;
                 var fixedTiming = new Timing(FixedTimeStep, 1.0f, GameTime);
-    
-            
+                
                 while (TimeAccumulator >= FixedTimeStep)
                 {
                     SystemManager.RunFixedUpdatePrePhysics(fixedTiming);
@@ -512,8 +463,6 @@ public abstract class MagicGame : Game
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("UI DRAW CRASH: " + ex.Message);
-                // If this prints, that's your leak. 
-                // Gum pushed the state, crashed, and never popped it.
             }
             
             GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);

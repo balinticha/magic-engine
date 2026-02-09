@@ -11,6 +11,7 @@ public class GraphicsManager
     public RenderTarget2D ShadowTarget;
     public RenderTarget2D ScreenTarget;  // High Resolution target
     public RenderTarget2D ShadowScreenTarget;
+    
 
     public ScreenSetup Screen;
 
@@ -18,6 +19,49 @@ public class GraphicsManager
     {
         Graphics = graphics;
         Screen = new ScreenSetup(viewportWidth, viewportHeight, padding);
+    }
+
+    public void Initialize()
+    {
+        Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        Graphics.HardwareModeSwitch = false;
+        Graphics.IsFullScreen = true;
+        
+        Graphics.SynchronizeWithVerticalRetrace = true;
+        Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+        Graphics.ApplyChanges();
+    }
+
+    public void InitializeRenderTargets(GraphicsDevice graphicsDevice)
+    {
+        RenderTarget = new RenderTarget2D(
+            graphicsDevice,
+            Screen.VirtualWidth + Screen.Padding * 2,
+            Screen.VirtualHeight + Screen.Padding * 2,
+            false,
+            SurfaceFormat.HalfVector4,
+            DepthFormat.None);
+        
+        ShadowTarget = new RenderTarget2D(
+            graphicsDevice,
+            Screen.VirtualWidth + Screen.Padding * 2,
+            Screen.VirtualHeight + Screen.Padding * 2,
+            false,
+            SurfaceFormat.HalfVector4,
+            DepthFormat.None);
+        
+        ScreenTarget = new RenderTarget2D(graphicsDevice, 
+            graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height,
+            false,
+            SurfaceFormat.HalfVector4,
+            DepthFormat.None);
+
+        ShadowScreenTarget = new RenderTarget2D(graphicsDevice, 
+            graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height,
+            false,
+            SurfaceFormat.HalfVector4,
+            DepthFormat.None);
     }
 }
 
