@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MagicEngine.Engine.Base.CoreModules;
 
-public class EngineGraphicsModule
+public class EngineGraphicsModule : IEngineGraphicsModule
 {
     public GraphicsManager GraphicsManager { get; private set; }
     public PostProcessingManager PostProcessingManager { get; private set; }

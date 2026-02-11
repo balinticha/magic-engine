@@ -4,6 +4,7 @@ using MagicEngine.Engine.Base.CoreModules;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.Debug.Commands;
 using MagicEngine.Engine.Base.Debug.UI;
+using MagicEngine.Engine.Base.DebugModule;
 using MagicEngine.Engine.Base.EntitySystem;
 using MagicEngine.Engine.Base.Events;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
@@ -26,9 +27,9 @@ namespace MagicEngine.Engine.Base;
 public abstract class MagicGame : Game
 {
     #region New modules
-
     private GraphicsManager _gp;
     public EngineGraphicsModule EngineGraphicsModule;
+    public EngineDebugModule EngineDebugModule;
     #endregion
     
     #region NEW scene management systems
@@ -48,7 +49,7 @@ public abstract class MagicGame : Game
     
     #region ImGui debug overlays
     protected ImGuiRenderer ImGuiRenderer;
-    protected bool DebugActive = false;
+    protected bool DebugActive = false; 
     protected readonly ComponentViewerPanel ComponentViewerPanel = new();
     protected readonly List<InspectorWindowState> InspectorWindow = new();
     protected CrashInspectorPanel CrashInspectorPanel;
@@ -158,10 +159,10 @@ public abstract class MagicGame : Game
         DebugRenderCooldown = 10;
 
         LogManager.Log("Startup: ImGuiRender", LogLevel.VerboseExtra);
-        ImGuiRenderer = new ImGuiRenderer(this);
-        ImGuiRenderer.RebuildFontAtlas();
-
-        CrashInspectorPanel = new CrashInspectorPanel(this);
+        EngineDebugModule = new EngineDebugModule(new List<IDebugWindow>(), this, _gp.Graphics);
+        
+        // todo: no longer compatible with reefactor, fix
+        // CrashInspectorPanel = new CrashInspectorPanel(this);
         
         RegisterGameSystemsHook();
         
@@ -208,26 +209,29 @@ public abstract class MagicGame : Game
             UpdateUI(gameTime);
             
             // ========= Debug stuff start
-            if (Keyboard.GetState().IsKeyDown(Keys.F1) && DebugRenderCooldown <= 0)
-            {
-                DebugRender  = !DebugRender;
-                DebugActive = true;
-                DebugRenderCooldown = 20;
-            }
+            EngineDebugModule.HandleInput(Keyboard.GetState());
             
-            if (Keyboard.GetState().IsKeyDown(Keys.F2) && DebugRenderCooldown <= 0)
-            {
-                _consoleActive = !_consoleActive;
-                DebugActive = true;
-                DebugRenderCooldown = 20;
-            }
-            
-            if (Keyboard.GetState().IsKeyDown(Keys.F3) && DebugRenderCooldown <= 0)
-            {
-                EngineGraphicsModule.PostProcessingManager.Enabled = !EngineGraphicsModule.PostProcessingManager.Enabled;
-                DebugRenderCooldown = 20;
-            }
-            DebugRenderCooldown--;
+            // todo this should be moved into each IDebugWindow implementing window class
+            // if (Keyboard.GetState().IsKeyDown(Keys.F1) && DebugRenderCooldown <= 0)
+            // {
+            //     DebugRender  = !DebugRender;
+            //     DebugActive = true;
+            //     DebugRenderCooldown = 20;
+            // }
+            //
+            // if (Keyboard.GetState().IsKeyDown(Keys.F2) && DebugRenderCooldown <= 0)
+            // {
+            //     _consoleActive = !_consoleActive;
+            //     DebugActive = true;
+            //     DebugRenderCooldown = 20;
+            // }
+            //
+            // if (Keyboard.GetState().IsKeyDown(Keys.F3) && DebugRenderCooldown <= 0)
+            // {
+            //     EngineGraphicsModule.PostProcessingManager.Enabled = !EngineGraphicsModule.PostProcessingManager.Enabled;
+            //     DebugRenderCooldown = 20;
+            // }
+            // DebugRenderCooldown--;
             // ========= Debug stuff end
             
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -359,6 +363,8 @@ public abstract class MagicGame : Game
             #region DEBUG render loop
             if (DebugActive)
             {
+                // TODO This segment is to be replaced with EngineDebugModile.Draw(...)
+                
                 // Reset render states to ensure ImGui has a clean slate
                 GraphicsDevice.BlendState = BlendState.Opaque;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -371,9 +377,9 @@ public abstract class MagicGame : Game
                 {
                     var inputManager = SystemManager.GetSystem<InputManagerSystem>();
                     var io = ImGui.GetIO();
-
                     inputManager.IsInputDisabled = CrashInspectorPanel.IsActive || io.WantCaptureKeyboard;
 
+                    
                     ImGui.GetForegroundDrawList().AddCircleFilled(io.MousePos, 5f, 0xFF0000FF);
 
                     var sceneGraphPanel = SceneManager.GetScene().AttachedSystems.SceneGraphPanel;
