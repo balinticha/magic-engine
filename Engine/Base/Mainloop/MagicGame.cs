@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using DefaultEcs;
-using Gum.Forms;
-using Gum.Forms.Controls;
 using ImGuiNET;
+using MagicEngine.Engine.Base.CoreModules;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.Debug.Commands;
 using MagicEngine.Engine.Base.Debug.UI;
@@ -19,23 +16,19 @@ using MagicEngine.Engine.ECS.Core.Physics;
 using MagicEngine.Engine.ECS.Core.Physics.Behavior;
 using MagicEngine.Engine.ECS.Core.Positioning;
 using MagicEngine.Engine.ECS.Core.Session;
-using MagicEngine.Engine.ECS.Core.Events;
-using MagicEngine.Engine.ECS.Core.Physics.Bridge;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
-using nkast.Aether.Physics2D.Controllers;
 
 namespace MagicEngine.Engine.Base;
 
 public abstract class MagicGame : Game
 {
-    #region Graphics related
-    protected GraphicsManager GraphicsManager;
-    protected PostProcessingManager PostProcessingManager;
-    
-    public static Texture2D WhitePixel;
+    #region New modules
+
+    private GraphicsManager _gp;
+    public EngineGraphicsModule EngineGraphicsModule;
     #endregion
     
     #region NEW scene management systems
@@ -80,7 +73,7 @@ public abstract class MagicGame : Game
     protected Random _random;
     protected bool _consoleActive = false;
 
-    protected double GameTime = 0;
+    protected double GameTimeTemp = 0;
     
     // Profiling
     private double _fps;
@@ -104,8 +97,7 @@ public abstract class MagicGame : Game
     
     protected MagicGame()
     {
-        GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(this), 640, 360, 4);
-        
+        _gp = new GraphicsManager(new GraphicsDeviceManager(this), 640, 360, 4);
         Content.RootDirectory = "Content";
     }
 
@@ -113,20 +105,22 @@ public abstract class MagicGame : Game
     {
         _random = new Random();
         
-        // Graphcis and UI
-        Console.WriteLine("Initializing graphics and post processing");
-        GraphicsManager.Initialize();
-        GraphicsManager.InitializeRenderTargets(GraphicsDevice);
-        Window.IsBorderless = true;
-        InitializeUI();
-        PostProcessingManager = new PostProcessingManager();
-        
         // Console and logging
         _consoleInterceptor = new ConsoleInterceptor(Console.Out);
         Console.SetOut(_consoleInterceptor);
         Console.WriteLine("[Console] Output redirected to debug window.");
         LogManager = new LogManager();
         LogManager.LogMode = LogLevel.VerboseExtra;
+        
+        EngineGraphicsModule = new EngineGraphicsModule(
+            _gp,
+            GraphicsDevice,
+            Window,
+            LogManager,
+            new PostProcessingManager()
+        );
+        
+        InitializeUI();
         
         // Prototypes and core systems
         LogManager.Log("Startup: PrototypeManager", LogLevel.VerboseExtra);
@@ -150,12 +144,12 @@ public abstract class MagicGame : Game
         
         // Commands
         LogManager.Log("Startup: CommandManager", LogLevel.VerboseExtra);
-        _commandManager = new CommandManager(SystemManager, SceneManager, PrototypeManager, _random, CameraSystem, LogManager, PostProcessingManager);
+        _commandManager = new CommandManager(SystemManager, SceneManager, PrototypeManager, _random, CameraSystem, LogManager, EngineGraphicsModule.PostProcessingManager);
         _commandManager.Initialize();
         
         LogManager.Log("Startup: DebugConsoleWindow", LogLevel.VerboseExtra);
         _consoleWindow = new DebugConsoleWindow(_commandManager, _consoleInterceptor);
-        _postProcessDebugOverlay = new PostProcessDebugOverlay(PostProcessingManager);
+        _postProcessDebugOverlay = new PostProcessDebugOverlay(EngineGraphicsModule.PostProcessingManager);
         
         LogManager.Log("Startup: Debug view content load", LogLevel.VerboseExtra);
         SceneManager.GetScene().AttachedSystems.DebugView.LoadContent(GraphicsDevice, Content);
@@ -179,11 +173,7 @@ public abstract class MagicGame : Game
     
     protected override void LoadContent()
     {
-        LogManager.Log("Startup: Sprite batch setup", LogLevel.VerboseExtra);
-        GraphicsManager.SpriteBatch = new SpriteBatch(GraphicsDevice);
-        
-        WhitePixel = new Texture2D(GraphicsDevice, 1, 1);
-        WhitePixel.SetData(new[] { Color.White });
+        EngineGraphicsModule.LoadContent();
         
         LogManager.Log("Startup: Prototype content load", LogLevel.VerboseExtra);
         PrototypeManager.Initialize();
@@ -234,14 +224,14 @@ public abstract class MagicGame : Game
             
             if (Keyboard.GetState().IsKeyDown(Keys.F3) && DebugRenderCooldown <= 0)
             {
-                PostProcessingManager.Enabled = !PostProcessingManager.Enabled;
+                EngineGraphicsModule.PostProcessingManager.Enabled = !EngineGraphicsModule.PostProcessingManager.Enabled;
                 DebugRenderCooldown = 20;
             }
             DebugRenderCooldown--;
             // ========= Debug stuff end
             
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            GameTime += deltaTime;
+            GameTimeTemp += deltaTime;
             
             // FPS & FrameTime Calculation
             if (deltaTime > 0.000001f)
@@ -251,7 +241,7 @@ public abstract class MagicGame : Game
             }
             _frameTime = deltaTime * 1000.0;
             
-            var preLoopTiming = new Timing(deltaTime, 0f, GameTime);
+            var preLoopTiming = new Timing(deltaTime, 0f, GameTimeTemp);
             
             SystemManager.RunFrameStart(preLoopTiming);
             SystemManager.RunTransientUpdate(preLoopTiming);
@@ -266,7 +256,7 @@ public abstract class MagicGame : Game
             {
                 RunPreFixedUpdateContent(preLoopTiming);
                 TimeAccumulator += deltaTime * SystemManager.GetSystem<SessionManager>().GameSpeed;
-                var fixedTiming = new Timing(FixedTimeStep, 1.0f, GameTime);
+                var fixedTiming = new Timing(FixedTimeStep, 1.0f, GameTimeTemp);
                 
                 while (TimeAccumulator >= FixedTimeStep)
                 {
@@ -310,7 +300,7 @@ public abstract class MagicGame : Game
                 }
             
                 var alpha = (float)(TimeAccumulator / FixedTimeStep); 
-                var postLoopTiming = new Timing(deltaTime, alpha, GameTime);
+                var postLoopTiming = new Timing(deltaTime, alpha, GameTimeTemp);
             
                 SystemManager.RunFrameLateUpdate(postLoopTiming);
                 
@@ -344,118 +334,15 @@ public abstract class MagicGame : Game
     {
         try
         {
-            Texture2D textureWithPP;
-            Texture2D finalTextureWithPP;
-                
             #region GAME draw loop
-            if (!CrashInspectorPanel.IsActive)
-            {
-                GraphicsDevice.SetRenderTarget(GraphicsManager.RenderTarget);
-                GraphicsDevice.Clear(ColorOperations.ToLinear(Color.Black));
-
-                var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            
-                // camera stuff todo refactor
-                Vector2 cameraIntPosition = new Vector2((int)Math.Round(CameraSystem.Position.X), (int)Math.Round(CameraSystem.Position.Y));
-                Matrix transform = Matrix.CreateTranslation(-cameraIntPosition.X, -cameraIntPosition.Y, 0) *
-                                   Matrix.CreateTranslation(
-                                       GraphicsManager.Screen.VirtualWidth / 2f + GraphicsManager.Screen.Padding, 
-                                       GraphicsManager.Screen.VirtualHeight / 2f + GraphicsManager.Screen.Padding, 0
-                                       );
-            
-                GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transform);
-                
-                // Create Draw Timing
-                var drawTiming = new Timing(deltaTime, (float)(TimeAccumulator / FixedTimeStep), GameTime);
-                SystemManager.RunDraw(drawTiming, GraphicsManager.SpriteBatch, transform);
-                
-                GraphicsManager.SpriteBatch.End();
-
-                textureWithPP = PostProcessingManager.ApplyEffects(
-                    EffectType.TexelLayer,
-                    GraphicsManager.SpriteBatch, 
-                    GraphicsManager.RenderTarget,
-                    GraphicsManager.RenderTarget,
-                    GraphicsManager.ShadowTarget);
-
-                if (DebugRender)
-                {
-                    Matrix projection = Matrix.CreateOrthographicOffCenter(
-                        0, 
-                        GraphicsManager.RenderTarget.Width, 
-                        GraphicsManager.RenderTarget.Height, 
-                        0, 
-                        0, 
-                        1);
-                
-                    Matrix view = Matrix.CreateScale(PhysicsConstants.PixelsPerMeter) * transform;
-                
-                    try
-                    {
-                        SceneManager.GetScene().AttachedSystems.DebugView.RenderDebugData(ref projection, ref view);
-                    }
-                    catch (Exception e)
-                    {
-                        LogManager.Release($"DebugView render failed: {e.Message}", "--MAINLOOP--");
-                        DebugRender = false;
-                    }
-                }
-            }
-            else
-            {
-                textureWithPP = GraphicsManager.RenderTarget;
-            }
-            
-            GraphicsDevice.SetRenderTarget(GraphicsManager.ScreenTarget);
-            GraphicsDevice.Clear(Color.Black);
-
-            // no clue what I'm doing
-            // but we are trying to upscale with subpixel movement smoothing
-            // the camera is only offset by integer values, but we move the final rendered image
-            // by the remainder of the floats.
-            float screenWidth = GraphicsDevice.Viewport.Width;
-            float screenHeight = GraphicsDevice.Viewport.Height;
-            float scaleX = screenWidth / GraphicsManager.Screen.VirtualWidth;
-            float scaleY = screenHeight / GraphicsManager.Screen.VirtualHeight;
-            float scale = Math.Min(scaleX, scaleY);
-            
-            int scaledWidth = (int)(GraphicsManager.Screen.VirtualWidth * scale);
-            int scaledHeight = (int)(GraphicsManager.Screen.VirtualHeight * scale);
-            int posX = (int)((screenWidth - scaledWidth) / 2);
-            int posY = (int)((screenHeight - scaledHeight) / 2);
-            
-            Vector2 subPixel = new Vector2((int)Math.Round(CameraSystem.Position.X), (int)Math.Round(CameraSystem.Position.Y)) - CameraSystem.Position;
-            posX += (int)(subPixel.X * scale);
-            posY += (int)(subPixel.Y * scale);
-
-            Rectangle finalDestination = new Rectangle(posX, posY, scaledWidth, scaledHeight); ;
-            
-            // Draw low-res texture with texel effects into high res
-            GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            GraphicsManager.SpriteBatch.Draw(textureWithPP, finalDestination, new Rectangle(
-                GraphicsManager.Screen.Padding, GraphicsManager.Screen.Padding, GraphicsManager.Screen.VirtualWidth, GraphicsManager.Screen.VirtualHeight
-                ), Color.White);
-            GraphicsManager.SpriteBatch.End();
-            
-            finalTextureWithPP = PostProcessingManager.ApplyEffects(
-                EffectType.PixelLayer,
-                GraphicsManager.SpriteBatch, 
-                GraphicsManager.ScreenTarget,
-                GraphicsManager.ScreenTarget,
-                GraphicsManager.ShadowScreenTarget
+            EngineGraphicsModule.Draw(
+                CrashInspectorPanel.IsActive,
+                GameTimeTemp, gameTime, TimeAccumulator, 
+                FixedTimeStep, CameraSystem, SystemManager, 
+                DebugRender, SceneManager
             );
             
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.Black);
-
-            GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
-            GraphicsManager.SpriteBatch.Draw(finalTextureWithPP, finalDestination, Color.White);
-            GraphicsManager.SpriteBatch.End();
-            
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
-
+            //// UI & MOUSE CURSORS - delegate to UI module
             try
             {
                 DrawUI();
@@ -465,27 +352,10 @@ public abstract class MagicGame : Game
                 System.Diagnostics.Debug.WriteLine("UI DRAW CRASH: " + ex.Message);
             }
             
-            GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
-            if (!DebugActive && CursorTexture != null)
-            {
-                var mouseState = Mouse.GetState();
-                Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
-                float cursorScale = 0.1f; 
-
-                GraphicsManager.SpriteBatch.Draw(
-                    CursorTexture,
-                    mousePos,
-                    null,
-                    Color.White,
-                    0f,
-                    CursorHotspot,
-                    cursorScale,
-                    SpriteEffects.None,
-                    0f
-                );
-            }
-            GraphicsManager.SpriteBatch.End();
+            EngineGraphicsModule.DrawCursor(CursorTexture, CursorHotspot);
             #endregion
+            
+            //// DEBUG UI
             #region DEBUG render loop
             if (DebugActive)
             {
@@ -560,9 +430,6 @@ public abstract class MagicGame : Game
     
     protected override void UnloadContent()
     {
-        WhitePixel?.Dispose();
-        WhitePixel = null;
-        // ...
         base.UnloadContent();
     }
 

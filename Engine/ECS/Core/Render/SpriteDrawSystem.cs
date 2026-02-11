@@ -21,6 +21,7 @@ public class SpriteDrawSystem : EntitySystem
     private readonly List<RenderItem> _renderQueue = new(2048);
     private Effect _defaultShader;
     private int _batchCount = 0;
+    private Texture2D? _whitePixel;
 
     private EntitySet? _spriteEntities;
     private EntitySet? _boundsEntities;
@@ -99,6 +100,12 @@ public class SpriteDrawSystem : EntitySystem
 
     public override void Draw(Timing timing, SpriteBatch spriteBatch, Matrix transformMatrix)
     {
+        if (_whitePixel == null)
+        {
+            _whitePixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            _whitePixel.SetData(new[] { Color.White });
+        }
+
         _renderQueue.Clear();
         _batchCount = 0;
         
@@ -213,7 +220,7 @@ public class SpriteDrawSystem : EntitySystem
             // so that Scale * Origin results in the correct pixel offset.
             Vector2 origin = bounds.Anchor;
             
-            ProcessEntity(in entity, MagicGame.WhitePixel, Color.White, 
+            ProcessEntity(in entity, _whitePixel!, Color.White, 
                 origin, 
                 bounds.Width, bounds.Height, 
                 bounds.Layer, bounds.SortOffset); 
@@ -280,7 +287,7 @@ public class SpriteDrawSystem : EntitySystem
 
             // If using WhitePixel (1x1), we must scale it to DestinationSize
             Vector2 scale = Vector2.One;
-            if (item.Texture == MagicGame.WhitePixel)
+            if (item.Texture == _whitePixel)
             {
                 scale = item.DestinationSize;
             }
