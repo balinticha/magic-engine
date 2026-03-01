@@ -12,7 +12,7 @@ public sealed class SoulSystem : EntitySystem
     [Dependency] private readonly SessionManager _sessionManager;
 
     private EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
         _query = World.GetEntities()
@@ -33,16 +33,16 @@ public sealed class SoulSystem : EntitySystem
             // Not controlling an entity or the entity is dead
             var ent = Prototypes.SpawnEntity("Soul", _sessionManager.ControlledEntityLastPosition);
             Console.WriteLine($"[SoulSystem] Session player is deattached from an entity. Soul entity spawned: {ent}");
-            
+
             _sessionManager.SetControlledEntity(ent);
         }
-        
+
         // Checks for souls no longer controlled
         foreach (ref readonly var entity in _query.GetEntities())
         {
             if (entity == _sessionManager.GetControlledEntityUnsafe())
                 continue;
-            
+
             entity.Dispose();
         }
     }

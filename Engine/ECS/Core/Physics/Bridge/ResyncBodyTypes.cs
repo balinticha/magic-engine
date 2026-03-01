@@ -39,7 +39,7 @@ public class ResyncBodyType : EntitySystem
     {
         if (!ent.TryGet<PhysicsBodyComponent>(out var body))
             return false;
-        
+
         // Set the stored physicsbodys BodyType to the stored BodyType on the component
         body.Comp.Body.BodyType = body.Comp.Type;
 

@@ -30,8 +30,13 @@ namespace MagicEngine.Engine.ECS.Core.Input
             return keyboardState.IsKeyDown(_key);
         }
     }
-    
-    public enum MouseButton { Left, Right, Middle }
+
+    public enum MouseButton
+    {
+        Left,
+        Right,
+        Middle
+    }
 
     /// <summary>
     /// Represents a specific mouse button binding.

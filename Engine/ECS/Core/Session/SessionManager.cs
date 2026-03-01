@@ -28,7 +28,6 @@ public class SessionManager : EntitySystem
             _controlledEntity = storage.Get<Entity>("controlledEntity");
             LogManager.Verbose("Loaded controlled entity from persistent scene storage", "SessionManager");
         }
-        
     }
 
     public override void OnSceneUnload()
@@ -46,7 +45,9 @@ public class SessionManager : EntitySystem
         {
             entity = _controlledEntity.Value;
             return true;
-        };
+        }
+
+        ;
         entity = default;
         return false;
     }
@@ -66,7 +67,7 @@ public class SessionManager : EntitySystem
     {
         if (!GetControlledEntity(out _))
             return;
-        
+
         SetControlledEntity(entity);
     }
 
@@ -74,7 +75,7 @@ public class SessionManager : EntitySystem
     {
         if (!GetControlledEntity(out var controlledEntity))
             return false;
-        
+
         return controlledEntity == entity;
     }
 
@@ -82,12 +83,11 @@ public class SessionManager : EntitySystem
     {
         if (!GetControlledEntity(out var controlledEntity))
             return;
-        
+
         if (!controlledEntity.TryGet<Position>(out var cmp))
             return;
-        
+
         ControlledEntityLastPosition = cmp.Comp.Value;
-        
     }
 }
 
@@ -97,7 +97,7 @@ public sealed class EarlyAttachSystem : EntitySystem
     [Dependency] private readonly SessionManager _sessionManager;
 
     private EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
         _query = World.GetEntities()
@@ -118,7 +118,7 @@ public sealed class EarlyAttachSystem : EntitySystem
         {
             return;
         }
-        
+
         foreach (ref readonly var entity in _query.GetEntities())
         {
             Console.WriteLine($"[SessionManager.EarlyAttach] Early attaching triggered for: {entity}");

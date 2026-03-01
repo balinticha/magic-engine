@@ -31,7 +31,7 @@ public sealed class PositionSystem : EntitySystem
         {
             ref readonly var position = ref entity.Get<Position>();
             ref var previousPosition = ref entity.Get<PreviousPosition>();
-            
+
             previousPosition.Value = position.Value;
             previousPosition.Rotation = position.Rotation;
         }

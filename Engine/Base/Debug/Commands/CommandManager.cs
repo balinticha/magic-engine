@@ -25,7 +25,8 @@ public class CommandManager
     private readonly Dictionary<string, IConsoleCommand> _commands = new();
 
     // Pass in all the dependencies from Game1
-    public CommandManager(SystemManager sm, SceneManager s, PrototypeManager prm, Random r, CameraSystem cs, LogManager lm, PostProcessingManager ppm)
+    public CommandManager(SystemManager sm, SceneManager s, PrototypeManager prm, Random r, CameraSystem cs,
+        LogManager lm, PostProcessingManager ppm)
     {
         _systemManager = sm;
         _sceneManager = s;
@@ -39,10 +40,10 @@ public class CommandManager
     public void Initialize()
     {
         var commandTypes = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => 
+            .Where(t =>
                 typeof(IConsoleCommand).IsAssignableFrom(t) &&
-                !t.IsInterface && 
-                !t.IsAbstract && 
+                !t.IsInterface &&
+                !t.IsAbstract &&
                 !t.IsDefined(typeof(BuiltInCommandAttribute)));
 
         foreach (var type in commandTypes)
@@ -60,7 +61,7 @@ public class CommandManager
                 baseCommand.LogManager = _logManager;
                 baseCommand.PostProcessingManager = _postProcessingManager;
             }
-            
+
             // Handle [Dependency] injection for other systems, just like in SystemManager
             var dependencyFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(f => f.IsDefined(typeof(DependencyAttribute), false));
@@ -78,14 +79,15 @@ public class CommandManager
                 }
                 else
                 {
-                     Console.WriteLine($"[CommandManager] WARN: Failed to resolve dependency {field.FieldType.Name} for command {type.Name}");
+                    Console.WriteLine(
+                        $"[CommandManager] WARN: Failed to resolve dependency {field.FieldType.Name} for command {type.Name}");
                 }
             }
-            
+
             _commands.Add(commandInstance.Name.ToLower(), commandInstance);
-             Console.WriteLine($"[CommandManager] Registered command: '{commandInstance.Name}'");
+            Console.WriteLine($"[CommandManager] Registered command: '{commandInstance.Name}'");
         }
-        
+
         var helpCommand = new HelpCommand(_commands);
         _commands.Add(helpCommand.Name.ToLower(), helpCommand);
         Console.WriteLine($"[CommandManager] Registered built-in command: '{helpCommand.Name}'");

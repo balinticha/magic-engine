@@ -10,21 +10,28 @@ namespace MagicEngine.Engine.Base.Debug.UI;
 
 public class CrashInspectorPanel : IDebugWindow
 {
-    public bool IsOpen { get => IsActive; set {} }
+    public bool IsOpen
+    {
+        get => IsActive;
+        set { }
+    }
+
     public Keys Hotkey => Keys.None;
     public bool IsManaged => false;
     public bool IsActive { get; private set; }
 
     private Exception _crashException;
-    private readonly Game _gameInstance; 
+    private readonly Game _gameInstance;
 
     // State for the flashing animation
     private float _flashTimer;
     private int _flashCount;
     private bool _isInitialFlashActive;
-    
+
     private const int TotalFlashes = 5; // The number of times to flash
+
     private const float FlashSequenceDuration = 1f; // The total time for all flashes
+
     // A single flash has two states (e.g., on/off), so we calculate the interval for each state change.
     private const float FlashStateInterval = FlashSequenceDuration / (TotalFlashes * 2);
 
@@ -41,7 +48,7 @@ public class CrashInspectorPanel : IDebugWindow
     {
         IsActive = true;
         _crashException = e;
-        
+
         // Reset animation state
         _flashTimer = 0f;
         _flashCount = 0;
@@ -79,7 +86,7 @@ public class CrashInspectorPanel : IDebugWindow
 
         // --- Styling ---
         bool isBrightState = !_isInitialFlashActive || (_flashCount % 2 == 0);
-        
+
         if (isBrightState)
         {
             ImGui.PushStyleColor(ImGuiCol.TitleBgActive, new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -90,12 +97,15 @@ public class CrashInspectorPanel : IDebugWindow
             ImGui.PushStyleColor(ImGuiCol.TitleBgActive, new Vector4(0.8f, 0.0f, 0.0f, 1.0f));
             ImGui.PushStyleColor(ImGuiCol.TitleBg, new Vector4(0.6f, 0.0f, 0.0f, 0.8f));
         }
+
         ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
         // --- Window Layout ---
         Vector2 displaySize = ImGui.GetIO().DisplaySize;
         Vector2 windowSize = new Vector2(1400, 700);
-        ImGui.SetNextWindowPos(new Vector2((displaySize.X - windowSize.X) * 0.5f, (displaySize.Y - windowSize.Y) * 0.5f), ImGuiCond.FirstUseEver);
+        ImGui.SetNextWindowPos(
+            new Vector2((displaySize.X - windowSize.X) * 0.5f, (displaySize.Y - windowSize.Y) * 0.5f),
+            ImGuiCond.FirstUseEver);
         ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
         // --- Window Content ---
@@ -104,8 +114,10 @@ public class CrashInspectorPanel : IDebugWindow
         ImGui.TextColored(new Vector4(1.0f, 0.2f, 0.2f, 1.0f), "CRITICAL APPLICATION FAILURE DETECTED!");
         ImGui.Separator();
 
-        ImGui.TextWrapped("The game has encountered an unhandled exception and normal execution is permanently terminated.");
-        ImGui.TextWrapped("You can use the debug tools to inspect the game state at the time of the crash, and exit the game when ready.");
+        ImGui.TextWrapped(
+            "The game has encountered an unhandled exception and normal execution is permanently terminated.");
+        ImGui.TextWrapped(
+            "You can use the debug tools to inspect the game state at the time of the crash, and exit the game when ready.");
         ImGui.TextWrapped("The crash log is displayed under this text.");
         ImGui.Separator();
 

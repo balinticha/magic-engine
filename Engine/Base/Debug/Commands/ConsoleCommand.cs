@@ -27,12 +27,12 @@ public abstract class ConsoleCommand : IConsoleCommand
     public CameraSystem Camera { get; internal set; } = null!;
     public LogManager LogManager { get; internal set; } = null!;
     public PostProcessingManager PostProcessingManager { get; internal set; } = null!;
-    
+
     public abstract string Name { get; }
     public abstract string Description { get; }
     public virtual bool AllowCrashes { get; } = false;
     public abstract string Execute(string[] args);
-    
+
     /// <summary>
     /// Finds an entity by its debug ID string (e.g., "1:1.0").
     /// </summary>
@@ -42,20 +42,21 @@ public abstract class ConsoleCommand : IConsoleCommand
     protected bool TryGetEntityById(string id, out Entity entity)
     {
         // VERY slow. O(n) time. Meh.
-        entity = World.FirstOrDefault(e => {
+        entity = World.FirstOrDefault(e =>
+        {
             var parts = e.ToString().Split(' ');
             return parts.Length == 2 && parts[1] == id;
         });
-        
+
         return entity.IsAlive;
     }
-    
+
     protected bool TryFindComponentType(string componentName, out Type? componentType)
     {
         componentType = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
             .FirstOrDefault(type => string.Equals(type.Name, componentName, StringComparison.OrdinalIgnoreCase));
-        
+
         return componentType != null;
     }
 
@@ -80,11 +81,11 @@ public abstract class ConsoleCommand : IConsoleCommand
 
         // Create a specific method, e.g., Remove<Position>()
         MethodInfo genericRemoveMethod = removeMethod.MakeGenericMethod(componentType);
-        
+
         // Invoke the method
         genericRemoveMethod.Invoke(entity, null);
     }
-    
+
     protected void SetComponentByType(in Entity entity, Type componentType, object componentInstance)
     {
         // Get all methods named "Set", then find the specific overload we need.
@@ -95,8 +96,8 @@ public abstract class ConsoleCommand : IConsoleCommand
                 // 2. It must be a generic method definition.
                 m.IsGenericMethodDefinition &&
                 // 3. It must have exactly ONE parameter (this is the key to resolving the ambiguity).
-                m.GetParameters().Length == 1); 
-            
+                m.GetParameters().Length == 1);
+
         if (setMethod == null)
         {
             // This should NEVER ever ever ever happen but who the fuck knows at this point
@@ -111,7 +112,7 @@ public abstract class ConsoleCommand : IConsoleCommand
         // Invoke the method, passing the component instance as a parameter
         genericSetMethod.Invoke(entity, new object[] { componentInstance });
     }
-    
+
     /// <summary>
     /// Safely parses a numeric value from a string argument.
     /// </summary>
@@ -150,29 +151,30 @@ public abstract class ConsoleCommand : IConsoleCommand
 
         return false;
     }
-    
+
     // Logging wrapper methods
     protected void Log(string text, LogLevel level = LogLevel.Debug)
     {
         LogManager.Log(text, GetType().Name, level);
     }
-    
+
     protected void D(string text)
     {
         LogManager.Debug(text, GetType().Name);
     }
-    
+
     protected void R(string text)
     {
         LogManager.Release(text, GetType().Name);
     }
-    
+
     protected void V(string text)
     {
         LogManager.Verbose(text, GetType().Name);
     }
 }
 
-
 [AttributeUsage(AttributeTargets.Class)]
-public class BuiltInCommandAttribute : Attribute { }
+public class BuiltInCommandAttribute : Attribute
+{
+}

@@ -7,9 +7,11 @@ namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 public class WeldDetachCommand : ConsoleCommand
 {
     [Dependency] private readonly HierarchyManager _hierarchyManager = null!;
-    
+
     public override string Name => "weldDetach";
-    public override string Description => "Detaches the second entity to the first with a physics weld. Usage: weldDetach <parent> <child>";
+
+    public override string Description =>
+        "Detaches the second entity to the first with a physics weld. Usage: weldDetach <parent> <child>";
 
     public override string Execute(string[] args)
     {
@@ -17,8 +19,8 @@ public class WeldDetachCommand : ConsoleCommand
         {
             return "Invalid arguments. " + Description;
         }
-        
-        
+
+
         if (!TryGetEntityById(args[0], out var parent))
         {
             return $"Error: Could not find an entity with ID '{args[0]}'.";
@@ -28,7 +30,7 @@ public class WeldDetachCommand : ConsoleCommand
         {
             return $"Error: Could not find an entity with ID '{args[1]}'.";
         }
-        
+
         try
         {
             _hierarchyManager.TryDetach(child, parent);

@@ -31,7 +31,7 @@ public class PrototypeManager
 
     // YAML Deserializer
     private readonly IDeserializer _deserializer;
-    
+
     // Sanity
     public bool Initialized { get; private set; }
 
@@ -40,13 +40,14 @@ public class PrototypeManager
     /// </summary>
     private class PrototypeData
     {
-        [YamlMember(Alias = "id")]
-        public string ID { get; set; } = null!;
+        [YamlMember(Alias = "id")] public string ID { get; set; } = null!;
+
         [YamlMember(Alias = "name", ApplyNamingConventions = false)]
         public string? Name { get; set; }
-        
+
         [YamlMember(Alias = "parent", ApplyNamingConventions = false)]
         public string? Parent { get; set; }
+
         public List<Dictionary<string, object>> Components { get; set; } = new();
     }
 
@@ -68,7 +69,7 @@ public class PrototypeManager
     {
         if (Initialized)
             return;
-        
+
         Console.WriteLine("[PrototypeManager] Initializing...");
 
         // 1. Discover all component types in the current assembly.
@@ -81,7 +82,7 @@ public class PrototypeManager
         LoadPrototypesFromDisk();
 
         Console.WriteLine($"[PrototypeManager] Initialization complete. Loaded {_prototypes.Count} prototypes.");
-        
+
         Initialized = true;
     }
 
@@ -103,22 +104,23 @@ public class PrototypeManager
     {
         if (!Initialized)
         {
-            throw new Exception($"[PrototypeManager] Too early! Tried to spawn entity {prototypeId} but PrototypeManager is not initialized yet");
+            throw new Exception(
+                $"[PrototypeManager] Too early! Tried to spawn entity {prototypeId} but PrototypeManager is not initialized yet");
         }
-        
+
         if (!_prototypes.TryGetValue(prototypeId, out var prototype))
         {
             throw new KeyNotFoundException($"Prototype with ID '{prototypeId}' not found.");
         }
 
         var entity = _sceneManager.GetScene().EcsWorld.CreateEntity();
-        
-        entity.Set(new PrototypeIDComponent { Value = prototypeId }); 
+
+        entity.Set(new PrototypeIDComponent { Value = prototypeId });
 
         entity.Set(new Position { Value = position });
         var vel = velocity ?? Vector2.Zero;
         entity.Set(new Velocity { Value = vel });
-        
+
         if (!string.IsNullOrEmpty(prototype.Name))
         {
             // This assumes a component like: public struct NameComponent { public string Value; }
@@ -126,31 +128,32 @@ public class PrototypeManager
         }
 
         ApplyPrototypeRecursively(entity, prototypeId, new HashSet<string>());
-        
+
         Console.WriteLine($"[PrototypeManager] Spawned entity from prototype '{prototypeId}'.");
         return entity;
     }
-    
+
     private void ApplyPrototypeRecursively(Entity entity, string prototypeId, HashSet<string> processedIds)
     {
         if (!processedIds.Add(prototypeId))
         {
-            Console.WriteLine($"[ERROR] Circular dependency detected involving prototype '{prototypeId}'. Aborting spawn chain.");
+            Console.WriteLine(
+                $"[ERROR] Circular dependency detected involving prototype '{prototypeId}'. Aborting spawn chain.");
             return;
         }
-        
+
         if (!_prototypes.TryGetValue(prototypeId, out var prototype))
         {
             Console.WriteLine($"[ERROR] Prototype with ID '{prototypeId}' not found. Aborting spawn chain.");
             return;
         }
-        
+
         // Process parent first to establish base components
         if (!string.IsNullOrEmpty(prototype.Parent))
         {
             ApplyPrototypeRecursively(entity, prototype.Parent, processedIds);
         }
-        
+
         // Now apply/override with this prototype's components
         foreach (var componentData in prototype.Components)
         {
@@ -159,7 +162,8 @@ public class PrototypeManager
 
             // Position and Velocity are set by the SpawnEntity method, so we skip them here
             // to avoid overriding the spawn location.
-            if (componentTypeName == nameof(Position) || componentTypeName == nameof(Velocity) || componentTypeName == nameof(NameComponent))
+            if (componentTypeName == nameof(Position) || componentTypeName == nameof(Velocity) ||
+                componentTypeName == nameof(NameComponent))
             {
                 continue;
             }
@@ -168,14 +172,15 @@ public class PrototypeManager
 
             if (!_componentTypeCache.TryGetValue(componentTypeName, out var componentType))
             {
-                Console.WriteLine($"[ERROR] Unknown component type '{componentTypeName}' in prototype '{prototypeId}'. Skipping.");
+                Console.WriteLine(
+                    $"[ERROR] Unknown component type '{componentTypeName}' in prototype '{prototypeId}'. Skipping.");
                 continue;
             }
 
             // Reflection to get the generic Has<T> and Get<T> methods from DefaultEcs.Entity
             var hasMethod = typeof(Entity).GetMethod(nameof(Entity.Has)).MakeGenericMethod(componentType);
             var getMethod = typeof(Entity).GetMethod(nameof(Entity.Get)).MakeGenericMethod(componentType);
-            
+
             bool componentExists = (bool)hasMethod.Invoke(entity, null);
             object componentInstance;
 
@@ -192,7 +197,7 @@ public class PrototypeManager
 
             // 3. Populate the fields of the new OR existing component instance.
             SetComponentData(ref componentInstance, componentType, componentValues);
-            
+
             // 4. Set the component back on the entity.
             // This is important for both cases:
             // - For new components, it adds them.
@@ -206,7 +211,7 @@ public class PrototypeManager
                 bool isByRef = parameters[0].ParameterType.IsByRef;
                 return componentType.IsValueType ? isByRef : !isByRef;
             });
-            
+
             setMethod.MakeGenericMethod(componentType).Invoke(entity, new[] { componentInstance });
         }
     }
@@ -214,12 +219,14 @@ public class PrototypeManager
     private void BuildComponentCache()
     {
         var componentTypes = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => ( t.IsDefined(typeof(ComponentAttribute), false)) || t.IsDefined(typeof(LockedComponentAttribute), false));
+            .Where(t => (t.IsDefined(typeof(ComponentAttribute), false)) ||
+                        t.IsDefined(typeof(LockedComponentAttribute), false));
 
         foreach (var type in componentTypes)
         {
             _componentTypeCache[type.Name] = type;
         }
+
         Console.WriteLine($"[PrototypeManager] Discovered {_componentTypeCache.Count} component types.");
     }
 
@@ -248,7 +255,7 @@ public class PrototypeManager
         {
             // The YAML parser turns {x: 100, y: 100} into a dictionary.
             var dict = (Dictionary<object, object>)yamlValue;
-        
+
             // We use float.Parse and handle both lowercase and uppercase keys for robustness.
             var x = float.Parse((dict.GetValueOrDefault("x") ?? dict.GetValueOrDefault("X") ?? "0").ToString());
             var y = float.Parse((dict.GetValueOrDefault("y") ?? dict.GetValueOrDefault("Y") ?? "0").ToString());
@@ -283,7 +290,7 @@ public class PrototypeManager
                 string key = kvp.Key.ToString()!;
                 object value = kvp.Value;
 
-                try 
+                try
                 {
                     object sanitizedValue = SanitizeParameterValue(value);
                     sanitized[key] = sanitizedValue;
@@ -294,6 +301,7 @@ public class PrototypeManager
                     throw new Exception($"Failed to sanitize parameter '{key}': {e.Message} in PrototypeManager");
                 }
             }
+
             return sanitized;
         });
     }
@@ -306,35 +314,38 @@ public class PrototypeManager
             if (list.Count == 2)
             {
                 return new Vector2(
-                    float.Parse(list[0].ToString()!), 
+                    float.Parse(list[0].ToString()!),
                     float.Parse(list[1].ToString()!));
             }
+
             if (list.Count == 3)
             {
                 return new Vector3(
-                    float.Parse(list[0].ToString()!), 
+                    float.Parse(list[0].ToString()!),
                     float.Parse(list[1].ToString()!),
                     float.Parse(list[2].ToString()!));
             }
+
             if (list.Count == 4)
             {
                 return new Vector4(
-                    float.Parse(list[0].ToString()!), 
+                    float.Parse(list[0].ToString()!),
                     float.Parse(list[1].ToString()!),
                     float.Parse(list[2].ToString()!),
                     float.Parse(list[3].ToString()!));
             }
-            
+
             throw new Exception($"Unsupported list validation size: {list.Count}");
         }
-        
+
         string valStr = rawValue.ToString()!;
-        
+
         if (bool.TryParse(valStr, out bool bVal)) return bVal;
 
         // Numbers -> Float (Force float for shader compatibility)
         // Check if it looks like a number
-        if (double.TryParse(valStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double dVal))
+        if (double.TryParse(valStr, System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out double dVal))
         {
             return (float)dVal;
         }
@@ -353,10 +364,12 @@ public class PrototypeManager
                 .Select(p => p.Trim())
                 .ToList();
 
-            if (parts.All(p => float.TryParse(p, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out _)))
+            if (parts.All(p => float.TryParse(p, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out _)))
             {
-                var floats = parts.Select(p => float.Parse(p, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
-                
+                var floats = parts.Select(p => float.Parse(p, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+
                 if (floats.Length == 2) return new Vector2(floats[0], floats[1]);
                 if (floats.Length == 3) return new Vector3(floats[0], floats[1], floats[2]);
                 if (floats.Length == 4) return new Vector4(floats[0], floats[1], floats[2], floats[3]);
@@ -396,9 +409,11 @@ public class PrototypeManager
                 {
                     if (string.IsNullOrEmpty(proto.ID))
                     {
-                        Console.WriteLine($"[WARNING] Found prototype without an ID in {Path.GetFileName(file)}. Skipping.");
+                        Console.WriteLine(
+                            $"[WARNING] Found prototype without an ID in {Path.GetFileName(file)}. Skipping.");
                         continue;
                     }
+
                     _prototypes[proto.ID] = proto;
                 }
             }
@@ -409,7 +424,8 @@ public class PrototypeManager
         }
     }
 
-    private void SetComponentData(ref object componentInstance, Type componentType, Dictionary<object, object> componentValues)
+    private void SetComponentData(ref object componentInstance, Type componentType,
+        Dictionary<object, object> componentValues)
     {
         // Get all fields and properties of the component marked with [DataField].
         var members = componentType.GetMembers(BindingFlags.Public | BindingFlags.Instance)
@@ -451,7 +467,8 @@ public class PrototypeManager
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[ERROR] Failed to set data for field '{memberInfo.Name}' on component '{componentType.Name}'. Reason: {ex.Message}");
+                    Console.WriteLine(
+                        $"[ERROR] Failed to set data for field '{memberInfo.Name}' on component '{componentType.Name}'. Reason: {ex.Message}");
                 }
             }
         }
@@ -475,7 +492,7 @@ public class PrototypeManager
     }
 }
 
-[Component] 
+[Component]
 public struct NameComponent
 {
     public string Value;

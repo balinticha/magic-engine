@@ -13,22 +13,21 @@ public class RemoveComponentCommand : ConsoleCommand
         {
             return "Invalid arguments. " + Description;
         }
-        
+
         if (!TryGetEntityById(args[0], out var target))
         {
             return $"Error: Could not find an entity with ID '{args[0]}'.";
         }
-        
+
         if (!TryFindComponentType(args[1], out var component) || component == null)
             return $"Error: Could not find a component called '{args[1]}'.";
-        
+
         try
         {
             // check first
             if (!HasComponentByType(target, component))
             {
                 return $"Entity {target} does not have a '{component.Name}' component.";
-                
             }
 
             // remove second

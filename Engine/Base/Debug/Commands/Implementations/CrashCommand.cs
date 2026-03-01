@@ -6,7 +6,7 @@ public class CrashCommand : ConsoleCommand
 {
     public override string Name => "crash";
     public override string Description => "Crashes the game. Usage: crash <message>";
-    
+
     public override bool AllowCrashes => true;
 
     public override string Execute(string[] args)

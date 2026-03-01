@@ -3,7 +3,8 @@ using nkast.Aether.Physics2D.Dynamics.Joints;
 
 namespace MagicEngine.Engine.ECS.Core.Physics.Behavior.Components;
 
-struct IsWelded {
+struct IsWelded
+{
     public WeldJoint Joint;
     public Entity Parent;
 }

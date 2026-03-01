@@ -22,15 +22,15 @@ public class EntityOperationHelpers : EntitySystem.EntitySystem
         {
             return true;
         }
-        
+
         if (!ent.IsAlive)
         {
             return false;
         }
-        
+
         if (Events.Raise(ent, new EntityDeathRequestEvent(ent)).IsCancelled)
             return false;
-        
+
         Events.Raise(ent, new EntityDeathEvent(ent));
         ent.Set<MarkedForDeath>();
         Vx($"Entity {ent} marked for deletion");
@@ -48,11 +48,11 @@ public class EntityOperationHelpers : EntitySystem.EntitySystem
         {
             return;
         }
-        
+
         var ev = Events.Raise(ent, new ForcedEntityDeathRequestEvent(ent));
         if (ev.CancelAndRaiseFatalError)
             AssertFailure($"Tried to force kill an entity: {ev.ErrorMessage} but it was cancelled");
-        
+
         Events.Raise(ent, new EntityDeathEvent(ent));
         ent.Set<MarkedForDeath>();
         Vx($"Entity {ent} marked for deletion");

@@ -40,14 +40,14 @@ public sealed class DrawPrimitiveSystem : EntitySystem
                 var drawPos = new Vector2(
                     drawCenter.X - cmp_r.Comp.Width / 2f,
                     drawCenter.Y - cmp_r.Comp.Height / 2f);
-                
+
                 spriteBatch.FillRectangle(drawPos.X, drawPos.Y, cmp_r.Comp.Width, cmp_r.Comp.Height, cmp_r.Comp.Color);
             }
 
             if (entity.TryGet<DrawCircle>(out var cmp_c))
             {
                 var drawCenter = pos + cmp_c.Comp.Offset;
-                
+
                 spriteBatch.DrawCircle(drawCenter, cmp_c.Comp.Radius, 15, cmp_c.Comp.Color, 5f);
             }
         }

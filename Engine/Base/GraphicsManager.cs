@@ -9,9 +9,9 @@ public class GraphicsManager
     public SpriteBatch SpriteBatch;
     public RenderTarget2D RenderTarget;
     public RenderTarget2D ShadowTarget;
-    public RenderTarget2D ScreenTarget;  // High Resolution target
+    public RenderTarget2D ScreenTarget; // High Resolution target
     public RenderTarget2D ShadowScreenTarget;
-    
+
 
     public ScreenSetup Screen;
 
@@ -27,7 +27,7 @@ public class GraphicsManager
         Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         Graphics.HardwareModeSwitch = false;
         Graphics.IsFullScreen = true;
-        
+
         Graphics.SynchronizeWithVerticalRetrace = true;
         Graphics.GraphicsProfile = GraphicsProfile.HiDef;
         Graphics.ApplyChanges();
@@ -42,7 +42,7 @@ public class GraphicsManager
             false,
             SurfaceFormat.HalfVector4,
             DepthFormat.None);
-        
+
         ShadowTarget = new RenderTarget2D(
             graphicsDevice,
             Screen.VirtualWidth + Screen.Padding * 2,
@@ -50,14 +50,14 @@ public class GraphicsManager
             false,
             SurfaceFormat.HalfVector4,
             DepthFormat.None);
-        
-        ScreenTarget = new RenderTarget2D(graphicsDevice, 
+
+        ScreenTarget = new RenderTarget2D(graphicsDevice,
             graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height,
             false,
             SurfaceFormat.HalfVector4,
             DepthFormat.None);
 
-        ShadowScreenTarget = new RenderTarget2D(graphicsDevice, 
+        ShadowScreenTarget = new RenderTarget2D(graphicsDevice,
             graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height,
             false,
             SurfaceFormat.HalfVector4,

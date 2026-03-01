@@ -11,7 +11,7 @@ public interface IConsoleCommand
     /// A brief description of what the command does, for a 'help' command.
     /// </summary>
     string Description { get; }
-    
+
     /// <summary>
     /// Should the command be executed in a try / catch block?
     /// </summary>

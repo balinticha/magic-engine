@@ -19,12 +19,12 @@ public class SceneGraphPanel : IDebugWindow
     public bool IsOpen { get; set; } = false;
     public Keys Hotkey => Keys.F2;
     public bool IsManaged => false;
-    
+
     public event Action<Entity> OnInspectEntity;
     private readonly World _world;
     private readonly EntitySet _rootEntities;
     private readonly string _currentSceneName;
-    
+
     public Entity? SelectedEntity { get; private set; }
     public Entity? EntityToInspect { get; private set; }
 
@@ -41,7 +41,7 @@ public class SceneGraphPanel : IDebugWindow
     public void Draw(GameTime gameTime)
     {
         if (!IsOpen) return;
-        
+
         bool isOpen = IsOpen;
         EntityToInspect = null;
 
@@ -53,14 +53,15 @@ public class SceneGraphPanel : IDebugWindow
             {
                 DrawEntityNode(entity);
             }
-            
+
             if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !ImGui.IsAnyItemHovered())
             {
                 SelectedEntity = null;
             }
         }
+
         ImGui.End();
-        
+
         IsOpen = isOpen;
     }
 
@@ -70,35 +71,35 @@ public class SceneGraphPanel : IDebugWindow
     private void DrawEntityNode(Entity entity)
     {
         if (!entity.IsAlive) return;
-        
+
         ImGui.PushID(entity.GetHashCode());
-        
-        string nodeText = BuildEntityLabel(entity); 
+
+        string nodeText = BuildEntityLabel(entity);
 
         IEnumerable<Entity> children = null;
         if (entity.Has<IsParent>())
         {
             children = entity.Get<IsParent>().Childrens;
         }
-        
+
         var hasChildren = children != null && children.Any();
 
-        var nodeFlags = hasChildren 
-            ? ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.OpenOnDoubleClick 
+        var nodeFlags = hasChildren
+            ? ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.OpenOnDoubleClick
             : ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen;
 
         if (SelectedEntity.HasValue && SelectedEntity.Value == entity)
         {
             nodeFlags |= ImGuiTreeNodeFlags.Selected;
         }
-        
+
         bool isNodeOpen = ImGui.TreeNodeEx(nodeText, nodeFlags);
 
         if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
         {
             SelectedEntity = entity;
         }
-    
+
         if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
         {
             EntityToInspect = entity;
@@ -109,11 +110,12 @@ public class SceneGraphPanel : IDebugWindow
         {
             foreach (var child in children)
             {
-                DrawEntityNode(child); 
+                DrawEntityNode(child);
             }
+
             ImGui.TreePop();
         }
-        
+
         ImGui.PopID();
     }
 
@@ -131,20 +133,20 @@ public class SceneGraphPanel : IDebugWindow
         // The rest of your logic remains the same, but now it uses
         // the cached builder, saving 2 more allocations.
         // ---------------------------------------------------------
-        
+
         if (entity.TryGet<NameComponent>(out var name))
         {
             _labelCache.Append(' ');
             _labelCache.Append(name.Comp.Value);
         }
-        
+
         if (entity.TryGet<PrototypeIDComponent>(out var protoId))
         {
             _labelCache.Append(" [");
             _labelCache.Append(protoId.Comp.Value);
             _labelCache.Append(']');
         }
-        
+
         return _labelCache.ToString();
     }
 }

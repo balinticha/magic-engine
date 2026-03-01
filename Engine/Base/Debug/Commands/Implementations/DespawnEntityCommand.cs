@@ -16,13 +16,13 @@ public class DespawnEntityCommand : ConsoleCommand
         {
             return "Invalid arguments. " + Description;
         }
-        
+
         if (!TryGetEntityById(args[0], out var target))
         {
             return $"Error: Could not find an entity with ID '{args[0]}'.";
         }
-        
-        bool force = args.Length == 2 && 
+
+        bool force = args.Length == 2 &&
                      (args[1].Equals("true", StringComparison.OrdinalIgnoreCase) ||
                       args[1].Equals("force", StringComparison.OrdinalIgnoreCase) ||
                       args[1].Equals("yes", StringComparison.OrdinalIgnoreCase) ||
@@ -30,7 +30,7 @@ public class DespawnEntityCommand : ConsoleCommand
                       args[1].Equals("f", StringComparison.OrdinalIgnoreCase) ||
                       args[1].Equals("-f", StringComparison.OrdinalIgnoreCase) ||
                       args[1] == "1");
-        
+
         try
         {
             if (force)
@@ -41,7 +41,7 @@ public class DespawnEntityCommand : ConsoleCommand
             {
                 _entityOperationHelpers.TryKillEntity(target);
             }
-            
+
             return $"Command sent.";
         }
         catch (Exception ex)

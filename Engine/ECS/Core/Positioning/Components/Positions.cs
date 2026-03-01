@@ -7,11 +7,9 @@ namespace MagicEngine.Engine.ECS.Core.Positioning.Components;
 [Component]
 public struct Position
 {
-    [DataField]
-    public Vector2 Value;
-    
-    [DataField] [InspectorSlider(0, 10)]
-    public float Rotation;
+    [DataField] public Vector2 Value;
+
+    [DataField] [InspectorSlider(0, 10)] public float Rotation;
 }
 
 /// <summary>

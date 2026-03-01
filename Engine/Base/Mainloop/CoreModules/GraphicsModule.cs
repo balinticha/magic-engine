@@ -19,25 +19,26 @@ public class EngineGraphicsModule : IEngineGraphicsModule
 {
     public GraphicsManager GraphicsManager { get; private set; }
     public PostProcessingManager PostProcessingManager { get; private set; }
-    public Texture2D WhitePixel  { get; private set; }
+    public Texture2D WhitePixel { get; private set; }
     public LogManager LogManager { get; private set; }
     public GameWindow Window { get; private set; }
-    
+
     private Texture2D? textureWithPP;
     private Texture2D? finalTextureWithPP;
 
-    public EngineGraphicsModule(GraphicsManager graphicsManager, GraphicsDevice graphicsDevice, GameWindow gameWindow, LogManager logManager, PostProcessingManager postProcessingManager)
+    public EngineGraphicsModule(GraphicsManager graphicsManager, GraphicsDevice graphicsDevice, GameWindow gameWindow,
+        LogManager logManager, PostProcessingManager postProcessingManager)
     {
         GraphicsManager = graphicsManager;
         LogManager = logManager;
         Window = gameWindow;
-        
+
         LogManager.Log("Initializing graphics module...");
         GraphicsManager.Initialize();
         GraphicsManager.InitializeRenderTargets(GraphicsManager.Graphics.GraphicsDevice);
         Window.IsBorderless = true;
-        
-       PostProcessingManager = postProcessingManager;
+
+        PostProcessingManager = postProcessingManager;
     }
 
     public void LoadContent()
@@ -48,12 +49,13 @@ public class EngineGraphicsModule : IEngineGraphicsModule
         WhitePixel.SetData(new[] { Color.White });
     }
 
-    public void Draw(bool isCrashing, Timing timing, CameraSystem cameraSystem, SystemManager systemManager, bool debugRender, SceneManager sceneManager)
+    public void Draw(bool isCrashing, Timing timing, CameraSystem cameraSystem, SystemManager systemManager,
+        bool debugRender, SceneManager sceneManager)
     {
         if (!isCrashing)
         {
             bool t = RenderStepLowResSpriteDraw(
-                timing, cameraSystem, systemManager, 
+                timing, cameraSystem, systemManager,
                 debugRender, sceneManager
             );
 
@@ -62,69 +64,70 @@ public class EngineGraphicsModule : IEngineGraphicsModule
             //{
             //    debugRender = false;
             //}
-                
         }
         else
         {
             RenderStepLowResSpriteDrawCrashMode();
         }
+
         RenderStepUpscaleToHighRes(cameraSystem);
     }
 
-    public bool RenderStepLowResSpriteDraw(Timing timing, CameraSystem cameraSystem, SystemManager systemManager, bool debugRender, SceneManager sceneManager)
+    public bool RenderStepLowResSpriteDraw(Timing timing, CameraSystem cameraSystem, SystemManager systemManager,
+        bool debugRender, SceneManager sceneManager)
     {
-        if (GraphicsManager.Graphics.GraphicsDevice.BlendState == null) 
+        if (GraphicsManager.Graphics.GraphicsDevice.BlendState == null)
             GraphicsManager.Graphics.GraphicsDevice.BlendState = BlendState.Opaque;
-    
-        if (GraphicsManager.Graphics.GraphicsDevice.DepthStencilState == null) 
+
+        if (GraphicsManager.Graphics.GraphicsDevice.DepthStencilState == null)
             GraphicsManager.Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-    
-        if (GraphicsManager.Graphics.GraphicsDevice.RasterizerState == null) 
+
+        if (GraphicsManager.Graphics.GraphicsDevice.RasterizerState == null)
             GraphicsManager.Graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-    
-        if (GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] == null) 
+
+        if (GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] == null)
             GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
-        
+
         GraphicsManager.Graphics.GraphicsDevice.SetRenderTarget(GraphicsManager.RenderTarget);
         GraphicsManager.Graphics.GraphicsDevice.Clear(ColorOperations.ToLinear(Color.Black));
 
-    
+
         // camera stuff todo refactor
-        Vector2 cameraIntPosition = new Vector2((int)Math.Round(cameraSystem.Position.X), (int)Math.Round(cameraSystem.Position.Y));
+        Vector2 cameraIntPosition = new Vector2((int)Math.Round(cameraSystem.Position.X),
+            (int)Math.Round(cameraSystem.Position.Y));
         Matrix transform = Matrix.CreateTranslation(-cameraIntPosition.X, -cameraIntPosition.Y, 0) *
                            Matrix.CreateTranslation(
-                               GraphicsManager.Screen.VirtualWidth / 2f + GraphicsManager.Screen.Padding, 
+                               GraphicsManager.Screen.VirtualWidth / 2f + GraphicsManager.Screen.Padding,
                                GraphicsManager.Screen.VirtualHeight / 2f + GraphicsManager.Screen.Padding, 0
-                               );
-    
+                           );
+
         GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transform);
-        
+
         systemManager.RunDraw(timing, GraphicsManager.SpriteBatch, transform);
-        
+
         GraphicsManager.SpriteBatch.End();
 
         textureWithPP = PostProcessingManager.ApplyEffects(
             EffectType.TexelLayer,
-            GraphicsManager.SpriteBatch, 
+            GraphicsManager.SpriteBatch,
             GraphicsManager.RenderTarget,
             GraphicsManager.RenderTarget,
             GraphicsManager.ShadowTarget);
-        
-        
+
 
         // render debug hitboxes
         if (debugRender)
         {
             Matrix projection = Matrix.CreateOrthographicOffCenter(
-                0, 
-                GraphicsManager.RenderTarget.Width, 
-                GraphicsManager.RenderTarget.Height, 
-                0, 
-                0, 
+                0,
+                GraphicsManager.RenderTarget.Width,
+                GraphicsManager.RenderTarget.Height,
+                0,
+                0,
                 1);
-        
+
             Matrix view = Matrix.CreateScale(PhysicsConstants.PixelsPerMeter) * transform;
-        
+
             try
             {
                 sceneManager.GetScene().AttachedSystems.DebugView.RenderDebugData(ref projection, ref view);
@@ -147,18 +150,18 @@ public class EngineGraphicsModule : IEngineGraphicsModule
 
     public void RenderStepUpscaleToHighRes(CameraSystem cameraSystem)
     {
-        if (GraphicsManager.Graphics.GraphicsDevice.BlendState == null) 
+        if (GraphicsManager.Graphics.GraphicsDevice.BlendState == null)
             GraphicsManager.Graphics.GraphicsDevice.BlendState = BlendState.Opaque;
-    
-        if (GraphicsManager.Graphics.GraphicsDevice.DepthStencilState == null) 
+
+        if (GraphicsManager.Graphics.GraphicsDevice.DepthStencilState == null)
             GraphicsManager.Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-    
-        if (GraphicsManager.Graphics.GraphicsDevice.RasterizerState == null) 
+
+        if (GraphicsManager.Graphics.GraphicsDevice.RasterizerState == null)
             GraphicsManager.Graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-    
-        if (GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] == null) 
+
+        if (GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] == null)
             GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
-        
+
         GraphicsManager.Graphics.GraphicsDevice.SetRenderTarget(GraphicsManager.ScreenTarget);
         GraphicsManager.Graphics.GraphicsDevice.Clear(Color.Black);
 
@@ -171,41 +174,44 @@ public class EngineGraphicsModule : IEngineGraphicsModule
         float scaleX = screenWidth / GraphicsManager.Screen.VirtualWidth;
         float scaleY = screenHeight / GraphicsManager.Screen.VirtualHeight;
         float scale = Math.Min(scaleX, scaleY);
-        
+
         int scaledWidth = (int)(GraphicsManager.Screen.VirtualWidth * scale);
         int scaledHeight = (int)(GraphicsManager.Screen.VirtualHeight * scale);
         int posX = (int)((screenWidth - scaledWidth) / 2);
         int posY = (int)((screenHeight - scaledHeight) / 2);
-        
-        Vector2 subPixel = new Vector2((int)Math.Round(cameraSystem.Position.X), (int)Math.Round(cameraSystem.Position.Y)) - cameraSystem.Position;
+
+        Vector2 subPixel =
+            new Vector2((int)Math.Round(cameraSystem.Position.X), (int)Math.Round(cameraSystem.Position.Y)) -
+            cameraSystem.Position;
         posX += (int)(subPixel.X * scale);
         posY += (int)(subPixel.Y * scale);
 
         Rectangle finalDestination = new Rectangle(posX, posY, scaledWidth, scaledHeight);
-        
+
         // Draw low-res texture with texel effects into high res
         GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
         GraphicsManager.SpriteBatch.Draw(textureWithPP, finalDestination, new Rectangle(
-            GraphicsManager.Screen.Padding, GraphicsManager.Screen.Padding, GraphicsManager.Screen.VirtualWidth, GraphicsManager.Screen.VirtualHeight
-            ), Color.White);
+            GraphicsManager.Screen.Padding, GraphicsManager.Screen.Padding, GraphicsManager.Screen.VirtualWidth,
+            GraphicsManager.Screen.VirtualHeight
+        ), Color.White);
         GraphicsManager.SpriteBatch.End();
-        
+
         //// APPLY TEXEL PP EFFECTS TO HIGH RES TEXTURE
         finalTextureWithPP = PostProcessingManager.ApplyEffects(
             EffectType.PixelLayer,
-            GraphicsManager.SpriteBatch, 
+            GraphicsManager.SpriteBatch,
             GraphicsManager.ScreenTarget,
             GraphicsManager.ScreenTarget,
             GraphicsManager.ShadowScreenTarget
         );
-        
+
         GraphicsManager.Graphics.GraphicsDevice.SetRenderTarget(null);
         GraphicsManager.Graphics.GraphicsDevice.Clear(Color.Black);
 
         GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
         GraphicsManager.SpriteBatch.Draw(finalTextureWithPP, finalDestination, Color.White);
         GraphicsManager.SpriteBatch.End();
-        
+
         GraphicsManager.Graphics.GraphicsDevice.BlendState = BlendState.Opaque;
         GraphicsManager.Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         GraphicsManager.Graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
@@ -218,7 +224,7 @@ public class EngineGraphicsModule : IEngineGraphicsModule
         {
             var mouseState = Mouse.GetState();
             Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
-            float cursorScale = 0.1f; 
+            float cursorScale = 0.1f;
 
             GraphicsManager.SpriteBatch.Draw(
                 cursorTexture,
@@ -232,6 +238,7 @@ public class EngineGraphicsModule : IEngineGraphicsModule
                 0f
             );
         }
+
         GraphicsManager.SpriteBatch.End();
     }
 }

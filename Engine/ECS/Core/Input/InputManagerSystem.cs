@@ -9,7 +9,6 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace MagicEngine.Engine.ECS.Core.Input;
 
-
 [UpdateInBucket(ExecutionBucket.Input)]
 public class InputManagerSystem : EntitySystem
 {
@@ -18,17 +17,19 @@ public class InputManagerSystem : EntitySystem
     {
         public List<BindingItemData> Bindings { get; set; } = new();
     }
+
     private class BindingItemData
     {
         public string Action { get; set; } = null!;
         public string Type { get; set; } = null!;
         public string Value { get; set; } = null!;
     }
+
     private readonly IDeserializer _deserializer;
-    
+
     private Dictionary<InputAction, InputState> _actions = new Dictionary<InputAction, InputState>();
     private readonly Dictionary<InputAction, InputBinding> _bindings = new Dictionary<InputAction, InputBinding>();
-    
+
     private KeyboardState _currentKeyboardState;
     private KeyboardState _previousKeyboardState;
     private MouseState _currentMouseState;
@@ -43,7 +44,7 @@ public class InputManagerSystem : EntitySystem
             .Build();
     }
 
-    
+
     public override void Initialize()
     {
         LoadBindingsFromFile();
@@ -70,17 +71,16 @@ public class InputManagerSystem : EntitySystem
             _actions[action] = (isDown, wasDown) switch
             {
                 (true, false) => InputState.JustPressed,
-                (true, true)  => InputState.Down,
+                (true, true) => InputState.Down,
                 (false, true) => InputState.JustReleased,
-                _                            => InputState.Up
+                _ => InputState.Up
             };
-
         }
-        
+
         _previousKeyboardState = _currentKeyboardState;
         _previousMouseState = _currentMouseState;
     }
-    
+
     /// <summary>
     /// Public method for other systems to query the state of an action.
     /// </summary>
@@ -88,7 +88,7 @@ public class InputManagerSystem : EntitySystem
     {
         return _actions.GetValueOrDefault(action, InputState.Up);
     }
-    
+
     /// <summary>
     /// Public method for other system to query the state of action, when edge cases don't matter (ie: continuous
     /// input)
@@ -98,17 +98,17 @@ public class InputManagerSystem : EntitySystem
         var act = _actions.GetValueOrDefault(action, InputState.Up);
         return act is InputState.Down or InputState.JustPressed;
     }
-    
+
     private void LoadBindingsFromFile()
     {
         var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs", "bindings.yml");
-        
+
         if (!File.Exists(filePath))
         {
             Console.WriteLine($"[ERROR] Input bindings file not found at: {filePath}. Input will not work.");
             return;
         }
-        
+
         try
         {
             var yamlContent = File.ReadAllText(filePath);
@@ -118,7 +118,7 @@ public class InputManagerSystem : EntitySystem
             {
                 ParseAndAddBinding(item);
             }
-            
+
             Console.WriteLine($"[InputManagerSystem] Successfully loaded {config.Bindings.Count} input bindings.");
         }
         catch (Exception ex)
@@ -126,7 +126,7 @@ public class InputManagerSystem : EntitySystem
             Console.WriteLine($"[ERROR] Failed to parse bindings.yml: {ex.Message}");
         }
     }
-    
+
     /// <summary>
     /// Converts a deserialized binding item into a concrete InputBinding object
     /// and adds it to our main dictionary.
@@ -141,7 +141,7 @@ public class InputManagerSystem : EntitySystem
         }
 
         InputBinding? binding = null;
-        
+
         // 2. Parse the binding type and value
         switch (item.Type.ToLowerInvariant())
         {
@@ -152,10 +152,12 @@ public class InputManagerSystem : EntitySystem
                 }
                 else
                 {
-                    Console.WriteLine($"[WARNING] Invalid key value '{item.Value}' for action '{item.Action}'. Skipping.");
+                    Console.WriteLine(
+                        $"[WARNING] Invalid key value '{item.Value}' for action '{item.Action}'. Skipping.");
                 }
+
                 break;
-                
+
             case "mouse":
                 if (Enum.TryParse<MouseButton>(item.Value, true, out var button))
                 {
@@ -163,15 +165,18 @@ public class InputManagerSystem : EntitySystem
                 }
                 else
                 {
-                     Console.WriteLine($"[WARNING] Invalid mouse button value '{item.Value}' for action '{item.Action}'. Skipping.");
+                    Console.WriteLine(
+                        $"[WARNING] Invalid mouse button value '{item.Value}' for action '{item.Action}'. Skipping.");
                 }
+
                 break;
-                
+
             default:
-                Console.WriteLine($"[WARNING] Unknown binding type '{item.Type}' for action '{item.Action}'. Skipping.");
+                Console.WriteLine(
+                    $"[WARNING] Unknown binding type '{item.Type}' for action '{item.Action}'. Skipping.");
                 break;
         }
-        
+
         // 3. If parsing was successful, add the binding to our dictionary.
         if (binding != null)
         {
@@ -180,15 +185,14 @@ public class InputManagerSystem : EntitySystem
     }
 }
 
-
 public enum InputAction
 {
-    PrimaryInteract,  // eg. Attack - Left click
-    SecondaryInteract,  // eg. Shield - Right click
-    MoveUp,  // W
-    MoveRight,  // D
-    MoveDown,  // S
-    MoveLeft,  // A
+    PrimaryInteract, // eg. Attack - Left click
+    SecondaryInteract, // eg. Shield - Right click
+    MoveUp, // W
+    MoveRight, // D
+    MoveDown, // S
+    MoveLeft, // A
     Pause,
 }
 

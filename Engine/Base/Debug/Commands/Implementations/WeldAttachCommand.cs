@@ -7,9 +7,11 @@ namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 public class WeldAttachCommand : ConsoleCommand
 {
     [Dependency] private readonly HierarchyManager _hierarchyManager = null!;
-    
+
     public override string Name => "weldAttach";
-    public override string Description => "Attaches the second entity to the first with a physics weld. Usage: weldAttach <parent> <child>";
+
+    public override string Description =>
+        "Attaches the second entity to the first with a physics weld. Usage: weldAttach <parent> <child>";
 
     public override string Execute(string[] args)
     {
@@ -17,7 +19,7 @@ public class WeldAttachCommand : ConsoleCommand
         {
             return "Invalid arguments. " + Description;
         }
-        
+
         if (!TryGetEntityById(args[0], out var parent))
         {
             return $"Error: Could not find an entity with ID '{args[0]}'.";
@@ -27,7 +29,7 @@ public class WeldAttachCommand : ConsoleCommand
         {
             return $"Error: Could not find an entity with ID '{args[1]}'.";
         }
-        
+
         try
         {
             _hierarchyManager.TryAttach(child, parent);

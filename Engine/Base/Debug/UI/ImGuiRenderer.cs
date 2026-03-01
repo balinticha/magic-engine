@@ -48,8 +48,9 @@ namespace MagicEngine.Engine.Base.Debug.UI
         {
             var context = ImGui.CreateContext();
             ImGui.SetCurrentContext(context);
-            
-            _blendState = new BlendState {
+
+            _blendState = new BlendState
+            {
                 ColorSourceBlend = Blend.SourceAlpha,
                 AlphaSourceBlend = Blend.SourceAlpha,
                 ColorDestinationBlend = Blend.InverseSourceAlpha,
@@ -87,7 +88,10 @@ namespace MagicEngine.Engine.Base.Debug.UI
 
             // Copy the data to a managed array
             var pixels = new byte[width * height * bytesPerPixel];
-            unsafe { Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length); }
+            unsafe
+            {
+                Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length);
+            }
 
             // Create and register the texture as an XNA texture
             var tex2d = new Texture2D(_graphicsDevice, width, height, false, SurfaceFormat.Color);
@@ -143,7 +147,10 @@ namespace MagicEngine.Engine.Base.Debug.UI
         {
             ImGui.Render();
 
-            unsafe { RenderDrawData(ImGui.GetDrawData()); }
+            unsafe
+            {
+                RenderDrawData(ImGui.GetDrawData());
+            }
         }
 
         #endregion ImGuiRenderer
@@ -187,7 +194,8 @@ namespace MagicEngine.Engine.Base.Debug.UI
 
             _effect.World = Matrix.Identity;
             _effect.View = Matrix.Identity;
-            _effect.Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
+            _effect.Projection =
+                Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
             _effect.TextureEnabled = true;
             _effect.Texture = texture;
             _effect.VertexColorEnabled = true;
@@ -201,7 +209,7 @@ namespace MagicEngine.Engine.Base.Debug.UI
         protected virtual void UpdateInput()
         {
             if (!_game.IsActive) return;
-            
+
             var io = ImGui.GetIO();
 
             var mouse = Mouse.GetState();
@@ -227,7 +235,8 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 }
             }
 
-            io.DisplaySize = new Vector2(_graphicsDevice.PresentationParameters.BackBufferWidth, _graphicsDevice.PresentationParameters.BackBufferHeight);
+            io.DisplaySize = new Vector2(_graphicsDevice.PresentationParameters.BackBufferWidth,
+                _graphicsDevice.PresentationParameters.BackBufferHeight);
             io.DisplayFramebufferScale = new Vector2(1f, 1f);
         }
 
@@ -303,7 +312,7 @@ namespace MagicEngine.Engine.Base.Debug.UI
         /// </summary>
         private void RenderDrawData(ImDrawDataPtr drawData)
         {
-            try 
+            try
             {
                 // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers
                 var lastViewport = _graphicsDevice.Viewport;
@@ -315,7 +324,7 @@ namespace MagicEngine.Engine.Base.Debug.UI
 
                 _graphicsDevice.BlendFactor = Color.White;
                 _graphicsDevice.BlendState = _blendState;
-                
+
                 _graphicsDevice.RasterizerState = _rasterizerState;
                 _graphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
 
@@ -323,7 +332,8 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 drawData.ScaleClipRects(ImGui.GetIO().DisplayFramebufferScale);
 
                 // Setup projection
-                _graphicsDevice.Viewport = new Viewport(0, 0, _graphicsDevice.PresentationParameters.BackBufferWidth, _graphicsDevice.PresentationParameters.BackBufferHeight);
+                _graphicsDevice.Viewport = new Viewport(0, 0, _graphicsDevice.PresentationParameters.BackBufferWidth,
+                    _graphicsDevice.PresentationParameters.BackBufferHeight);
 
                 UpdateBuffers(drawData);
 
@@ -356,7 +366,8 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 _vertexBuffer?.Dispose();
 
                 _vertexBufferSize = (int)(drawData.TotalVtxCount * 1.5f);
-                _vertexBuffer = new VertexBuffer(_graphicsDevice, DrawVertDeclaration.Declaration, _vertexBufferSize, BufferUsage.None);
+                _vertexBuffer = new VertexBuffer(_graphicsDevice, DrawVertDeclaration.Declaration, _vertexBufferSize,
+                    BufferUsage.None);
                 _vertexData = new byte[_vertexBufferSize * DrawVertDeclaration.Size];
             }
 
@@ -365,7 +376,8 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 _indexBuffer?.Dispose();
 
                 _indexBufferSize = (int)(drawData.TotalIdxCount * 1.5f);
-                _indexBuffer = new IndexBuffer(_graphicsDevice, IndexElementSize.SixteenBits, _indexBufferSize, BufferUsage.None);
+                _indexBuffer = new IndexBuffer(_graphicsDevice, IndexElementSize.SixteenBits, _indexBufferSize,
+                    BufferUsage.None);
                 _indexData = new byte[_indexBufferSize * sizeof(ushort)];
             }
 
@@ -380,8 +392,10 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 fixed (void* vtxDstPtr = &_vertexData[vtxOffset * DrawVertDeclaration.Size])
                 fixed (void* idxDstPtr = &_indexData[idxOffset * sizeof(ushort)])
                 {
-                    Buffer.MemoryCopy((void*)cmdList.VtxBuffer.Data, vtxDstPtr, _vertexData.Length, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
-                    Buffer.MemoryCopy((void*)cmdList.IdxBuffer.Data, idxDstPtr, _indexData.Length, cmdList.IdxBuffer.Size * sizeof(ushort));
+                    Buffer.MemoryCopy((void*)cmdList.VtxBuffer.Data, vtxDstPtr, _vertexData.Length,
+                        cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
+                    Buffer.MemoryCopy((void*)cmdList.IdxBuffer.Data, idxDstPtr, _indexData.Length,
+                        cmdList.IdxBuffer.Size * sizeof(ushort));
                 }
 
                 vtxOffset += cmdList.VtxBuffer.Size;
@@ -409,14 +423,15 @@ namespace MagicEngine.Engine.Base.Debug.UI
                 {
                     ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[cmdi];
 
-                    if (drawCmd.ElemCount == 0) 
+                    if (drawCmd.ElemCount == 0)
                     {
                         continue;
                     }
 
                     if (!_loadedTextures.ContainsKey(drawCmd.TextureId))
                     {
-                        throw new InvalidOperationException($"Could not find a texture with id '{drawCmd.TextureId}', please check your bindings");
+                        throw new InvalidOperationException(
+                            $"Could not find a texture with id '{drawCmd.TextureId}', please check your bindings");
                     }
 
                     _graphicsDevice.ScissorRectangle = new Rectangle(

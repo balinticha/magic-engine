@@ -14,23 +14,23 @@ public enum ExecutionBucket
 
     // --- Runs in the fixed-time update loop ---
     PreUpdate,
-    Update,         // Default bucket for most game logic systems
+    Update, // Default bucket for most game logic systems
     PostPhysics,
 
     // --- Runs after the fixed-time loop in the variable-time MonoGame Update() ---
-    LateUpdate,     // Ideal for camera updates that track physics objects
+    LateUpdate, // Ideal for camera updates that track physics objects
 
     // --- Runs at the very end of the MonoGame Update() to prepare for the next frame ---
     Cleanup,
     PreRender,
-    
+
     // --- Runs inside the MonoGame Draw() method ---
-    Audio,  // Runs for audio-related things before anything is drawn to the screen, once per frame
+    Audio, // Runs for audio-related things before anything is drawn to the screen, once per frame
     Render,
-    
+
     // --- Runs before Render ONLY when paused
     UpdatePaused,
-    
+
     // --- Runs before UpdatePaused when paused, runs after First when unpaused.,
     Transient
 }

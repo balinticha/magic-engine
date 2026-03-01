@@ -9,12 +9,16 @@ namespace MagicEngine.Engine.Base.Debug.Attributes;
 /// The attribute can only be applied to fields.
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
-public abstract class InspectorAttribute : Attribute { }
+public abstract class InspectorAttribute : Attribute
+{
+}
 
 /// <summary>
 /// When added to a public field, allows its value to be edited in the component viewer.
 /// </summary>
-public class InspectorEditableAttribute : InspectorAttribute { }
+public class InspectorEditableAttribute : InspectorAttribute
+{
+}
 
 /// <summary>
 /// When added to a public numeric field (float or int), displays it as a slider

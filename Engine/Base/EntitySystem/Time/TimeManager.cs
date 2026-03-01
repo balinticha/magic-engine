@@ -33,16 +33,16 @@ public class TimeManager
 
             DeltaTime = realDeltaTime * gameSpeed;
             TotalTime += DeltaTime;
-            
+
             _timeAccumulator += DeltaTime;
         }
     }
-    
+
     public bool ShouldRunFixedUpdate()
     {
         return _timeAccumulator >= FixedTimeStep;
     }
-    
+
     public void ConsumeFixedUpdate()
     {
         _timeAccumulator -= FixedTimeStep;
@@ -60,7 +60,7 @@ public class TimeManager
     public Timing GetFixedTiming()
     {
         return new Timing(
-            FixedTimeStep, RealTotalTime, 
+            FixedTimeStep, RealTotalTime,
             FixedTimeStep, TotalTime,
             FixedTimeStep, UnscaledTotalTime,
             1.0f);

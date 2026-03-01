@@ -19,7 +19,7 @@ namespace MagicEngine.Engine.ECS.Core.Parenting;
 public class HierarchyManager : EntitySystem
 {
     private EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
         _query = World.GetEntities()
@@ -72,13 +72,13 @@ public class HierarchyManager : EntitySystem
         // no.
         if (actor == target)
             return false;
-        
+
         if (actor.Has<IsChildren>())
             return false;
 
         if (!actor.IsAlive || !target.IsAlive)
             return false;
-        
+
         AttachUnsafe(actor, target, desiredOffset);
         return true;
     }
@@ -94,7 +94,7 @@ public class HierarchyManager : EntitySystem
         // still ABSOLUTELY no
         if (actor == target)
             throw new InvalidOperationException("Actor cannot target themselves.");
-        
+
         actor.Set(new IsChildren
         {
             Parent = target,
@@ -113,7 +113,7 @@ public class HierarchyManager : EntitySystem
                 Childrens = [actor]
             });
         }
-        
+
         // Physics engine stuff
         if (desiredOffset.HasValue)
         {
@@ -125,7 +125,7 @@ public class HierarchyManager : EntitySystem
             ref readonly var targetPos = ref target.Get<Position>();
             actor.Set(new LocalTransform { Position = actorPos.Value - targetPos.Value });
         }
-        
+
         World.Publish(new HierarchyChangeEvent
         {
             Type = HierarchyChangeEventType.Attached,
@@ -142,7 +142,7 @@ public class HierarchyManager : EntitySystem
         // Actor not a children
         if (!actor.TryGet<IsChildren>(out var childrenComp))
             return false;
-        
+
         // Actor is not the children of the parent
         if (!(childrenComp.Comp.Parent == target))
             return false;
@@ -165,7 +165,7 @@ public class HierarchyManager : EntitySystem
             Actor = actor,
             Parent = target,
         });
-        
+
         return true;
     }
 
@@ -173,11 +173,12 @@ public class HierarchyManager : EntitySystem
     /// Safely switch the parent of an entity.
     /// </summary>
     /// <returns>Outcome</returns>
-    public bool TrySafeSwitchParent(Entity actor, Entity currentParent, Entity newParent, LocalTransform? desiredOffset = null)
+    public bool TrySafeSwitchParent(Entity actor, Entity currentParent, Entity newParent,
+        LocalTransform? desiredOffset = null)
     {
         if (!TryDetach(actor, currentParent))
             return false;
-        
+
         AttachUnsafe(actor, newParent, desiredOffset);
         return true;
     }

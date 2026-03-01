@@ -42,7 +42,7 @@ public sealed class ProcessPositionRequestSystem : EntitySystem
                 entity.TryRemComp<SetPositionRequest>();
                 continue;
             }
-            
+
             pos.Value = req.RequestPosition;
             vel.Value += req.RequestVelocityChange;
             entity.TryRemComp<SetPositionRequest>();

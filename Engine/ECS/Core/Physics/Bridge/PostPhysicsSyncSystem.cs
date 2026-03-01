@@ -19,12 +19,13 @@ public class PostPhysicsSyncSystem : ISystem<float>
 
     public bool IsEnabled { get; set; } = true;
 
-    public PostPhysicsSyncSystem(World ecsWorld, nkast.Aether.Physics2D.Dynamics.World physicsWorld, EventManager eventManager)
+    public PostPhysicsSyncSystem(World ecsWorld, nkast.Aether.Physics2D.Dynamics.World physicsWorld,
+        EventManager eventManager)
     {
         _ecsWorld = ecsWorld;
         _physicsWorld = physicsWorld;
         _eventManager = eventManager;
-        
+
         _entitySet = ecsWorld.GetEntities()
             .With<Position>()
             .With<Velocity>()
@@ -46,18 +47,18 @@ public class PostPhysicsSyncSystem : ISystem<float>
             {
                 continue;
             }
-            
+
             Body bodyA = contact.FixtureA.Body;
             Body bodyB = contact.FixtureB.Body;
-            
+
             if (bodyA.Tag is not Entity entityA || bodyB.Tag is not Entity entityB)
             {
                 continue;
             }
-            
+
             _eventManager.Raise(entityA, new CollisionEvent(entityA, entityB, contact));
             _eventManager.Raise(entityB, new CollisionEvent(entityB, entityA, contact));
-            
+
             _ecsWorld.Publish(new CollisionEvent(entityA, entityB, contact));
         }
     }
@@ -67,10 +68,10 @@ public class PostPhysicsSyncSystem : ISystem<float>
         foreach (var entity in _entitySet.GetEntities())
         {
             ref readonly var physicsBody = ref entity.Get<PhysicsBodyComponent>();
-            
+
             ref var position = ref entity.Get<Position>();
             ref var velocity = ref entity.Get<Velocity>();
-            
+
             position.Value = PhysicsSystem.ToECS(physicsBody.Body.Position);
             position.Rotation = physicsBody.Body.Rotation;
             velocity.Value = PhysicsSystem.ToECS(physicsBody.Body.LinearVelocity);

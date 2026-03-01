@@ -7,7 +7,5 @@ namespace MagicEngine.Engine.ECS.Core.Positioning.Components;
 [Component]
 struct Velocity
 {
-    [DataField]
-    [InspectorEditable]
-    public Vector2 Value;
+    [DataField] [InspectorEditable] public Vector2 Value;
 }

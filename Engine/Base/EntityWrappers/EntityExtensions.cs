@@ -30,7 +30,7 @@ namespace MagicEngine.Engine.Base.EntityWrappers
             {
                 return false;
             }
-            
+
             entity.Remove<T>();
             return true;
         }

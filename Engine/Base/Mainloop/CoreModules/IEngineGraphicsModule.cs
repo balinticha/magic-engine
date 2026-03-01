@@ -17,5 +17,4 @@ public interface IEngineGraphicsModule
     // probably make this accept a generic EngineGraphicsModuleRuntimeData struct or smth
     // for now, we'll leave this commented out
     // public void Draw(smth);
-
 }

@@ -20,9 +20,9 @@ public class SpawnCommand : ConsoleCommand
         {
             return "Invalid coordinates. X and Y must be numbers.";
         }
-        
+
         var position = new Vector2(x, y);
-        
+
         try
         {
             var newEntity = Prototypes.SpawnEntity(prototypeId, position);

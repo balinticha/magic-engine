@@ -36,6 +36,7 @@ public class ComponentStringBuilder : IComponentReader
                 _builder.AppendLine($"  - {field.Name}: {value?.ToString() ?? "null"}");
             }
         }
+
         _builder.AppendLine(); // Add a blank line for readability
     }
 }

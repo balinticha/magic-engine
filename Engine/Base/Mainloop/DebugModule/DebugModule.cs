@@ -10,11 +10,11 @@ public interface IDebugWindow
 {
     public bool IsOpen { get; set; }
     public Keys Hotkey { get; }
-    
+
     // Managed windows are not opened or closed by hotkeys, but rather are managed by other windows.
     // When they are closed, they can be removed from the module's managed list.
     public bool IsManaged { get; }
-    
+
     public void Draw(GameTime gameTime);
 }
 
@@ -34,7 +34,7 @@ public class EngineDebugModule : IEngineDebugModule
 {
     public bool DebugEnabled { get; set; }
     public bool WantsCaptureKeyboard => ImGui.GetIO().WantCaptureKeyboard;
-    
+
     private ImGuiRenderer _imGuiRenderer;
     private List<IDebugWindow> _windows;
 
@@ -42,20 +42,27 @@ public class EngineDebugModule : IEngineDebugModule
     private GraphicsDeviceManager _graphics;
 
     // Optional event or direct method to show crash inspector
-    public Action<Exception> OnCrash; 
+    public Action<Exception> OnCrash;
 
     public EngineDebugModule(List<IDebugWindow> windows, Game game, GraphicsDeviceManager graphics)
     {
         DebugEnabled = false;
         _windows = windows;
         _graphics = graphics;
-        
+
         _imGuiRenderer = new ImGuiRenderer(game);
         _imGuiRenderer.RebuildFontAtlas();
     }
-    
-    public void AddWindow(IDebugWindow window) { _windows.Add(window); }
-    public void RemoveWindow(IDebugWindow window) { _windows.Remove(window); }
+
+    public void AddWindow(IDebugWindow window)
+    {
+        _windows.Add(window);
+    }
+
+    public void RemoveWindow(IDebugWindow window)
+    {
+        _windows.Remove(window);
+    }
 
     public void ShowCrash(Exception e)
     {
@@ -99,9 +106,9 @@ public class EngineDebugModule : IEngineDebugModule
         _graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
 
         _imGuiRenderer.BeforeLayout(gameTime);
-                
+
         ImGui.GetForegroundDrawList().AddCircleFilled(ImGui.GetIO().MousePos, 5f, 0xFF0000FF);
-        
+
         // Clean up managed windows that are closed
         _windows.RemoveAll(w => w.IsManaged && !w.IsOpen);
 
@@ -114,7 +121,7 @@ public class EngineDebugModule : IEngineDebugModule
                 window.Draw(gameTime);
             }
         }
-        
+
         _imGuiRenderer.AfterLayout();
     }
 }

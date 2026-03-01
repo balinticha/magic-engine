@@ -11,7 +11,10 @@ namespace MagicEngine.Engine.Base.Debug.UI
 
         static DrawVertDeclaration()
         {
-            unsafe { Size = sizeof(ImDrawVert); }
+            unsafe
+            {
+                Size = sizeof(ImDrawVert);
+            }
 
             Declaration = new VertexDeclaration(
                 Size,

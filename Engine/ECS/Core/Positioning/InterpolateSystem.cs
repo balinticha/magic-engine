@@ -11,7 +11,7 @@ namespace MagicEngine.Engine.ECS.Core.Positioning;
 public sealed class InterpolateSystem : EntitySystem
 {
     EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
         _query = World.GetEntities()
@@ -35,7 +35,7 @@ public sealed class InterpolateSystem : EntitySystem
             ref readonly var current = ref entity.Get<Position>();
             ref readonly var previous = ref entity.Get<PreviousPosition>();
             ref var render = ref entity.Get<RenderPosition>();
-            
+
             var interpolated = Vector2.Lerp(previous.Value, current.Value, alpha);
 
             render.Value = new Vector2(

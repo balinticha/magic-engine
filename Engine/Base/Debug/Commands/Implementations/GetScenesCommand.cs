@@ -13,7 +13,7 @@ public class ListScenesCommand : ConsoleCommand
         {
             return "Invalid arguments. " + Description;
         }
-        
+
         try
         {
             return $"Command sent. Result: {string.Join(", ", SceneManager.GetSceneNames())}";

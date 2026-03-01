@@ -11,7 +11,7 @@ namespace MagicEngine.Engine.ECS.Core.Positioning;
 public sealed class AddRenderPositionSystem : EntitySystem
 {
     private EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
         _query = World.GetEntities()
@@ -40,7 +40,7 @@ public sealed class AddRenderPositionSystem : EntitySystem
                 },
                 Rotation = pos.Rotation
             };
-            
+
             entity.Set(rp);
         }
     }

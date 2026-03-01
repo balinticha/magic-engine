@@ -20,11 +20,11 @@ public unsafe class DebugConsoleWindow : IDebugWindow
     private readonly ConsoleInterceptor _consoleInterceptor;
     private byte[] _inputBuffer = new byte[100];
     private bool _scrollToBottom;
-    
+
     private readonly List<string> _commandHistory = new();
     private int _historyIndex = 0;
     private const int MaxLogLines = 1000;
-    
+
     private byte[] _callbackBuffer = new byte[512];
 
     public DebugConsoleWindow(CommandManager commandManager, ConsoleInterceptor consoleInterceptor)
@@ -37,7 +37,7 @@ public unsafe class DebugConsoleWindow : IDebugWindow
     public unsafe void Draw(GameTime gameTime)
     {
         if (!IsOpen) return;
-        
+
         bool isOpen = IsOpen;
 
         ImGui.SetNextWindowSize(new System.Numerics.Vector2(1400, 600), ImGuiCond.FirstUseEver);
@@ -69,13 +69,14 @@ public unsafe class DebugConsoleWindow : IDebugWindow
                 // Input Text Box
                 bool reclaimFocus = false;
                 var inputTextFlags = ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory;
-                
-                if (ImGui.InputText("Input", _inputBuffer, (uint)_inputBuffer.Length, inputTextFlags, ConsoleInputCallback))
+
+                if (ImGui.InputText("Input", _inputBuffer, (uint)_inputBuffer.Length, inputTextFlags,
+                        ConsoleInputCallback))
                 {
                     HandleInput();
                     reclaimFocus = true;
                 }
-                
+
                 ImGui.SameLine();
                 if (ImGui.Button("Submit"))
                 {
@@ -97,7 +98,7 @@ public unsafe class DebugConsoleWindow : IDebugWindow
         {
             ImGui.End();
         }
-        
+
         IsOpen = isOpen;
     }
 
@@ -135,29 +136,31 @@ public unsafe class DebugConsoleWindow : IDebugWindow
 
         return 0;
     }
-    
+
     private void HandleInput()
     {
-        string input = Encoding.UTF8.GetString(_inputBuffer).TrimEnd('\0'); // Get string from buffer, remove null terminators
+        string input = Encoding.UTF8.GetString(_inputBuffer)
+            .TrimEnd('\0'); // Get string from buffer, remove null terminators
         Array.Clear(_inputBuffer, 0, _inputBuffer.Length); // Clear the buffer for the next input
 
         if (!string.IsNullOrWhiteSpace(input))
         {
-            Console.WriteLine($"> {input}"); 
-            
+            Console.WriteLine($"> {input}");
+
             if (_commandHistory.LastOrDefault() != input)
             {
                 _commandHistory.Add(input);
             }
+
             _historyIndex = _commandHistory.Count;
-            
-            
+
+
             string result = _commandManager.ExecuteCommand(input);
-            if(!string.IsNullOrEmpty(result))
+            if (!string.IsNullOrEmpty(result))
             {
                 Console.WriteLine(result);
             }
-            
+
             _scrollToBottom = true;
         }
     }

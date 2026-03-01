@@ -10,7 +10,6 @@ public sealed class ComponentAttribute : Attribute
 {
 }
 
-
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class LockedComponentAttribute : Attribute
 {

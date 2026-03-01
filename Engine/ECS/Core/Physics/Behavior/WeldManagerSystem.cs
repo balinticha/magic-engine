@@ -40,24 +40,24 @@ public sealed class WeldManagerSystem : EntitySystem
     {
         if (!ev.Actor.TryGet<PhysicsBodyComponent>(out var apb) || !ev.Parent.TryGet<PhysicsBodyComponent>(out var ppb))
             return;
-        
+
         var childBody = apb.Comp.Body;
         var parentBody = ppb.Comp.Body;
-            
+
         if (ev.Type == HierarchyChangeEventType.Attached)
         {
             var localOffset = ev.Actor.Has<LocalTransform>()
                 ? ev.Actor.Get<LocalTransform>().Position
                 : PhysicsSystem.ToECS(childBody.Position - parentBody.Position);
-            
+
             var anchor = parentBody.Position;
             var weldJoint = JointFactory.CreateWeldJoint(
-                PhysicsWorld, 
-                parentBody, 
+                PhysicsWorld,
+                parentBody,
                 childBody,
                 parentBody.GetLocalPoint(anchor),
                 childBody.GetLocalPoint(anchor));
-            
+
             ev.Actor.Set(new IsWelded { Joint = weldJoint, Parent = ev.Parent });
             Console.WriteLine($"[WeldJointSystem] Created weld joint for Entity {ev.Actor} attached to {ev.Parent}.");
         }
@@ -69,7 +69,7 @@ public sealed class WeldManagerSystem : EntitySystem
             Console.WriteLine($"[WeldJointSystem] Destroyed weld joint for Entity {ev.Actor}.");
         }
     }
-    
+
     public override void Update(Timing timing)
     {
         foreach (ref readonly var entity in _query.GetEntities())

@@ -13,8 +13,8 @@ public class PpConfigCommand : ConsoleCommand
         }
 
         PostProcessingManager.IsDebugMenuOpen = !PostProcessingManager.IsDebugMenuOpen;
-        return PostProcessingManager.IsDebugMenuOpen 
-            ? "Post Process Config overlay ENABLED." 
+        return PostProcessingManager.IsDebugMenuOpen
+            ? "Post Process Config overlay ENABLED."
             : "Post Process Config overlay DISABLED.";
     }
 }

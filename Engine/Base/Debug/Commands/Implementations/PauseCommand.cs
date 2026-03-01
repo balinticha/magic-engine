@@ -7,7 +7,7 @@ namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 public class PauseCommand : ConsoleCommand
 {
     [Dependency] private readonly SessionManager _sessionManager = null!;
-    
+
     public override string Name => "pause";
     public override string Description => "Toggles pause. Usage: pause";
 

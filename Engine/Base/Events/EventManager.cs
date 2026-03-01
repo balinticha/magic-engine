@@ -46,7 +46,6 @@ internal class EventSubscription<TComponent, TEvent> : IEventSubscription where 
     }
 }
 
-
 /// <summary>
 /// Manages directed event subscriptions and raising.
 /// Events are raised on a specific entity and will only trigger callbacks
@@ -111,7 +110,7 @@ public class EventManager
     {
         if (!target.IsEnabled()) // Don't raise events on disabled/destroyed entities
             return ev;
-            
+
         var eventType = typeof(TEvent);
         if (_subscriptions.TryGetValue(eventType, out var subscriptionList))
         {

@@ -31,6 +31,6 @@ public struct RectangleColliderComponent
 {
     [DataField] public float Width;
     [DataField] public float Height;
-    [DataField] public Vector2 Offset; 
+    [DataField] public Vector2 Offset;
     [DataField] public bool IsSensor;
 }

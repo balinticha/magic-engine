@@ -31,7 +31,7 @@ public sealed class PlayerControllerSystem : EntitySystem
     [Dependency] private readonly AudioManagerSystem _audio = null!;
 
     private EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
         _query = World.GetEntities()
@@ -54,7 +54,7 @@ public sealed class PlayerControllerSystem : EntitySystem
         {
             if (!_sessionManager.IsControlling(entity))
                 continue;
-            
+
             ref var velocity = ref entity.Get<Velocity>();
             ref var position = ref entity.Get<Position>();
             ref readonly var cmp = ref entity.Get<PlayerController>();
@@ -82,7 +82,7 @@ public sealed class PlayerControllerSystem : EntitySystem
                 var target = new Vector2(
                     position.Value.X += velocity.Value.X * cmp.dashSpeed,
                     position.Value.Y += velocity.Value.Y * cmp.dashSpeed
-                    );
+                );
                 _audio.PlaySound(new PlaySoundRequest
                 {
                     IsGlobal = true,
@@ -131,14 +131,14 @@ public sealed class CameraFollowPlayer : EntitySystem
         {
             if (!_sessionManager.IsControlling(entity))
                 continue;
-            
+
             ref var pos = ref entity.Get<Position>();
             ref var vel = ref entity.Get<Velocity>();
             ref var cfa = ref entity.Get<CameraFollowAhead>();
-            
+
             // this is where the camera WANTS to be
             var targetPosition = pos.Value + vel.Value * cfa.Amount;
-            
+
             // we interpolate from the CURRENT position to the TARGET position
             Camera.Position = Vector2.Lerp(
                 Camera.Position,
@@ -152,8 +152,11 @@ public sealed class CameraFollowPlayer : EntitySystem
 [Component]
 public struct CameraFollowAhead
 {
-    [DataField] [InspectorSlider(0f, 1.2f)] public float Amount;
-    [DataField] [InspectorSlider(0.01f, 1f)] public float Interpolation;
+    [DataField] [InspectorSlider(0f, 1.2f)]
+    public float Amount;
+
+    [DataField] [InspectorSlider(0.01f, 1f)]
+    public float Interpolation;
 }
 
 public sealed class DragSystem : EntitySystem
@@ -176,7 +179,7 @@ public sealed class DragSystem : EntitySystem
         {
             ref var cmp = ref entity.Get<Velocity>();
             var drag = entity.Get<Drag>().Amount;
-            
+
             cmp.Value *= 1 - drag;
         }
     }

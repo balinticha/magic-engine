@@ -16,7 +16,7 @@ public class PhysicsBodyDeletionSystem : ISystem<float>
 {
     private readonly World _physicsWorld;
     private readonly IDisposable _componentRemovedSubscription;
-    
+
     // Using a Queue is a clean way to manage bodies waiting for deletion.
     private readonly Queue<Body> _bodiesToRemove;
 

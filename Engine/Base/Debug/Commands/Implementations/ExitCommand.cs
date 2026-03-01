@@ -4,7 +4,6 @@ namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 
 public class ExitCommand : ConsoleCommand
 {
-    
     public override string Name => "exit";
     public override string Description => "Exits the game. Usage: exit";
 

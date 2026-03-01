@@ -32,11 +32,11 @@ public sealed class SyncRenderPositionSystem : EntitySystem
         {
             ref readonly var position = ref entity.Get<Position>();
             ref var renderPosition = ref entity.Get<RenderPosition>();
-            
+
             renderPosition.Value = new Vector2(
                 (int)Math.Round(position.Value.X),
                 (int)Math.Round(position.Value.Y)
-                );
+            );
             renderPosition.Rotation = position.Rotation;
         }
     }

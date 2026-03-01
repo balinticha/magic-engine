@@ -13,12 +13,12 @@ public class SwitchSceneCommand : ConsoleCommand
         {
             return "Invalid arguments. " + Description;
         }
-        
+
         if (!SceneManager.SceneExists(args[0]))
         {
             return $"Error: Could not find a scene with ID '{args[0]}'.";
         }
-        
+
         try
         {
             return $"Command sent. Result: {SceneManager.TrySetActive(args[0])}";

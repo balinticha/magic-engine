@@ -41,24 +41,47 @@ public class LogManager()
             Console.WriteLine($"[{originatingSystem}] {text}");
         }
     }
-    
+
     /// <summary>
     /// Shorthand method for Log with debug level
     /// </summary>
-    public void Debug(string text) {Log(text, LogLevel.Debug);}
-    public void Debug(string text, string originatingSystem) {Log(text, originatingSystem, LogLevel.Debug);}
+    public void Debug(string text)
+    {
+        Log(text, LogLevel.Debug);
+    }
+
+    public void Debug(string text, string originatingSystem)
+    {
+        Log(text, originatingSystem, LogLevel.Debug);
+    }
+
     /// <summary>
     /// Shorthand method for Log with release level
     /// </summary>
-    public void Release(string text) {Log(text, LogLevel.Release);}
-    public void Release(string text, string originatingSystem) {Log(text, originatingSystem, LogLevel.Release);}
+    public void Release(string text)
+    {
+        Log(text, LogLevel.Release);
+    }
+
+    public void Release(string text, string originatingSystem)
+    {
+        Log(text, originatingSystem, LogLevel.Release);
+    }
+
     /// <summary>
     /// Shorthand method for Log with verbose level
     /// </summary>
-    public void Verbose(string text) {Log(text, LogLevel.Verbose);}
-    public void Verbose(string text, string originatingSystem) {Log(text, originatingSystem, LogLevel.Verbose);}
+    public void Verbose(string text)
+    {
+        Log(text, LogLevel.Verbose);
+    }
 
-    public void AssertFailure(string text, string originatingSystem , LogLevel level = LogLevel.Debug)
+    public void Verbose(string text, string originatingSystem)
+    {
+        Log(text, originatingSystem, LogLevel.Verbose);
+    }
+
+    public void AssertFailure(string text, string originatingSystem, LogLevel level = LogLevel.Debug)
     {
         Log(text, originatingSystem, level);
         throw new Exception($"Assert failure: {text}");
@@ -70,7 +93,7 @@ public enum LogLevel
     None,
     Release,
     Debug,
-    Verbose,       
+    Verbose,
     VerboseExtra
 }
 

@@ -11,7 +11,12 @@ namespace MagicEngine.Engine.Base.Debug.UI;
 
 public class PostProcessDebugOverlay : IDebugWindow
 {
-    public bool IsOpen { get => _postProcessingManager.IsDebugMenuOpen; set => _postProcessingManager.IsDebugMenuOpen = value; }
+    public bool IsOpen
+    {
+        get => _postProcessingManager.IsDebugMenuOpen;
+        set => _postProcessingManager.IsDebugMenuOpen = value;
+    }
+
     public Keys Hotkey => Keys.F4;
     public bool IsManaged => false;
     private readonly PostProcessingManager _postProcessingManager;
@@ -49,17 +54,17 @@ public class PostProcessDebugOverlay : IDebugWindow
                     {
                         effect.Enabled = enabled;
                     }
-                    
+
                     // Expose parameters via Reflection
                     // Very ineffective, very uncached, very idontcare
                     var properties = effect.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                    
+
                     foreach (var prop in properties)
                     {
                         if (!prop.CanRead || !prop.CanWrite) continue;
 
                         string label = $"{prop.Name}##{i}";
-                        
+
                         if (prop.PropertyType == typeof(float))
                         {
                             float val = (float)prop.GetValue(effect)!;
@@ -78,14 +83,14 @@ public class PostProcessDebugOverlay : IDebugWindow
                         }
                         else if (prop.PropertyType == typeof(bool))
                         {
-                             // Already handling Enabled manually, but catch others
-                             if (prop.Name == "Enabled") continue; 
-                             
-                             bool val = (bool)prop.GetValue(effect)!;
-                             if (ImGui.Checkbox(label, ref val))
-                             {
-                                 prop.SetValue(effect, val);
-                             }
+                            // Already handling Enabled manually, but catch others
+                            if (prop.Name == "Enabled") continue;
+
+                            bool val = (bool)prop.GetValue(effect)!;
+                            if (ImGui.Checkbox(label, ref val))
+                            {
+                                prop.SetValue(effect, val);
+                            }
                         }
                         else if (prop.PropertyType == typeof(Vector2))
                         {
@@ -130,6 +135,7 @@ public class PostProcessDebugOverlay : IDebugWindow
                 }
             }
         }
+
         ImGui.End();
     }
 }

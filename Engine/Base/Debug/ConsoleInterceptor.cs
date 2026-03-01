@@ -24,7 +24,7 @@ public class ConsoleInterceptor : TextWriter
         {
             LogMessages.Add(message);
         }
-        
+
         // Write to the original console
         _originalOut.WriteLine(message);
     }

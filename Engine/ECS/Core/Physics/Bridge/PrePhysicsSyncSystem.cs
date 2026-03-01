@@ -15,11 +15,11 @@ public class PrePhysicsSyncSystem : AEntitySetSystem<float>
             .With<Position>()
             .With<PhysicsBodyComponent>()
             .AsSet())
-            
+
     {
     }
 
-    protected override void Update( float state, in Entity entity)
+    protected override void Update(float state, in Entity entity)
     {
         // Get the velocity from the ECS component
         ref readonly var velocity = ref entity.Get<Velocity>();

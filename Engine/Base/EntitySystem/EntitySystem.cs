@@ -23,46 +23,56 @@ public abstract class EntitySystem
     public CameraSystem Camera { get; internal set; } = null!;
     public LogManager LogManager { get; internal set; } = null!;
     public Microsoft.Xna.Framework.Content.ContentManager Content { get; internal set; } = null!;
-    
-    
-    
+
+
     /// <summary>
     /// The method called ONCE on entity system initialization. Do not perform scene-specific operations here, like subscribing to event listeners
     /// </summary>
-    public virtual void Initialize() { }
-    
+    public virtual void Initialize()
+    {
+    }
+
     /// <summary>
     /// The method called when a scene is loaded. Subscribe to event listeners and perform other scene-specific setup here
     /// </summary>
-    public virtual void OnSceneLoad() { }
-    
+    public virtual void OnSceneLoad()
+    {
+    }
+
     /// <summary>
     /// The method called when a scene is unloaded. Perform cleanup for anything you've done in OnSceneLoad().
     /// </summary>
-    public virtual void OnSceneUnload() { }
-    public virtual void Update(Timing timing) { }
-    
+    public virtual void OnSceneUnload()
+    {
+    }
+
+    public virtual void Update(Timing timing)
+    {
+    }
+
     /// <summary>
     /// Called for systems in the Render bucket during the main Draw call.
     /// </summary>
-    public virtual void Draw(Timing timing, SpriteBatch spriteBatch, Microsoft.Xna.Framework.Matrix transformMatrix) { }
-    
+    public virtual void Draw(Timing timing, SpriteBatch spriteBatch, Microsoft.Xna.Framework.Matrix transformMatrix)
+    {
+    }
+
     // Logging wrapper methods
     protected void Log(string text, LogLevel level = LogLevel.Debug)
     {
         LogManager.Log(text, GetType().Name, level);
     }
-    
+
     protected void D(string text)
     {
         LogManager.Debug(text, GetType().Name);
     }
-    
+
     protected void R(string text)
     {
         LogManager.Release(text, GetType().Name);
     }
-    
+
     protected void V(string text)
     {
         LogManager.Verbose(text, GetType().Name);

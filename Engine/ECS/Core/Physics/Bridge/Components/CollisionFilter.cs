@@ -6,8 +6,7 @@ namespace MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 [Component]
 public struct CollisionFilterComponent
 {
-    [DataField]
-    public CollisionCategory Category;
+    [DataField] public CollisionCategory Category;
     public CollisionCategory CollidesWith; // If set to `None`, it will be auto-calculated.
 
     public CollisionFilterComponent(CollisionCategory category, CollisionCategory collidesWith = CollisionCategory.None)
@@ -27,8 +26,8 @@ public enum CollisionCategory
     Bullet = 8, // Collides with structures, shields, bulletShields, and worldStatic
     CounterBullet = 16, // collides with bullets, BulletShields, and WorldStatic
     WorldStatic = 32, // collides with everything but bulletShields
-    
-    All = ~0 
+
+    All = ~0
 }
 
 /// <summary>
@@ -45,13 +44,15 @@ public static class CollisionRules
                 return CollisionCategory.All & ~CollisionCategory.BulletShield & ~CollisionCategory.CounterBullet;
 
             case CollisionCategory.Shield:
-                return CollisionCategory.Structure | CollisionCategory.Bullet | CollisionCategory.CounterBullet | CollisionCategory.WorldStatic;
+                return CollisionCategory.Structure | CollisionCategory.Bullet | CollisionCategory.CounterBullet |
+                       CollisionCategory.WorldStatic;
 
             case CollisionCategory.BulletShield:
                 return CollisionCategory.Bullet;
 
             case CollisionCategory.Bullet:
-                return CollisionCategory.Structure | CollisionCategory.Shield | CollisionCategory.BulletShield | CollisionCategory.WorldStatic;
+                return CollisionCategory.Structure | CollisionCategory.Shield | CollisionCategory.BulletShield |
+                       CollisionCategory.WorldStatic;
 
             case CollisionCategory.CounterBullet:
                 return CollisionCategory.Bullet | CollisionCategory.BulletShield | CollisionCategory.WorldStatic;

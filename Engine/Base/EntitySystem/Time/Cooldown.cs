@@ -22,7 +22,7 @@ public struct Cooldown
     {
         _lastActivationTime = timing.TotalTime;
     }
-    
+
     public float GetRemainingPercent(in Timing timing)
     {
         double elapsed = timing.TotalTime - _lastActivationTime;
@@ -51,7 +51,7 @@ public struct UnscaledCooldown
     {
         _lastActivationTime = timing.UnscaledTotalTime;
     }
-    
+
     public float GetRemainingPercent(in Timing timing)
     {
         double elapsed = timing.UnscaledTotalTime - _lastActivationTime;
@@ -80,7 +80,7 @@ public struct RealtimeCooldown
     {
         _lastActivationTime = timing.RealTotalTime;
     }
-    
+
     public float GetRemainingPercent(in Timing timing)
     {
         double elapsed = timing.RealTotalTime - _lastActivationTime;

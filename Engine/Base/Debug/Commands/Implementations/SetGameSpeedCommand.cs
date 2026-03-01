@@ -7,9 +7,11 @@ namespace MagicEngine.Engine.Base.Debug.Commands.Implementations;
 public class SetGameSpeedCommand : ConsoleCommand
 {
     [Dependency] private readonly SessionManager _sessionManager = null!;
-    
+
     public override string Name => "setsimspeed";
-    public override string Description => "Sets the simulation speed. Usage: setsimspeed <multiplier> Eg. setsimspeed 1.2";
+
+    public override string Description =>
+        "Sets the simulation speed. Usage: setsimspeed <multiplier> Eg. setsimspeed 1.2";
 
     public override string Execute(string[] args)
     {
@@ -17,7 +19,7 @@ public class SetGameSpeedCommand : ConsoleCommand
         {
             return $"Error: Could not parse '{args[0]}' as a number for the Y value.";
         }
-        
+
         try
         {
             _sessionManager.GameSpeed = speed;

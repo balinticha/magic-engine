@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MagicEngine.Engine.Base.Shaders.PostProcessing;
 
-public class PostProcessingManager 
+public class PostProcessingManager
 {
     public bool Enabled { get; set; } = true;
     public List<PostProcessStep> Effects { get; } = new();
@@ -18,7 +18,8 @@ public class PostProcessingManager
     /// <param name="dest">The <see cref="RenderTarget2D"/> that will ultimately hold the processed result.</param>
     /// <param name="swap">A temporary <see cref="RenderTarget2D"/> used for intermediate effect application steps.</param>
     /// <returns>The <see cref="Texture2D"/> containing the final result after applying all enabled effects.</returns>
-    public Texture2D ApplyEffects(EffectType layer, SpriteBatch sb, Texture2D source, RenderTarget2D dest, RenderTarget2D swap)
+    public Texture2D ApplyEffects(EffectType layer, SpriteBatch sb, Texture2D source, RenderTarget2D dest,
+        RenderTarget2D swap)
     {
         if (Effects.Count == 0 || !Enabled)
             return source;
@@ -26,18 +27,19 @@ public class PostProcessingManager
         Texture2D currentSource = source;
         RenderTarget2D currentDest = swap;
         RenderTarget2D nextDest = dest;
-        
+
         foreach (var effect in Effects)
         {
             if (effect.Type != layer) continue;
             if (!effect.Enabled) continue;
-            
+
             effect.Apply(sb, currentSource, currentDest);
 
             currentSource = currentDest;
             (currentDest, nextDest) = (nextDest, currentDest);
         }
-        return currentSource; 
+
+        return currentSource;
     }
 }
 
@@ -50,5 +52,5 @@ public class PostProcessingManager
 public enum EffectType
 {
     TexelLayer, // applied before upscaling
-    PixelLayer  // applied after upscaling
+    PixelLayer // applied after upscaling
 }

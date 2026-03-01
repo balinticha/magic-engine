@@ -35,7 +35,7 @@ public sealed class PhysicsSystem : EntitySystem
             coords.Y * PhysicsConstants.PixelsPerMeter
         );
     }
-    
+
     /// <summary>
     /// Convert physics engine length to ECS length
     /// </summary>

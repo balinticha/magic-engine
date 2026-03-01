@@ -23,7 +23,7 @@ public class AudioManagerSystem : EntitySystem
 
     public Dictionary<string, SoundEffect> SoundBank = new();
     private readonly HashSet<string> _missingSounds = new();
-    
+
     private SoundEffect? GetSoundEffect(string name)
     {
         if (string.IsNullOrEmpty(name)) return null;
@@ -44,27 +44,28 @@ public class AudioManagerSystem : EntitySystem
             return null;
         }
     }
-    
+
     private readonly Queue<PlaySoundRequest> _requestQueue = new();
-    private readonly List<ActiveOneShot> _activeOneShots = new();  // current playing one-off sfx
-    private readonly List<VoiceCandidate> _candidates = new();  // we reuse this to reduce GC pressure
+    private readonly List<ActiveOneShot> _activeOneShots = new(); // current playing one-off sfx
+    private readonly List<VoiceCandidate> _candidates = new(); // we reuse this to reduce GC pressure
 
     private const int MaxVoices = 64;
+
     // todo unhardcode this one the renderer is rewritten to support literally anything else,
     // and therefore can provide the required values with dependency injection. In the meantime
     // this'll have to do.
-    private const float PanRange = 640f / 2f;  // Primary render target width
+    private const float PanRange = 640f / 2f; // Primary render target width
 
     private EntitySet? _query;
 
     public override void OnSceneLoad()
     {
         _query = World.GetEntities().With<ContinousSoundEmitter>().With<RenderPosition>().AsSet();
-        
+
         Events.Subscribe<ContinousSoundEmitter, EntityDeathEvent>(OnEntityDeath);
         PreloadAllSounds();
     }
-    
+
     private void PreloadAllSounds()
     {
         Log("Preloading sounds...", LogLevel.Release);
@@ -72,10 +73,10 @@ public class AudioManagerSystem : EntitySystem
         if (!System.IO.Directory.Exists(contentRoot)) return;
 
         int count = 0;
-        
+
         // Recursive scan
         LoadSoundsFromDir(contentRoot, contentRoot, ref count);
-        
+
         Log($"Preloaded {count} sounds.", LogLevel.Release);
     }
 
@@ -90,7 +91,7 @@ public class AudioManagerSystem : EntitySystem
                 // "Content/Sounds/mysound.xnb" -> "Sounds/mysound"
                 var relativePath = System.IO.Path.GetRelativePath(rootDir, file);
                 var assetName = System.IO.Path.ChangeExtension(relativePath, null);
-                
+
                 // Load it!
                 GetSoundEffect(assetName);
                 count++;
@@ -102,7 +103,7 @@ public class AudioManagerSystem : EntitySystem
             LoadSoundsFromDir(rootDir, dir, ref count);
         }
     }
-    
+
     /// <summary>
     /// Reads the first few bytes of the XNB file to determine if it is a SoundEffect.
     /// This prevents us from trying to load Textures as Sounds.
@@ -120,12 +121,12 @@ public class AudioManagerSystem : EntitySystem
                 // Byte 4: XNB Version (usually 5)
                 // Byte 5: Flags (bit 0 = HIdef, bit 7 = Compressed)
                 // Byte 6-9: Compressed/Uncompressed Size
-                
+
                 // Read first 2kb (header area)
                 byte[] buffer = new byte[2048];
                 int read = stream.Read(buffer, 0, buffer.Length);
                 string headerContent = System.Text.Encoding.ASCII.GetString(buffer, 0, read);
-                
+
                 return headerContent.Contains("SoundEffectReader") || headerContent.Contains("SoundEffect");
             }
         }
@@ -134,7 +135,7 @@ public class AudioManagerSystem : EntitySystem
             return false;
         }
     }
-    
+
     public override void OnSceneUnload()
     {
         // Todo unsubscibe?
@@ -165,7 +166,7 @@ public class AudioManagerSystem : EntitySystem
                 _activeOneShots.RemoveAt(i);
             }
         }
-        
+
         // Don't play sound if we, for some reason, don't have an entity controlled
         if (!_sessionManager.GetControlledEntity(out var controlledEntity) ||
             !controlledEntity.TryGet<SoundListener>(out var listener) ||
@@ -178,9 +179,9 @@ public class AudioManagerSystem : EntitySystem
 
         Vector2 listenerPos = listenerPosCmp.Comp.Value;
         var masterVolume = listener.Comp.MasterVolume;
-        
+
         _candidates.Clear();
-        
+
         // handle passive emitters
         foreach (ref readonly var entity in _query.GetEntities())
         {
@@ -188,7 +189,7 @@ public class AudioManagerSystem : EntitySystem
             // in a Draw() call
             var pos = entity.Get<RenderPosition>().Value;
             ref var emitter = ref entity.Get<ContinousSoundEmitter>();
-            
+
             // culling
             float distSq = Vector2.DistanceSquared(pos, listenerPos);
             if (emitter.IsPositional && distSq > emitter.Range * emitter.Range)
@@ -197,12 +198,13 @@ public class AudioManagerSystem : EntitySystem
                 {
                     emitter.ActiveInstance.Stop();
                 }
+
                 continue;
             }
-            
+
             float dist = (float)Math.Sqrt(distSq);
             float finalVol = CalculateVolume(emitter.Volume, dist, emitter.Range, masterVolume, emitter.IsPositional);
-            
+
             _candidates.Add(new VoiceCandidate
             {
                 Type = CandidateType.Emitter,
@@ -211,11 +213,11 @@ public class AudioManagerSystem : EntitySystem
                 WorldPosition = pos
             });
         }
-        
+
         // handle new sfx requests
         while (_requestQueue.TryDequeue(out var request))
         {
-            float distSq = request.IsGlobal ? 0f: Vector2.DistanceSquared(request.WorldPosition, listenerPos);
+            float distSq = request.IsGlobal ? 0f : Vector2.DistanceSquared(request.WorldPosition, listenerPos);
             if (!request.IsGlobal && distSq > request.Range * request.Range)
             {
                 continue;
@@ -223,7 +225,7 @@ public class AudioManagerSystem : EntitySystem
 
             var dist = (float)Math.Sqrt(distSq);
             float vol = CalculateVolume(request.Volume, dist, request.Range, masterVolume, request.IsGlobal);
-            
+
             _candidates.Add(new VoiceCandidate
             {
                 Type = CandidateType.NewRequest,
@@ -238,13 +240,14 @@ public class AudioManagerSystem : EntitySystem
             float distSq = activeShot.IsGlobal ? 0f : Vector2.DistanceSquared(activeShot.Position, listenerPos);
             if (!activeShot.IsGlobal && distSq > activeShot.Range * activeShot.Range)
             {
-                activeShot.Instance.Stop();  // will be cleaned up next frame
+                activeShot.Instance.Stop(); // will be cleaned up next frame
                 continue;
             }
-            
+
             float dist = (float)Math.Sqrt(distSq);
-            float finalVol = CalculateVolume(activeShot.BaseVolume, dist, activeShot.Range, masterVolume, activeShot.IsGlobal);
-            
+            float finalVol = CalculateVolume(activeShot.BaseVolume, dist, activeShot.Range, masterVolume,
+                activeShot.IsGlobal);
+
             _candidates.Add(new VoiceCandidate
             {
                 Type = CandidateType.ActiveOneShot,
@@ -253,16 +256,16 @@ public class AudioManagerSystem : EntitySystem
                 WorldPosition = activeShot.Position
             });
         }
-        
+
         // uh, is this efficient for every frame?
         // probably fine for now, but TODO this should be a primary candidate for optimization passes
         _candidates.Sort((a, b) => b.Importance.CompareTo(a.Importance));
-        
+
         // We MUST stop the losers (index >= MaxVoices) BEFORE we play the winners.
         for (int i = MaxVoices; i < _candidates.Count; i++)
         {
             var candidate = _candidates[i];
-            
+
             switch (candidate.Type)
             {
                 case CandidateType.Emitter:
@@ -277,7 +280,7 @@ public class AudioManagerSystem : EntitySystem
                     break;
             }
         }
-        
+
         // Now that we have freed up slots, we can safely play the top 64.
         int playCount = Math.Min(_candidates.Count, MaxVoices);
         for (int i = 0; i < playCount; i++)
@@ -302,11 +305,11 @@ public class AudioManagerSystem : EntitySystem
             }
         }
     }
-    
+
     private void UpdateEmitter(Entity entity, float targetVolume, float targetPan)
     {
         ref var component = ref entity.Get<ContinousSoundEmitter>();
-        
+
         if (component.ActiveInstance == null || component.ActiveInstance.IsDisposed)
         {
             var sfx = GetSoundEffect(component.Name);
@@ -322,15 +325,15 @@ public class AudioManagerSystem : EntitySystem
         }
 
         var instance = component.ActiveInstance;
-        
+
         instance.Volume = MathHelper.Clamp(targetVolume, 0f, 1f);
         instance.Pitch = MathHelper.Clamp(component.Pitch, -1f, 1f);
-        
+
         if (component.IsPositional)
             instance.Pan = MathHelper.Clamp(targetPan, -1f, 1f);
         else
             instance.Pan = 0f;
-        
+
         if (instance.State != SoundState.Playing)
         {
             instance.Play();
@@ -343,7 +346,7 @@ public class AudioManagerSystem : EntitySystem
         if (sfx == null) return;
 
         var instance = sfx.CreateInstance();
-        
+
         float pitch = request.Pitch;
         if (request.PitchVariance > 0)
         {
@@ -378,7 +381,7 @@ public class AudioManagerSystem : EntitySystem
 
         // Normalize distance (0.0 = on top of listener, 1.0 = at max range)
         float normalizedDist = MathHelper.Clamp(distance / range, 0f, 1f);
-        
+
         // Invert it (1.0 = close, 0.0 = far)
         float inverseDist = 1.0f - normalizedDist;
 
@@ -387,11 +390,11 @@ public class AudioManagerSystem : EntitySystem
 
         return baseVolume * distanceFactor * masterVolume;
     }
-    
+
     private float CalculateImportance(float vol, int priority, bool isEmitter)
     {
         float emitterBonus = isEmitter ? 1.2f : 1f;
-        
+
         return ((vol + priority * 0.3f) * emitterBonus);
     }
 
@@ -401,10 +404,10 @@ public class AudioManagerSystem : EntitySystem
     private float CalculatePan(Vector2 emitterPos, Vector2 listenerPos)
     {
         float xDiff = emitterPos.X - listenerPos.X;
-        
+
         // Divide by the range to get a percentage (e.g., 500px diff / 1000px range = 0.5)
         float pan = xDiff / PanRange;
-        
+
         return MathHelper.Clamp(pan, -1f, 1f);
     }
 
@@ -426,6 +429,7 @@ public class AudioManagerSystem : EntitySystem
             shot.Instance.Stop();
             shot.Instance.Dispose();
         }
+
         _activeOneShots.Clear();
 
         // emitters
@@ -438,8 +442,13 @@ public class AudioManagerSystem : EntitySystem
             }
         }
     }
-    
-    private enum CandidateType { Emitter, NewRequest, ActiveOneShot }
+
+    private enum CandidateType
+    {
+        Emitter,
+        NewRequest,
+        ActiveOneShot
+    }
 
     private struct VoiceCandidate
     {

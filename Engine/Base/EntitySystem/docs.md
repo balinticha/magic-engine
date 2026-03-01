@@ -2,47 +2,53 @@
 
 ## Overview
 
-The Entity System in MagicEngine is the core framework for game logic execution. It integrates with `DefaultEcs` to provide a structured way to manage and run "Systems" — classes that operate on entities or manage specific game functionality.
+The Entity System in MagicEngine is the core framework for game logic execution. It integrates with `DefaultEcs` to
+provide a structured way to manage and run "Systems" — classes that operate on entities or manage specific game
+functionality.
 
-The system is orchestrated by the `SystemManager`, which handles the discovery, initialization, dependency injection, and execution loop of all `EntitySystem` instances.
+The system is orchestrated by the `SystemManager`, which handles the discovery, initialization, dependency injection,
+and execution loop of all `EntitySystem` instances.
 
 ## Architecture
 
 ### 1. SystemManager
 
 The `SystemManager` is the central hub. It:
-*   Automatically discovers all classes inheriting from `EntitySystem` using reflection.
-*   Instantiates them and injects core references (`World`, `SceneManager`, `PhysicsWorld`, etc.).
-*   Resolves inter-system dependencies via the `[Dependency]` attribute.
-*   Organizes systems into **Execution Buckets** to control update order.
-*   Runs the game loop, calling `Update()` or `Draw()` on systems in their respective buckets.
+
+* Automatically discovers all classes inheriting from `EntitySystem` using reflection.
+* Instantiates them and injects core references (`World`, `SceneManager`, `PhysicsWorld`, etc.).
+* Resolves inter-system dependencies via the `[Dependency]` attribute.
+* Organizes systems into **Execution Buckets** to control update order.
+* Runs the game loop, calling `Update()` or `Draw()` on systems in their respective buckets.
 
 ### 2. EntitySystem
 
 The abstract base class for all game systems. It provides:
-*   **Core Access**: `World` (ECS), `PhysicsWorld`, `EventManager`, `PrototypeManager`, `Camera`.
-*   **Lifecycle Methods**:
-    *   `Initialize()`: Run once at startup.
-    *   `OnSceneLoad()`: Run when a scene becomes active.
-    *   `OnSceneUnload()`: Run when a scene is deactivated.
-    *   `Update(Timing timing)`: Run every frame (frequency depends on bucket).
-    *   `Draw(float deltaTime, SpriteBatch sb)`: Run during the render pass.
-*   **Logging Helpers**: `Log()`, `D()` (Debug), `V()` (Verbose), `AssertFailure()`.
+
+* **Core Access**: `World` (ECS), `PhysicsWorld`, `EventManager`, `PrototypeManager`, `Camera`.
+* **Lifecycle Methods**:
+    * `Initialize()`: Run once at startup.
+    * `OnSceneLoad()`: Run when a scene becomes active.
+    * `OnSceneUnload()`: Run when a scene is deactivated.
+    * `Update(Timing timing)`: Run every frame (frequency depends on bucket).
+    * `Draw(float deltaTime, SpriteBatch sb)`: Run during the render pass.
+* **Logging Helpers**: `Log()`, `D()` (Debug), `V()` (Verbose), `AssertFailure()`.
 
 ### 3. Execution Buckets
 
-Systems are grouped into "Buckets" determined by the `[UpdateInBucket]` attribute. These buckets dictate *when* in the frame loop the system runs.
+Systems are grouped into "Buckets" determined by the `[UpdateInBucket]` attribute. These buckets dictate *when* in the
+frame loop the system runs.
 
-| Bucket | Loop Type | Use Case |
-| :--- | :--- | :--- |
-| `First` | Variable | Logic that must run absolutely first (e.g., time keeping). |
-| `Input` | Variable | Input polling. |
-| `PreUpdate` | Fixed | Preparing for the main physics/logic step. |
-| `Update` | Fixed | **Default.** Standard game logic, AI, movement. |
-| `PostPhysics` | Fixed | Logic that reacts to physics resolution (e.g., collision events). |
-| `LateUpdate` | Variable | Camera positioning, smoothing logic that needs final positions. |
-| `Cleanup` | Variable | Entity despawning, state resetting. |
-| `Render` | Draw | Drawing sprites, UI, debug lines (runs `Draw` instead of `Update`). |
+| Bucket        | Loop Type | Use Case                                                            |
+|:--------------|:----------|:--------------------------------------------------------------------|
+| `First`       | Variable  | Logic that must run absolutely first (e.g., time keeping).          |
+| `Input`       | Variable  | Input polling.                                                      |
+| `PreUpdate`   | Fixed     | Preparing for the main physics/logic step.                          |
+| `Update`      | Fixed     | **Default.** Standard game logic, AI, movement.                     |
+| `PostPhysics` | Fixed     | Logic that reacts to physics resolution (e.g., collision events).   |
+| `LateUpdate`  | Variable  | Camera positioning, smoothing logic that needs final positions.     |
+| `Cleanup`     | Variable  | Entity despawning, state resetting.                                 |
+| `Render`      | Draw      | Drawing sprites, UI, debug lines (runs `Draw` instead of `Update`). |
 
 ## Usage Guide
 
@@ -51,6 +57,7 @@ Systems are grouped into "Buckets" determined by the `[UpdateInBucket]` attribut
 To create a new system, inherit from `EntitySystem`.
 
 #### Basic Example
+
 ```csharp
 using MagicEngine.Engine.Base.EntitySystem;
 using DefaultEcs;
@@ -87,7 +94,8 @@ public class PlayerMovementSystem : EntitySystem
 
 ### Controlling Execution Order
 
-To change when your system updates, use the `[UpdateInBucket]` attribute. If omitted, it defaults to `ExecutionBucket.Update`.
+To change when your system updates, use the `[UpdateInBucket]` attribute. If omitted, it defaults to
+`ExecutionBucket.Update`.
 
 ```csharp
 [UpdateInBucket(ExecutionBucket.LateUpdate)]
@@ -100,7 +108,8 @@ public class CameraSystem : EntitySystem
 
 ### Dependency Injection
 
-If your system needs to call methods on another system, use the `[Dependency]` attribute. The `SystemManager` will automatically inject the instance.
+If your system needs to call methods on another system, use the `[Dependency]` attribute. The `SystemManager` will
+automatically inject the instance.
 
 ```csharp
 public class CombatSystem : EntitySystem
@@ -114,6 +123,7 @@ public class CombatSystem : EntitySystem
     }
 }
 ```
+
 **Note**: Dependencies are injected *before* `Initialize()` is called, so they are safe to use during initialization.
 
 ### Drawing
@@ -133,15 +143,18 @@ public class HudSystem : EntitySystem
 
 ### Time Management & Cooldowns
 
-The `Timing` struct passed to `Update()` and `Draw()` provides unified access to both **Real-world time** and **In-game time**. 
+The `Timing` struct passed to `Update()` and `Draw()` provides unified access to both **Real-world time** and **In-game
+time**.
 
-*   **`TotalTime` / `DeltaTime`**: In-game time. Affected by game speed and paused when `SessionManager.IsPaused = true`.
-*   **`UnscaledTotalTime` / `UnscaledDeltaTime`**: In-game time but *not* affected by game speed. Still pauses when `SessionManager.IsPaused = true`.
-*   **`RealTotalTime` / `RealDeltaTime`**: Exact real-world time. Never pauses, never scales.
+* **`TotalTime` / `DeltaTime`**: In-game time. Affected by game speed and paused when `SessionManager.IsPaused = true`.
+* **`UnscaledTotalTime` / `UnscaledDeltaTime`**: In-game time but *not* affected by game speed. Still pauses when
+  `SessionManager.IsPaused = true`.
+* **`RealTotalTime` / `RealDeltaTime`**: Exact real-world time. Never pauses, never scales.
 
 #### Using Cooldowns
 
-For DX when building abilities, timers, or state machines, use the provided `Cooldown` structs: `Cooldown` (scaled), `UnscaledCooldown`, and `RealtimeCooldown`.
+For DX when building abilities, timers, or state machines, use the provided `Cooldown` structs: `Cooldown` (scaled),
+`UnscaledCooldown`, and `RealtimeCooldown`.
 
 ```csharp
 public class CombatSystem : EntitySystem

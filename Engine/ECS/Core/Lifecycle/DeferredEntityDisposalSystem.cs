@@ -9,10 +9,11 @@ namespace MagicEngine.Engine.ECS.Core.Lifecycle;
 public class DeferredEntityDisposalSystem : EntitySystem
 {
     private EntitySet? _query;
-    
+
     public override void OnSceneLoad()
     {
-        _query = _query = World.GetEntities().With<MarkedForDeath>().AsSet();;
+        _query = _query = World.GetEntities().With<MarkedForDeath>().AsSet();
+        ;
     }
 
     public override void OnSceneUnload()
@@ -23,7 +24,7 @@ public class DeferredEntityDisposalSystem : EntitySystem
     public override void Update(Timing timing)
     {
         string removedEntities = "";
-        
+
         foreach (var entity in _query.GetEntities())
         {
             if (entity.IsAlive)
@@ -37,6 +38,5 @@ public class DeferredEntityDisposalSystem : EntitySystem
         {
             Vx($"Removed these entities at end of frame: {removedEntities}");
         }
-        
     }
 }

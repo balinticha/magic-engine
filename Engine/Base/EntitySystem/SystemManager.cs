@@ -12,7 +12,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MagicEngine.Engine.Base.EntitySystem;
 
-public class SystemManager(SceneManager sceneManager, Random random, PrototypeManager prm, CameraSystem cs, LogManager lm, Microsoft.Xna.Framework.Content.ContentManager content)
+public class SystemManager(
+    SceneManager sceneManager,
+    Random random,
+    PrototypeManager prm,
+    CameraSystem cs,
+    LogManager lm,
+    Microsoft.Xna.Framework.Content.ContentManager content)
 {
     private readonly SceneManager _sceneManager = sceneManager;
     private readonly PrototypeManager _prototypeManager = prm;
@@ -20,27 +26,27 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
     private readonly CameraSystem _cameraSystem = cs;
     private readonly LogManager _logManager = lm;
     private readonly Microsoft.Xna.Framework.Content.ContentManager _content = content;
-    
+
     public SystemProfiler Profiler = new();
-    
+
     // This dictionary holds all of our system instances, mapped by their Type for fast lookup
     private readonly Dictionary<Type, EntitySystem> _systemsByType = new();
-    
+
     // Stores lists of systems, organized by the bucket they should run in.
     private readonly Dictionary<ExecutionBucket, List<EntitySystem>> _systemsByBucket = new();
-    
+
     private readonly List<EntitySystem> _systemsToDeregister = new();
 
     public void Initialize()
     {
         _sceneManager._systemManager = this;
-        
+
         // Initialize the bucket dictionary to ensure all buckets have a list.
         foreach (ExecutionBucket bucket in Enum.GetValues(typeof(ExecutionBucket)))
         {
             _systemsByBucket[bucket] = new List<EntitySystem>();
         }
-        
+
         // --- Part 1: Discovery and Instantiation ---
         // Find all types in our program that inherit from EntitySystem.
         var systemTypes = Assembly.GetExecutingAssembly().GetTypes()
@@ -56,11 +62,12 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
             systemInstance.SystemManager = this;
             systemInstance.LogManager = _logManager;
             systemInstance.Content = _content;
-            
+
             _systemsByType.Add(type, systemInstance);
 
             var bucketAttribute = type.GetCustomAttribute<UpdateInBucketAttribute>();
-            var bucket = bucketAttribute?.Bucket ?? ExecutionBucket.Update; // Default to 'Update' if no attribute is found
+            var bucket =
+                bucketAttribute?.Bucket ?? ExecutionBucket.Update; // Default to 'Update' if no attribute is found
 
             // Add it to the correct execution bucket
             _systemsByBucket[bucket].Add(systemInstance);
@@ -73,9 +80,10 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
         foreach (var system in _systemsByType.Values)
         {
             // Find all fields in this system marked with [Dependency]
-            var dependencyFields = system.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            var dependencyFields = system.GetType()
+                .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(f => f.IsDefined(typeof(DependencyAttribute), false));
-            
+
             foreach (var field in dependencyFields)
             {
                 // Find the required system instance from our dictionary.
@@ -87,18 +95,19 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
                 }
                 else
                 {
-                    throw new Exception($"Failed to resolve dependency: {field.FieldType.Name} for system: {system.GetType().Name}");
+                    throw new Exception(
+                        $"Failed to resolve dependency: {field.FieldType.Name} for system: {system.GetType().Name}");
                 }
             }
         }
-        
+
         // --- Part 3: Final Initialization ---
         // Now that all dependencies are injected, call Initialize() on each system.
         foreach (var system in _systemsByType.Values)
         {
             system.Initialize();
         }
-        
+
         Console.WriteLine("[SystemManager] All systems initialized.");
     }
 
@@ -115,7 +124,7 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
             }
         }
     }
-    
+
     /// <summary>
     /// Queues a system to be deregistered at the end of the current frame.
     /// Its Update/Draw methods will no longer be called.
@@ -129,7 +138,7 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
             Console.WriteLine($"[SystemManager] Queued {system.GetType().Name} for deregistration.");
         }
     }
-    
+
     private void ProcessDeregistrations()
     {
         if (_systemsToDeregister.Count == 0)
@@ -141,7 +150,7 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
         {
             // Remove from the master type dictionary
             _systemsByType.Remove(systemToRemove.GetType());
-            
+
             // Remove from profiler tracking
             Profiler.Remove(systemToRemove.GetType().Name);
 
@@ -160,7 +169,7 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
         // Clear the queue for the next frame
         _systemsToDeregister.Clear();
     }
-    
+
     /// <summary>
     /// Retrieves a registered system of a specific type.
     /// </summary>
@@ -172,30 +181,30 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
         {
             return (T)system;
         }
-        
+
         throw new Exception($"System of type {typeof(T).Name} not found.");
     }
-    
+
     public void CallOnSceneLoad()
     {
         _logManager.Log("Calling OnSceneLoad on all systems", "SystemManager", LogLevel.VerboseExtra);
-        
+
         foreach (var system in _systemsByType.Values)
         {
             system.OnSceneLoad();
         }
     }
-    
+
     public void CallOnSceneUnload()
     {
         _logManager.Log("Calling OnSceneUnload on all systems", "SystemManager", LogLevel.VerboseExtra);
-        
+
         foreach (var system in _systemsByType.Values)
         {
             system.OnSceneUnload();
         }
     }
-    
+
     #region Game Loop Execution Methods
 
     public void RunFrameStart(Timing timing)
@@ -208,7 +217,6 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
     {
         RunBucket(ExecutionBucket.PreUpdate, timing);
         RunBucket(ExecutionBucket.Update, timing);
-        
     }
 
     public void RunFixedUpdatePostPhysics(Timing timing)
@@ -220,7 +228,7 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
     {
         RunBucket(ExecutionBucket.LateUpdate, timing);
     }
-        
+
     public void RunDraw(Timing timing, SpriteBatch spriteBatch, Microsoft.Xna.Framework.Matrix transformMatrix)
     {
         using (Profiler.Profile("Bucket: Audio"))
@@ -253,5 +261,6 @@ public class SystemManager(SceneManager sceneManager, Random random, PrototypeMa
     {
         RunBucket(ExecutionBucket.Transient, timing);
     }
+
     #endregion
 }

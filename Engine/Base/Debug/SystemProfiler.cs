@@ -26,6 +26,7 @@ public class SystemProfiler
             history = new ProfilerHistory();
             SystemTimes[systemName] = history;
         }
+
         history.Add(elapsedMs);
     }
 
@@ -51,7 +52,7 @@ public class SystemProfiler
             _profiler.Record(_name, ms);
         }
     }
-    
+
     public void Remove(string systemName)
     {
         SystemTimes.Remove(systemName);
@@ -62,10 +63,10 @@ public class SystemProfiler
 public class ProfilerHistory
 {
     private const int Capacity = 600;
-    
+
     private double[] _samples = new double[Capacity]; // Pre-allocate immediately
-    private double[] _buffer = new double[Capacity];  // Pre-allocate a scratchpad for sorting
-    
+    private double[] _buffer = new double[Capacity]; // Pre-allocate a scratchpad for sorting
+
     private int _count;
     private int _index;
 
@@ -79,12 +80,13 @@ public class ProfilerHistory
     public double GetAverage()
     {
         if (_count == 0) return 0;
-        
+
         double sum = 0;
         for (int i = 0; i < _count; i++)
         {
             sum += _samples[i];
         }
+
         return sum / _count;
     }
 
@@ -94,13 +96,13 @@ public class ProfilerHistory
 
         // FIXED: Reuse the pre-allocated _buffer instead of "new double[]"
         Array.Copy(_samples, _buffer, _count);
-        
+
         // Sort only the valid part of the buffer
         Array.Sort(_buffer, 0, _count);
 
         int index = (int)Math.Ceiling(percentile * _count) - 1;
         index = Math.Max(0, Math.Min(index, _count - 1));
-        
+
         return _buffer[index];
     }
 }

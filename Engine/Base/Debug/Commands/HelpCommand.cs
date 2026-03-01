@@ -10,7 +10,7 @@ public class HelpCommand : ConsoleCommand
 
     public override string Name => "help";
     public override string Description => "Shows a list of all commands, or detailed help for a specific command.";
-    
+
     public HelpCommand(Dictionary<string, IConsoleCommand> commands)
     {
         _allCommands = commands;
@@ -33,10 +33,10 @@ public class HelpCommand : ConsoleCommand
             {
                 return $"{command.Name}: {command.Description}";
             }
-            
+
             return $"Command not found: '{commandName}'";
         }
-        
+
         // Too many arguments
         return "Usage: help [command_name]";
     }
