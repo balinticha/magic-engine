@@ -106,6 +106,31 @@ public class CombatSystem : EntitySystem
 }
 ```
 
+### 4. Scene-Specific Storage for Global Systems (PersistentSceneStorage)
+
+Because `EntitySystem` instances are global and shared across all scenes, they cannot easily store scene-specific state in their own fields (e.g., storing the player character entity per scene). To solve this, each `Scene` contains a `PersistentSceneStorage` key-value store. 
+
+When a scene is unloaded or loaded, systems can save or restore state specific to that scene:
+
+```csharp
+public override void OnSceneLoad()
+{
+    var storage = SceneManager.AccessStore(this);
+    if (storage.Has("myValue"))
+    {
+        _myValue = storage.Get<int>("myValue");
+    }
+}
+
+public override void OnSceneUnload()
+{
+    var storage = SceneManager.AccessStore(this);
+    storage.Set("myValue", _myValue); // Save the value to the current leaving scene
+}
+```
+
+Behind the scenes, `SceneManager.AccessStore(this)` uses your system's type name to allocate an isolated `LocalStorage` dictionary within the current scene. This prevents key collisions between different systems.
+
 ### Important Notes
 
 * **One Active Scene**: Only one scene is active at a time. The `SystemManager` (which runs your game logic) always runs
