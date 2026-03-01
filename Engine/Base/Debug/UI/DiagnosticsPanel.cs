@@ -4,13 +4,19 @@ using System.Buffers.Text;
 using System.Collections.Generic; // Added for List<T>
 using System.Linq; // Keep for convenience, but we won't use it in the hot path
 using ImGuiNET;
+using MagicEngine.Engine.Base.DebugModule;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System.Numerics;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 
-public class DiagnosticsPanel
+public class DiagnosticsPanel : IDebugWindow
 {
+    public bool IsOpen { get; set; } = false;
+    public Keys Hotkey => Keys.F5;
+    public bool IsManaged => false;
     private float[] _frameTimeHistory = new float[600];
     private int _historyIndex = 0;
 
@@ -24,17 +30,32 @@ public class DiagnosticsPanel
     private static readonly Comparison<KeyValuePair<string, ProfilerHistory>> _systemComparer = 
         (a, b) => b.Value.GetAverage().CompareTo(a.Value.GetAverage());
 
-    public void Draw(ref bool isOpen, GraphicsDevice graphicsDevice, double fps, double frameTime, SystemProfiler profiler)
-    {
-        if (!isOpen) return;
+    private readonly Func<double> _getFps;
+    private readonly Func<double> _getFrameTime;
+    private readonly GraphicsDevice _graphicsDevice;
+    private readonly Func<SystemProfiler> _getProfiler;
 
-        ImGui.SetNextWindowSize(new Vector2(600, 600), ImGuiCond.FirstUseEver);
+    public DiagnosticsPanel(Func<double> getFps, Func<double> getFrameTime, GraphicsDevice graphicsDevice, Func<SystemProfiler> getProfiler)
+    {
+        _getFps = getFps;
+        _getFrameTime = getFrameTime;
+        _graphicsDevice = graphicsDevice;
+        _getProfiler = getProfiler;
+    }
+
+    public void Draw(GameTime gameTime)
+    {
+        if (!IsOpen) return;
+        
+        bool isOpen = IsOpen;
+
+        ImGui.SetNextWindowSize(new System.Numerics.Vector2(600, 600), ImGuiCond.FirstUseEver);
 
         if (ImGui.Begin("Diagnostics", ref isOpen))
         {
             if (ImGui.CollapsingHeader("Graphics Metrics", ImGuiTreeNodeFlags.DefaultOpen))
             {
-                var metrics = graphicsDevice.Metrics;
+                var metrics = _graphicsDevice.Metrics;
                 DrawMetricNoAlloc("Draw Calls: ", metrics.DrawCount);
                 DrawMetricNoAlloc("Primitives: ", metrics.PrimitiveCount);
                 DrawMetricNoAlloc("Texture Switches: ", metrics.TextureCount);
@@ -44,6 +65,9 @@ public class DiagnosticsPanel
             
             if (ImGui.CollapsingHeader("Performance", ImGuiTreeNodeFlags.DefaultOpen))
             {
+                var fps = _getFps();
+                var frameTime = _getFrameTime();
+                
                 DrawMetricNoAlloc("FPS: ", fps, new StandardFormat('F', 1));
                 DrawMetricNoAlloc("Frame Time: ", frameTime, new StandardFormat('F', 2));
 
@@ -64,30 +88,31 @@ public class DiagnosticsPanel
 
                 ImGui.Text($"1%% High (99th): {p99:F3} ms");
                 ImGui.SameLine();
-                ImGui.TextColored(new Vector4(1, 1, 0, 1), $"10%% High (90th): {p90:F3} ms");
+                ImGui.TextColored(new System.Numerics.Vector4(1, 1, 0, 1), $"10%% High (90th): {p90:F3} ms");
 
-                Vector2 graphSize = new Vector2(0, 80);
+                System.Numerics.Vector2 graphSize = new System.Numerics.Vector2(0, 80);
                 float graphMaxY = 33f;
                 
                 ImGui.PlotLines("##FrameTimeGraph", ref _frameTimeHistory[0], _frameTimeHistory.Length, _historyIndex, $"{frameTime:F3} ms", 0, graphMaxY, graphSize);
                 
                 if (ImGui.IsItemVisible())
                 {
-                   Vector2 pMin = ImGui.GetItemRectMin();
-                   Vector2 pMax = ImGui.GetItemRectMax();
+                   System.Numerics.Vector2 pMin = ImGui.GetItemRectMin();
+                   System.Numerics.Vector2 pMax = ImGui.GetItemRectMax();
                    var drawList = ImGui.GetWindowDrawList();
                    float height = pMax.Y - pMin.Y;
                    float y99 = pMax.Y - (p99 / graphMaxY * height);
                    float y90 = pMax.Y - (p90 / graphMaxY * height);
                    y99 = Math.Clamp(y99, pMin.Y, pMax.Y);
                    y90 = Math.Clamp(y90, pMin.Y, pMax.Y);
-                   drawList.AddLine(new Vector2(pMin.X, y99), new Vector2(pMax.X, y99), ImGui.GetColorU32(new Vector4(1, 0, 0, 0.7f)));
-                   drawList.AddLine(new Vector2(pMin.X, y90), new Vector2(pMax.X, y90), ImGui.GetColorU32(new Vector4(1, 1, 0, 0.7f)));
+                   drawList.AddLine(new System.Numerics.Vector2(pMin.X, y99), new System.Numerics.Vector2(pMax.X, y99), ImGui.GetColorU32(new System.Numerics.Vector4(1, 0, 0, 0.7f)));
+                   drawList.AddLine(new System.Numerics.Vector2(pMin.X, y90), new System.Numerics.Vector2(pMax.X, y90), ImGui.GetColorU32(new System.Numerics.Vector4(1, 1, 0, 0.7f)));
                 }
             }
             
             if (ImGui.CollapsingHeader("System Profiler", ImGuiTreeNodeFlags.DefaultOpen))
             {
+                var profiler = _getProfiler();
                 _cachedSystemList.Clear();
 
                 foreach(var kvp in profiler.SystemTimes)
@@ -129,20 +154,22 @@ public class DiagnosticsPanel
             }
         }
         ImGui.End();
+        
+        IsOpen = isOpen;
     }
     
-    private static Vector4 GetColor(double time)
+    private static System.Numerics.Vector4 GetColor(double time)
     {
-        if (time > 5.0) return new Vector4(1, 0, 0, 1);
-        if (time > 2.0) return new Vector4(1, 1, 0, 1);
-        return new Vector4(0, 1, 0, 1);
+        if (time > 5.0) return new System.Numerics.Vector4(1, 0, 0, 1);
+        if (time > 2.0) return new System.Numerics.Vector4(1, 1, 0, 1);
+        return new System.Numerics.Vector4(0, 1, 0, 1);
     }
     
     // 1. A reusable scratch buffer for text formatting
     private byte[] _textBuffer = new byte[256];
 
     // 2. Helper to draw "Label: Value" without string allocations
-    private unsafe void DrawMetricNoAlloc(string prefix, double value, StandardFormat format, Vector4? color = null)
+    private unsafe void DrawMetricNoAlloc(string prefix, double value, StandardFormat format, System.Numerics.Vector4? color = null)
     {
         // A. Copy the prefix string (e.g., "FPS: ") into the buffer
         // Assuming ASCII/UTF8 compatible prefixes. 
@@ -177,7 +204,7 @@ public class DiagnosticsPanel
     }
 
     // 3. Overload for Integer metrics (Draw Calls, etc.)
-    private unsafe void DrawMetricNoAlloc(string prefix, long value, Vector4? color = null)
+    private unsafe void DrawMetricNoAlloc(string prefix, long value, System.Numerics.Vector4? color = null)
     {
         int offset = 0;
         foreach (char c in prefix) _textBuffer[offset++] = (byte)c;

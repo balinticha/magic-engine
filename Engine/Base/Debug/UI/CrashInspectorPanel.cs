@@ -1,13 +1,18 @@
 using System;
 using ImGuiNET;
+using MagicEngine.Engine.Base.DebugModule;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Vector2 = System.Numerics.Vector2;
 using Vector4 = System.Numerics.Vector4;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 
-public class CrashInspectorPanel
+public class CrashInspectorPanel : IDebugWindow
 {
+    public bool IsOpen { get => IsActive; set {} }
+    public Keys Hotkey => Keys.None;
+    public bool IsManaged => false;
     public bool IsActive { get; private set; }
 
     private Exception _crashException;

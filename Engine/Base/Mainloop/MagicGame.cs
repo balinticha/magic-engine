@@ -1,5 +1,4 @@
 using DefaultEcs;
-using ImGuiNET;
 using MagicEngine.Engine.Base.CoreModules;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.Debug.Commands;
@@ -48,22 +47,9 @@ public abstract class MagicGame : Game
     #endregion
     
     #region ImGui debug overlays
-    protected ImGuiRenderer ImGuiRenderer;
-    protected bool DebugActive = false; 
-    protected readonly ComponentViewerPanel ComponentViewerPanel = new();
-    protected readonly List<InspectorWindowState> InspectorWindow = new();
-    protected CrashInspectorPanel CrashInspectorPanel;
-    
-    protected class InspectorWindowState
-    {
-        public Entity TargetEntity;
-        public bool IsOpen = true;
-    }
-    
+    protected bool _hasCrashed = false;
     protected CommandManager _commandManager;
-    protected DebugConsoleWindow _consoleWindow;
     protected ConsoleInterceptor _consoleInterceptor;
-    protected PostProcessDebugOverlay _postProcessDebugOverlay;
     #endregion
     
     #region State
@@ -80,7 +66,6 @@ public abstract class MagicGame : Game
     private double _fps;
     private double _frameTime;
     private const float Smoothing = 0.95f;
-    protected readonly DiagnosticsPanel DiagnosticsPanel = new();
     #endregion
 
     #region  UI
@@ -148,10 +133,6 @@ public abstract class MagicGame : Game
         _commandManager = new CommandManager(SystemManager, SceneManager, PrototypeManager, _random, CameraSystem, LogManager, EngineGraphicsModule.PostProcessingManager);
         _commandManager.Initialize();
         
-        LogManager.Log("Startup: DebugConsoleWindow", LogLevel.VerboseExtra);
-        _consoleWindow = new DebugConsoleWindow(_commandManager, _consoleInterceptor);
-        _postProcessDebugOverlay = new PostProcessDebugOverlay(EngineGraphicsModule.PostProcessingManager);
-        
         LogManager.Log("Startup: Debug view content load", LogLevel.VerboseExtra);
         SceneManager.GetScene().AttachedSystems.DebugView.LoadContent(GraphicsDevice, Content);
         
@@ -161,8 +142,29 @@ public abstract class MagicGame : Game
         LogManager.Log("Startup: ImGuiRender", LogLevel.VerboseExtra);
         EngineDebugModule = new EngineDebugModule(new List<IDebugWindow>(), this, _gp.Graphics);
         
-        // todo: no longer compatible with reefactor, fix
-        // CrashInspectorPanel = new CrashInspectorPanel(this);
+        EngineDebugModule.OnCrash = (e) => {
+            _hasCrashed = true;
+            EngineDebugModule.DebugEnabled = true;
+            var crashPanel = new CrashInspectorPanel(this);
+            crashPanel.Activate(e);
+            EngineDebugModule.AddWindow(crashPanel);
+        };
+        
+        // Add default panels
+        EngineDebugModule.AddWindow(new DebugConsoleWindow(_commandManager, _consoleInterceptor));
+        EngineDebugModule.AddWindow(new PostProcessDebugOverlay(EngineGraphicsModule.PostProcessingManager));
+        EngineDebugModule.AddWindow(new DiagnosticsPanel(
+            () => _fps, 
+            () => _frameTime, 
+            GraphicsDevice, 
+            () => SystemManager.Profiler
+        ));
+        
+        var sceneGraphPanel = SceneManager.GetScene().AttachedSystems.SceneGraphPanel;
+        EngineDebugModule.AddWindow(sceneGraphPanel);
+        sceneGraphPanel.OnInspectEntity += entity => {
+            EngineDebugModule.AddWindow(new ComponentViewerPanel(entity, entity.GetHashCode()));
+        };
         
         RegisterGameSystemsHook();
         
@@ -200,7 +202,7 @@ public abstract class MagicGame : Game
         try
         {
             #region Update loop
-            if (CrashInspectorPanel.IsActive)
+            if (_hasCrashed)
             {
                 base.Update(gameTime);
                 return;
@@ -211,27 +213,13 @@ public abstract class MagicGame : Game
             // ========= Debug stuff start
             EngineDebugModule.HandleInput(Keyboard.GetState());
             
-            // todo this should be moved into each IDebugWindow implementing window class
-            // if (Keyboard.GetState().IsKeyDown(Keys.F1) && DebugRenderCooldown <= 0)
-            // {
-            //     DebugRender  = !DebugRender;
-            //     DebugActive = true;
-            //     DebugRenderCooldown = 20;
-            // }
-            //
-            // if (Keyboard.GetState().IsKeyDown(Keys.F2) && DebugRenderCooldown <= 0)
-            // {
-            //     _consoleActive = !_consoleActive;
-            //     DebugActive = true;
-            //     DebugRenderCooldown = 20;
-            // }
-            //
-            // if (Keyboard.GetState().IsKeyDown(Keys.F3) && DebugRenderCooldown <= 0)
-            // {
-            //     EngineGraphicsModule.PostProcessingManager.Enabled = !EngineGraphicsModule.PostProcessingManager.Enabled;
-            //     DebugRenderCooldown = 20;
-            // }
-            // DebugRenderCooldown--;
+            if (Keyboard.GetState().IsKeyDown(Keys.F1) && DebugRenderCooldown <= 0)
+            {
+                DebugRender  = !DebugRender;
+                EngineDebugModule.DebugEnabled = !EngineDebugModule.DebugEnabled;
+                DebugRenderCooldown = 20;
+            }
+            DebugRenderCooldown--;
             // ========= Debug stuff end
             
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -319,7 +307,7 @@ public abstract class MagicGame : Game
         }
         catch (Exception e)
         {
-            if (!CrashInspectorPanel.IsActive)
+            if (!_hasCrashed)
             {
                 Console.WriteLine(e);
                 EnterCrashInspector(e);
@@ -340,7 +328,7 @@ public abstract class MagicGame : Game
         {
             #region GAME draw loop
             EngineGraphicsModule.Draw(
-                CrashInspectorPanel.IsActive,
+                _hasCrashed,
                 GameTimeTemp, gameTime, TimeAccumulator, 
                 FixedTimeStep, CameraSystem, SystemManager, 
                 DebugRender, SceneManager
@@ -361,64 +349,15 @@ public abstract class MagicGame : Game
             
             //// DEBUG UI
             #region DEBUG render loop
-            if (DebugActive)
-            {
-                // TODO This segment is to be replaced with EngineDebugModile.Draw(...)
-                
-                // Reset render states to ensure ImGui has a clean slate
-                GraphicsDevice.BlendState = BlendState.Opaque;
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-                GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
-                
-                ImGuiRenderer.BeforeLayout(gameTime);
+            var inputManager = SystemManager.GetSystem<InputManagerSystem>();
+            inputManager.IsInputDisabled = _hasCrashed || (EngineDebugModule.WantsCaptureKeyboard && EngineDebugModule.DebugEnabled);
 
-                try
-                {
-                    var inputManager = SystemManager.GetSystem<InputManagerSystem>();
-                    var io = ImGui.GetIO();
-                    inputManager.IsInputDisabled = CrashInspectorPanel.IsActive || io.WantCaptureKeyboard;
-
-                    
-                    ImGui.GetForegroundDrawList().AddCircleFilled(io.MousePos, 5f, 0xFF0000FF);
-
-                    var sceneGraphPanel = SceneManager.GetScene().AttachedSystems.SceneGraphPanel;
-                    sceneGraphPanel.Draw(ref DebugActive);
-
-                    if (sceneGraphPanel.EntityToInspect.HasValue)
-                    {
-                        InspectorWindow.Add(new InspectorWindowState
-                        {
-                            TargetEntity = sceneGraphPanel.EntityToInspect.Value
-                        });
-                    }
-
-                    foreach (var windowState in InspectorWindow)
-                    {
-                        ComponentViewerPanel.Draw(
-                            windowState.TargetEntity,
-                            ref windowState.IsOpen,
-                            windowState.GetHashCode()
-                        );
-                    }
-
-                    InspectorWindow.RemoveAll(window => !window.IsOpen);
-                    _consoleWindow.Draw(ref _consoleActive);
-                    _postProcessDebugOverlay.Draw();
-                    CrashInspectorPanel.Draw(gameTime);
-                    
-                    DiagnosticsPanel.Draw(ref DebugActive, GraphicsDevice, _fps, _frameTime, SystemManager.Profiler);
-                }
-                finally
-                {
-                    ImGuiRenderer.AfterLayout();
-                }
-            }
+            EngineDebugModule.Draw(gameTime);
             #endregion
         }
         catch (Exception e)
         {
-            if (!CrashInspectorPanel.IsActive)
+            if (!_hasCrashed)
             {
                 Console.WriteLine(e);
                 //GraphicsDevice.SetRenderTarget(null);
@@ -442,8 +381,7 @@ public abstract class MagicGame : Game
     protected void EnterCrashInspector(Exception e)
     {
         LogManager.Release("==== BEGIN FATAL CRASH ====");
-        CrashInspectorPanel.Activate(e);
-        DebugActive = true;
+        EngineDebugModule.ShowCrash(e);
         LogManager.Debug("Entering crash inspector.");
     }
 }

@@ -5,11 +5,17 @@ using System.Numerics;
 using System.Text;
 using ImGuiNET;
 using MagicEngine.Engine.Base.Debug.Commands;
+using MagicEngine.Engine.Base.DebugModule;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 
-public unsafe class DebugConsoleWindow
+public unsafe class DebugConsoleWindow : IDebugWindow
 {
+    public bool IsOpen { get; set; } = false;
+    public Keys Hotkey => Keys.F3;
+    public bool IsManaged => false;
     private readonly CommandManager _commandManager;
     private readonly ConsoleInterceptor _consoleInterceptor;
     private byte[] _inputBuffer = new byte[100];
@@ -28,17 +34,19 @@ public unsafe class DebugConsoleWindow
         _scrollToBottom = true;
     }
 
-    public unsafe void Draw(ref bool isOpen)
+    public unsafe void Draw(GameTime gameTime)
     {
-        if (!isOpen) return;
+        if (!IsOpen) return;
+        
+        bool isOpen = IsOpen;
 
-        ImGui.SetNextWindowSize(new Vector2(1400, 600), ImGuiCond.FirstUseEver);
+        ImGui.SetNextWindowSize(new System.Numerics.Vector2(1400, 600), ImGuiCond.FirstUseEver);
         if (ImGui.Begin("Debug Console", ref isOpen))
         {
             try
             {
                 // Log Area
-                ImGui.BeginChild("ScrollingRegion", new Vector2(0, -ImGui.GetFrameHeightWithSpacing()),
+                ImGui.BeginChild("ScrollingRegion", new System.Numerics.Vector2(0, -ImGui.GetFrameHeightWithSpacing()),
                     ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar);
 
                 var logMessages = _consoleInterceptor.LogMessages;
@@ -89,6 +97,8 @@ public unsafe class DebugConsoleWindow
         {
             ImGui.End();
         }
+        
+        IsOpen = isOpen;
     }
 
     private unsafe int ConsoleInputCallback(ImGuiInputTextCallbackData* data)

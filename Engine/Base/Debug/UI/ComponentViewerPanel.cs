@@ -10,6 +10,8 @@ using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.ECS.Core.Parenting.Components;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MagicEngine.Engine.Base.DebugModule;
 using Vector2 = System.Numerics.Vector2;
 using Vector4 = System.Numerics.Vector4;
 
@@ -27,8 +29,20 @@ internal class ComponentCollector : IComponentReader
     }
 }
 
-public class ComponentViewerPanel
+public class ComponentViewerPanel : IDebugWindow
 {
+    public bool IsOpen { get; set; } = true;
+    public Keys Hotkey => Keys.None;
+    public bool IsManaged => true;
+    
+    public Entity TargetEntity { get; set; }
+    private readonly int _uniqueId;
+
+    public ComponentViewerPanel(Entity targetEntity, int uniqueId)
+    {
+        TargetEntity = targetEntity;
+        _uniqueId = uniqueId;
+    }
     // Define the types for each category for easy lookup
     private readonly HashSet<Type> _innateTypes = new()
     {
@@ -40,17 +54,21 @@ public class ComponentViewerPanel
         typeof(IsParent), typeof(IsChildren)
     };
 
-    public void Draw(Entity entity, ref bool isOpen, int uniqueId)
+    public void Draw(GameTime gameTime)
     {
-        if (!isOpen)
+        if (!IsOpen)
         {
             return;
         }
         
+        bool isOpen = IsOpen;
+        Entity entity = TargetEntity;
+        int uniqueId = _uniqueId;
+        
         // If no entity is selected or the selected entity is dead, don't draw the window.
         if (!entity.IsAlive)
         {
-            isOpen = false;
+            IsOpen = false;
             return;
         }
 
@@ -101,6 +119,8 @@ public class ComponentViewerPanel
             DrawTagCategory("Tags", tagComponents);
         }
         ImGui.End();
+        
+        IsOpen = isOpen;
     }
 
     private void DrawComponentCategory(string label, List<object> components, Entity entity)
