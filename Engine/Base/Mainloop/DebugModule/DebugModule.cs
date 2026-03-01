@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
 using ImGuiNET;
 using MagicEngine.Engine.Base.Debug.UI;
-using MagicEngine.Engine.ECS.Core.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace MagicEngine.Engine.Base.DebugModule;
+namespace MagicEngine.Engine.Base.Mainloop.DebugModule;
 
 public interface IDebugWindow
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DefaultEcs;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.EntityWrappers;
 using MagicEngine.Engine.ECS.Core.Audio.Components;
 using MagicEngine.Engine.ECS.Core.Events.EntityDeath;

@@ -1,5 +1,6 @@
 using DefaultEcs;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 using MagicEngine.Engine.Base.EntityWrappers;
 

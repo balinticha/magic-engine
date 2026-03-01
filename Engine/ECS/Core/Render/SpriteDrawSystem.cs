@@ -6,6 +6,7 @@ using MagicEngine.Engine.Base.EntitySystem;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using MagicEngine.Engine.ECS.Core.Render.Components;
 using MagicEngine.Engine.Base.Debug;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -315,8 +316,6 @@ public class SpriteDrawSystem : EntitySystem
             LogManager.Log("Drawing too many calls!");
         }
     }
-
-
     
     private void ApplyMaterialParameters(Entity entity, Effect effect, Timing timing)
     {
@@ -328,7 +327,7 @@ public class SpriteDrawSystem : EntitySystem
          var timeParam = effect.Parameters["Time"];
          if (timeParam != null)
          {
-             timeParam.SetValue((float)timing.GameTime);
+             timeParam.SetValue((float)timing.TotalTime);
          }
 
          // Material Params

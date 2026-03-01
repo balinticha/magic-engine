@@ -1,6 +1,7 @@
 using DefaultEcs;
 using MagicEngine.Engine.Base.Debug.Attributes;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.EntityWrappers;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.ECS.Core.Audio;

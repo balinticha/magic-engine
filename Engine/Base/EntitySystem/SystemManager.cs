@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MagicEngine.Engine.Base.Debug;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.Base.Scene;
 using MagicEngine.Engine.ECS.Core.Camera;

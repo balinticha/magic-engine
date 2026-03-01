@@ -4,11 +4,11 @@ using System.Buffers.Text;
 using System.Collections.Generic; // Added for List<T>
 using System.Linq; // Keep for convenience, but we won't use it in the hot path
 using ImGuiNET;
-using MagicEngine.Engine.Base.DebugModule;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Numerics;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 

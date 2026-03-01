@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using ImGuiNET;
 using MagicEngine.Engine.Base.Debug.Commands;
-using MagicEngine.Engine.Base.DebugModule;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 

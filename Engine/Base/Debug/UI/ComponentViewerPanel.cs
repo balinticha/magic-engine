@@ -6,12 +6,12 @@ using DefaultEcs;
 using DefaultEcs.Serialization;
 using ImGuiNET;
 using MagicEngine.Engine.Base.Debug.Attributes;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.ECS.Core.Parenting.Components;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using MagicEngine.Engine.Base.DebugModule;
 using Vector2 = System.Numerics.Vector2;
 using Vector4 = System.Numerics.Vector4;
 

@@ -124,9 +124,38 @@ If your system needs to render (e.g., a HUD or Debug Drawer), use the `Render` b
 [UpdateInBucket(ExecutionBucket.Render)]
 public class HudSystem : EntitySystem
 {
-    public override void Draw(float deltaTime, SpriteBatch spriteBatch)
+    public override void Draw(Timing timing, SpriteBatch spriteBatch, Matrix transformMatrix)
     {
         spriteBatch.DrawString(Font, "Health: 100", new Vector2(10, 10), Color.White);
+    }
+}
+```
+
+### Time Management & Cooldowns
+
+The `Timing` struct passed to `Update()` and `Draw()` provides unified access to both **Real-world time** and **In-game time**. 
+
+*   **`TotalTime` / `DeltaTime`**: In-game time. Affected by game speed and paused when `SessionManager.IsPaused = true`.
+*   **`UnscaledTotalTime` / `UnscaledDeltaTime`**: In-game time but *not* affected by game speed. Still pauses when `SessionManager.IsPaused = true`.
+*   **`RealTotalTime` / `RealDeltaTime`**: Exact real-world time. Never pauses, never scales.
+
+#### Using Cooldowns
+
+For DX when building abilities, timers, or state machines, use the provided `Cooldown` structs: `Cooldown` (scaled), `UnscaledCooldown`, and `RealtimeCooldown`.
+
+```csharp
+public class CombatSystem : EntitySystem
+{
+    // A 1.5 second cooldown that respects game speed and pauses
+    private Cooldown _attackCooldown = new Cooldown(1.5f);
+
+    public override void Update(Timing timing)
+    {
+        if (PlayerWantsToAttack && _attackCooldown.IsReady(timing))
+        {
+            PerformAttack();
+            _attackCooldown.Reset(timing);
+        }
     }
 }
 ```

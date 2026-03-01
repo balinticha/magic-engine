@@ -2,7 +2,7 @@ using MagicEngine.Engine.Base.Debug;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MagicEngine.Engine.Base.CoreModules;
+namespace MagicEngine.Engine.Base.Mainloop.CoreModules;
 
 public interface IEngineGraphicsModule
 {

@@ -3,6 +3,7 @@
 
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.Scene;
 using MagicEngine.Engine.Base.Shaders.PostProcessing;
 using MagicEngine.Engine.Base.Utilities;
@@ -12,7 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace MagicEngine.Engine.Base.CoreModules;
+namespace MagicEngine.Engine.Base.Mainloop.CoreModules;
 
 public class EngineGraphicsModule : IEngineGraphicsModule
 {
@@ -47,13 +48,12 @@ public class EngineGraphicsModule : IEngineGraphicsModule
         WhitePixel.SetData(new[] { Color.White });
     }
 
-    public void Draw(bool isCrashing, double gameTimeTemp, GameTime gameTime, float timeAccumulator, float fixedTimeStep, CameraSystem cameraSystem, SystemManager systemManager, bool debugRender, SceneManager sceneManager)
+    public void Draw(bool isCrashing, Timing timing, CameraSystem cameraSystem, SystemManager systemManager, bool debugRender, SceneManager sceneManager)
     {
         if (!isCrashing)
         {
             bool t = RenderStepLowResSpriteDraw(
-                gameTimeTemp, gameTime, timeAccumulator, 
-                fixedTimeStep, cameraSystem, systemManager, 
+                timing, cameraSystem, systemManager, 
                 debugRender, sceneManager
             );
 
@@ -71,7 +71,7 @@ public class EngineGraphicsModule : IEngineGraphicsModule
         RenderStepUpscaleToHighRes(cameraSystem);
     }
 
-    public bool RenderStepLowResSpriteDraw(double gameTimeTemp, GameTime gameTime, float timeAccumulator, float fixedTimeStep, CameraSystem cameraSystem, SystemManager systemManager, bool debugRender, SceneManager sceneManager)
+    public bool RenderStepLowResSpriteDraw(Timing timing, CameraSystem cameraSystem, SystemManager systemManager, bool debugRender, SceneManager sceneManager)
     {
         if (GraphicsManager.Graphics.GraphicsDevice.BlendState == null) 
             GraphicsManager.Graphics.GraphicsDevice.BlendState = BlendState.Opaque;
@@ -88,7 +88,6 @@ public class EngineGraphicsModule : IEngineGraphicsModule
         GraphicsManager.Graphics.GraphicsDevice.SetRenderTarget(GraphicsManager.RenderTarget);
         GraphicsManager.Graphics.GraphicsDevice.Clear(ColorOperations.ToLinear(Color.Black));
 
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
     
         // camera stuff todo refactor
         Vector2 cameraIntPosition = new Vector2((int)Math.Round(cameraSystem.Position.X), (int)Math.Round(cameraSystem.Position.Y));
@@ -100,9 +99,7 @@ public class EngineGraphicsModule : IEngineGraphicsModule
     
         GraphicsManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transform);
         
-        // Create Draw Timing
-        var drawTiming = new Timing(deltaTime, (float)(timeAccumulator / fixedTimeStep), gameTimeTemp);
-        systemManager.RunDraw(drawTiming, GraphicsManager.SpriteBatch, transform);
+        systemManager.RunDraw(timing, GraphicsManager.SpriteBatch, transform);
         
         GraphicsManager.SpriteBatch.End();
 

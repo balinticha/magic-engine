@@ -1,6 +1,6 @@
 using System;
 using ImGuiNET;
-using MagicEngine.Engine.Base.DebugModule;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Vector2 = System.Numerics.Vector2;

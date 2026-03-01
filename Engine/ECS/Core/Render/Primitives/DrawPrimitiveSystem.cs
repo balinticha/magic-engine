@@ -1,5 +1,6 @@
 using DefaultEcs;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using MagicEngine.Engine.Base.EntityWrappers;
 using Microsoft.Xna.Framework;

@@ -1,18 +1,17 @@
 using DefaultEcs;
-using MagicEngine.Engine.Base.CoreModules;
 using MagicEngine.Engine.Base.Debug;
 using MagicEngine.Engine.Base.Debug.Commands;
 using MagicEngine.Engine.Base.Debug.UI;
-using MagicEngine.Engine.Base.DebugModule;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.Events;
+using MagicEngine.Engine.Base.Mainloop.CoreModules;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.Base.Scene;
 using MagicEngine.Engine.Base.Shaders.PostProcessing;
-using MagicEngine.Engine.Base.Utilities;
 using MagicEngine.Engine.ECS.Core.Camera;
 using MagicEngine.Engine.ECS.Core.Input;
-using MagicEngine.Engine.ECS.Core.Physics;
 using MagicEngine.Engine.ECS.Core.Physics.Behavior;
 using MagicEngine.Engine.ECS.Core.Positioning;
 using MagicEngine.Engine.ECS.Core.Session;
@@ -21,7 +20,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 
-namespace MagicEngine.Engine.Base;
+namespace MagicEngine.Engine.Base.Mainloop;
 
 public abstract class MagicGame : Game
 {
@@ -55,12 +54,11 @@ public abstract class MagicGame : Game
     #region State
     protected bool DebugRender;
     protected int DebugRenderCooldown;
-    protected const float FixedTimeStep = 1f / 60f;
-    protected float TimeAccumulator = 0f;
     protected Random _random;
     protected bool _consoleActive = false;
 
-    protected double GameTimeTemp = 0;
+    protected TimeManager TimeManager;
+    
     
     // Profiling
     private double _fps;
@@ -90,6 +88,7 @@ public abstract class MagicGame : Game
     protected override void Initialize()
     {
         _random = new Random();
+        TimeManager = new TimeManager();
         
         // Console and logging
         _consoleInterceptor = new ConsoleInterceptor(Console.Out);
@@ -223,7 +222,6 @@ public abstract class MagicGame : Game
             // ========= Debug stuff end
             
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            GameTimeTemp += deltaTime;
             
             // FPS & FrameTime Calculation
             if (deltaTime > 0.000001f)
@@ -233,13 +231,15 @@ public abstract class MagicGame : Game
             }
             _frameTime = deltaTime * 1000.0;
             
-            var preLoopTiming = new Timing(deltaTime, 0f, GameTimeTemp);
+            var sessionManager = SystemManager.GetSystem<SessionManager>();
+            TimeManager.Update(deltaTime, sessionManager.IsPaused, sessionManager.GameSpeed);
+            
+            var preLoopTiming = TimeManager.GetCurrentTiming();
             
             SystemManager.RunFrameStart(preLoopTiming);
             SystemManager.RunTransientUpdate(preLoopTiming);
             
-            // TODO: this is absolute fucking shitcode, refactor this
-            if (SystemManager.GetSystem<SessionManager>().IsPaused)
+            if (sessionManager.IsPaused)
             {
                 SystemManager.RunPausedUpdate(preLoopTiming);
                 RunPausedFrameUpdate(preLoopTiming);
@@ -247,11 +247,10 @@ public abstract class MagicGame : Game
             else
             {
                 RunPreFixedUpdateContent(preLoopTiming);
-                TimeAccumulator += deltaTime * SystemManager.GetSystem<SessionManager>().GameSpeed;
-                var fixedTiming = new Timing(FixedTimeStep, 1.0f, GameTimeTemp);
                 
-                while (TimeAccumulator >= FixedTimeStep)
+                while (TimeManager.ShouldRunFixedUpdate())
                 {
+                    var fixedTiming = TimeManager.GetFixedTiming();
                     SystemManager.RunFixedUpdatePrePhysics(fixedTiming);
                 
                     // Engine housekeeping
@@ -260,24 +259,24 @@ public abstract class MagicGame : Game
                     // Physics bridge and the system itself ---
                     using (SystemManager.Profiler.Profile("Physics: BodyCreation"))
                     {
-                        SceneManager.GetScene().AttachedSystems.BodyCreationSystem.Update(FixedTimeStep);
+                        SceneManager.GetScene().AttachedSystems.BodyCreationSystem.Update(TimeManager.FixedTimeStep);
                     }
                     using (SystemManager.Profiler.Profile("Physics: PreSync"))
                     {
-                        SceneManager.GetScene().AttachedSystems.PrePhysicsSyncSystem.Update(FixedTimeStep);
+                        SceneManager.GetScene().AttachedSystems.PrePhysicsSyncSystem.Update(TimeManager.FixedTimeStep);
                     }
                     using (SystemManager.Profiler.Profile("Physics: Simulation"))
                     {
-                        SceneManager.GetScene().PhysicsWorld.Step(FixedTimeStep);
+                        SceneManager.GetScene().PhysicsWorld.Step(TimeManager.FixedTimeStep);
                         SceneManager.GetScene().PhysicsWorld.ClearForces();
                     }
                     using (SystemManager.Profiler.Profile("Physics: PostSync"))
                     {
-                        SceneManager.GetScene().AttachedSystems.PostPhysicsSyncSystem.Update(FixedTimeStep);
+                        SceneManager.GetScene().AttachedSystems.PostPhysicsSyncSystem.Update(TimeManager.FixedTimeStep);
                     }
                     using (SystemManager.Profiler.Profile("Physics: BodyDeletion"))
                     {
-                        SceneManager.GetScene().AttachedSystems.BodyDeletionSystem.Update(FixedTimeStep);
+                        SceneManager.GetScene().AttachedSystems.BodyDeletionSystem.Update(TimeManager.FixedTimeStep);
                     }
                     using (SystemManager.Profiler.Profile("Physics: WeldManager"))
                     {
@@ -288,11 +287,10 @@ public abstract class MagicGame : Game
                     SystemManager.RunFixedUpdatePostPhysics(fixedTiming);
                     
                     RunFixedUpdateContent(fixedTiming);
-                    TimeAccumulator -= FixedTimeStep;
+                    TimeManager.ConsumeFixedUpdate();
                 }
             
-                var alpha = (float)(TimeAccumulator / FixedTimeStep); 
-                var postLoopTiming = new Timing(deltaTime, alpha, GameTimeTemp);
+                var postLoopTiming = TimeManager.GetInterpolatedTiming();
             
                 SystemManager.RunFrameLateUpdate(postLoopTiming);
                 
@@ -329,8 +327,7 @@ public abstract class MagicGame : Game
             #region GAME draw loop
             EngineGraphicsModule.Draw(
                 _hasCrashed,
-                GameTimeTemp, gameTime, TimeAccumulator, 
-                FixedTimeStep, CameraSystem, SystemManager, 
+                TimeManager.GetInterpolatedTiming(), CameraSystem, SystemManager, 
                 DebugRender, SceneManager
             );
             

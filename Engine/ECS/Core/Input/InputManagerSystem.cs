@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using Microsoft.Xna.Framework.Input;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;

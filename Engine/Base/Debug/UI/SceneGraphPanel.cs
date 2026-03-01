@@ -4,13 +4,13 @@ using System.Numerics;
 using System.Text;
 using DefaultEcs;
 using ImGuiNET;
-using MagicEngine.Engine.Base.DebugModule;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.ECS.Core.Parenting.Components;
 using MagicEngine.Engine.Base.EntityWrappers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 

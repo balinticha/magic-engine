@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ImGuiNET;
-using MagicEngine.Engine.Base.DebugModule;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 using MagicEngine.Engine.Base.Shaders.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
