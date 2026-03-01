@@ -101,6 +101,11 @@ public class PrototypeManager
     /// </summary>
     public Entity SpawnEntity(string prototypeId, Vector2 position, Vector2? velocity = null)
     {
+        if (!Initialized)
+        {
+            throw new Exception($"[PrototypeManager] Too early! Tried to spawn entity {prototypeId} but PrototypeManager is not initialized yet");
+        }
+        
         if (!_prototypes.TryGetValue(prototypeId, out var prototype))
         {
             throw new KeyNotFoundException($"Prototype with ID '{prototypeId}' not found.");

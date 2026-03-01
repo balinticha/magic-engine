@@ -25,7 +25,7 @@ public struct Scene(SceneCreationResources creationResources, string name, World
 public class PersistentSceneStorage
 {
     private readonly Dictionary<string, Dictionary<string, object>> _storage = new();
-
+    
     public LocalStorage Access(object owner)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using DefaultEcs;
 using MagicEngine.Engine.Base.EntitySystem;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.Scene;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using MagicEngine.Engine.ECS.Core.Session.Components;

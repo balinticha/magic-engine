@@ -7,11 +7,20 @@ using ImGuiNET;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.ECS.Core.Parenting.Components;
 using MagicEngine.Engine.Base.EntityWrappers;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 
-public class SceneGraphPanel
+public class SceneGraphPanel : IDebugWindow
 {
+    public bool IsOpen { get; set; } = false;
+    public Keys Hotkey => Keys.F2;
+    public bool IsManaged => false;
+    
+    public event Action<Entity> OnInspectEntity;
     private readonly World _world;
     private readonly EntitySet _rootEntities;
     private readonly string _currentSceneName;
@@ -29,14 +38,14 @@ public class SceneGraphPanel
     /// <summary>
     /// Draws the Scene Graph window.
     /// </summary>
-    /// <param name="isOpen">A reference to a boolean that controls the window's visibility. The window's close button will set this to false.</param>
-    public void Draw(ref bool isOpen)
+    public void Draw(GameTime gameTime)
     {
-        if (!isOpen) return;
+        if (!IsOpen) return;
         
+        bool isOpen = IsOpen;
         EntityToInspect = null;
 
-        ImGui.SetNextWindowSize(new Vector2(300, 400), ImGuiCond.FirstUseEver);
+        ImGui.SetNextWindowSize(new System.Numerics.Vector2(300, 400), ImGuiCond.FirstUseEver);
         if (ImGui.Begin($"Scene Graph - {_currentSceneName}", ref isOpen))
         {
             // Iterate over all entities that are not children and draw them.
@@ -51,6 +60,8 @@ public class SceneGraphPanel
             }
         }
         ImGui.End();
+        
+        IsOpen = isOpen;
     }
 
     /// <summary>
@@ -91,6 +102,7 @@ public class SceneGraphPanel
         if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
         {
             EntityToInspect = entity;
+            OnInspectEntity?.Invoke(entity);
         }
 
         if (isNodeOpen && hasChildren)

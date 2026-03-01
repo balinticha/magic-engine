@@ -2,13 +2,18 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ImGuiNET;
+using MagicEngine.Engine.Base.Mainloop.DebugModule;
 using MagicEngine.Engine.Base.Shaders.PostProcessing;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace MagicEngine.Engine.Base.Debug.UI;
 
-public class PostProcessDebugOverlay
+public class PostProcessDebugOverlay : IDebugWindow
 {
+    public bool IsOpen { get => _postProcessingManager.IsDebugMenuOpen; set => _postProcessingManager.IsDebugMenuOpen = value; }
+    public Keys Hotkey => Keys.F4;
+    public bool IsManaged => false;
     private readonly PostProcessingManager _postProcessingManager;
 
     public PostProcessDebugOverlay(PostProcessingManager postProcessingManager)
@@ -16,9 +21,9 @@ public class PostProcessDebugOverlay
         _postProcessingManager = postProcessingManager;
     }
 
-    public void Draw()
+    public void Draw(GameTime gameTime)
     {
-        if (!_postProcessingManager.IsDebugMenuOpen)
+        if (!IsOpen)
             return;
 
         bool isOpen = true;
@@ -26,7 +31,7 @@ public class PostProcessDebugOverlay
         {
             if (!isOpen)
             {
-                _postProcessingManager.IsDebugMenuOpen = false;
+                IsOpen = false;
                 ImGui.End();
                 return;
             }

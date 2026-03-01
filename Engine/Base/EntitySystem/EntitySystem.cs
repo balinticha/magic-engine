@@ -1,6 +1,7 @@
 using System;
 using DefaultEcs;
 using MagicEngine.Engine.Base.Debug;
+using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.Events;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.Base.Scene;
