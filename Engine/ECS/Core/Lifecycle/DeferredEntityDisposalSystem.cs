@@ -12,8 +12,7 @@ public class DeferredEntityDisposalSystem : EntitySystem
 
     public override void OnSceneLoad()
     {
-        _query = _query = World.GetEntities().With<MarkedForDeath>().AsSet();
-        ;
+        _query = World.GetEntities().With<MarkedForDeath>().AsSet();
     }
 
     public override void OnSceneUnload()
