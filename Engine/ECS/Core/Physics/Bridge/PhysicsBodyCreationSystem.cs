@@ -32,9 +32,11 @@ public class PhysicsBodyCreationSystem : AEntitySetSystem<float>
         ref readonly var collider = ref entity.Get<RectangleColliderComponent>();
 
         float density = 1.0f; // Default density if no material is specified
+        BodyType bodyType = BodyType.Dynamic;
         if (entity.TryGet<PhysicsMaterialComponent>(out var material))
         {
             density = material.Comp.Density;
+            bodyType = material.Comp.Type;
         }
 
         // Create the physics body in the Aether world
@@ -80,10 +82,11 @@ public class PhysicsBodyCreationSystem : AEntitySetSystem<float>
         }
 
         body.Tag = entity;
+        body.BodyType = bodyType;
 
         // Add the PhysicsBodyComponent to the entity, storing the new body.
         // This also ensures this system won't process this entity again.
-        entity.Set(new PhysicsBodyComponent { Body = body });
+        entity.Set(new PhysicsBodyComponent { Body = body});
 
         Console.WriteLine($"[BodyCreationSystem] Created physics body for Entity {entity}.");
     }

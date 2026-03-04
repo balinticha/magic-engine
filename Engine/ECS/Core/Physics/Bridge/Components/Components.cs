@@ -12,16 +12,16 @@ namespace MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 public struct PhysicsBodyComponent()
 {
     public Body Body;
-    public BodyType Type = BodyType.Dynamic;
 }
 
 /// <summary>
 /// Defines the physical material properties of a body's fixtures.
 /// </summary>
 [Component]
-public struct PhysicsMaterialComponent
+public struct PhysicsMaterialComponent()
 {
     [DataField] [InspectorEditable] public float Density;
+    [DataField] public BodyType Type = BodyType.Dynamic;
     // [DataField] public float Friction;
     // [DataField] public float Restitution; // Bounciness
 }

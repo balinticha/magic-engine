@@ -15,6 +15,7 @@ public class ResyncBodyType : EntitySystem
     {
         _query = World.GetEntities()
             .With<PhysicsBodyComponent>()
+            .With<PhysicsMaterialComponent>()
             .AsSet();
     }
 
@@ -39,9 +40,11 @@ public class ResyncBodyType : EntitySystem
     {
         if (!ent.TryGet<PhysicsBodyComponent>(out var body))
             return false;
+        
+        if (!ent.TryGet<PhysicsMaterialComponent>(out var mat))
 
         // Set the stored physicsbodys BodyType to the stored BodyType on the component
-        body.Comp.Body.BodyType = body.Comp.Type;
+        body.Comp.Body.BodyType = mat.Comp.Type;
 
         return true;
     }
