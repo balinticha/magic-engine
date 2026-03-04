@@ -7,6 +7,7 @@ using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.Events;
 using MagicEngine.Engine.Base.Mainloop.CoreModules;
 using MagicEngine.Engine.Base.Mainloop.DebugModule;
+using MagicEngine.Engine.Base.DataDefinitionSystem;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 using MagicEngine.Engine.Base.Scene;
 using MagicEngine.Engine.Base.Shaders.PostProcessing;
@@ -42,6 +43,7 @@ public abstract class MagicGame : Game
 
     protected SystemManager SystemManager;
     protected PrototypeManager PrototypeManager;
+    protected DataDefinitionManager DataDefinitionManager;
 
     #endregion
 
@@ -129,9 +131,13 @@ public abstract class MagicGame : Game
         InitializeUI();
 
         // Prototypes and core systems
+        LogManager.Log("Startup: DataDefinitionManager", LogLevel.VerboseExtra);
+        DataDefinitionManager = new DataDefinitionManager(Content);
+        DataDefinitionManager.Initialize();
+        
         LogManager.Log("Startup: PrototypeManager", LogLevel.VerboseExtra);
         SceneManager = new SceneManager(GraphicsDevice, Content);
-        PrototypeManager = new PrototypeManager(SceneManager, Content);
+        PrototypeManager = new PrototypeManager(SceneManager, Content, DataDefinitionManager);
         CameraSystem = new CameraSystem();
 
         LogManager.Log("Startup: SystemManager", LogLevel.VerboseExtra);

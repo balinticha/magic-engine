@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using MagicEngine.Engine.Base.DataDefinitionSystem;
 
 namespace MagicEngine.Engine.Base.PrototypeComponentSystem;
 
@@ -23,6 +24,7 @@ public class PrototypeManager
     // Dependencies
     private readonly SceneManager _sceneManager;
     private readonly ContentManager _content;
+    private readonly DataDefinitionManager _dataDefinitionManager;
 
     // Caches
     private readonly Dictionary<string, PrototypeData> _prototypes = new();
@@ -51,10 +53,11 @@ public class PrototypeManager
         public List<Dictionary<string, object>> Components { get; set; } = new();
     }
 
-    public PrototypeManager(SceneManager sceneManager, ContentManager content)
+    public PrototypeManager(SceneManager sceneManager, ContentManager content, DataDefinitionManager dataDefinitionManager)
     {
         _sceneManager = sceneManager;
         _content = content;
+        _dataDefinitionManager = dataDefinitionManager;
 
         // Configure the YAML deserializer to understand standard C# naming conventions.
         _deserializer = new DeserializerBuilder()
@@ -77,6 +80,9 @@ public class PrototypeManager
 
         // 2. Register default and custom type converters for deserialization.
         RegisterDefaultConverters();
+        
+        // 2.5 Ensure DataDefinitionManager is linked properly to custom converters
+        LinkDataDefinitionConverters();
 
         // 3. Scan the 'Prefabs' directory and load all .yaml files.
         LoadPrototypesFromDisk();
@@ -95,6 +101,18 @@ public class PrototypeManager
     {
         _typeConverters[type] = converter;
         Console.WriteLine($"[PrototypeManager] Registered custom type converter for {type.Name}");
+    }
+
+    private void LinkDataDefinitionConverters()
+    {
+        foreach (var type in _dataDefinitionManager.GetAllDefinitionTypes())
+        {
+            RegisterTypeConverter(type, yamlValue =>
+            {
+                string assetId = yamlValue.ToString() ?? "";
+                return _dataDefinitionManager.Get(type, assetId);
+            });
+        }
     }
 
     /// <summary>
