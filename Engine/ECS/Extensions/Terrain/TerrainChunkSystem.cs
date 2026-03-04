@@ -1,4 +1,4 @@
-namespace MagicEngine.Engine.Extensions.Terrain;
+namespace MagicEngine.Engine.ECS.Extensions.Terrain;
 
 public class TerrainChunkSystem
 {

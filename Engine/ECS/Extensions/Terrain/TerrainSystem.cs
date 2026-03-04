@@ -5,10 +5,10 @@ using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.EntityWrappers;
 using MagicEngine.Engine.ECS.Core.Events.EntityDeath;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
-using MagicEngine.Engine.ECS.Extensions.Terrain;
+using MagicEngine.Engine.ECS.Extensions.Terrain.Components;
 using Microsoft.Xna.Framework;
 
-namespace MagicEngine.Engine.Extensions.Terrain;
+namespace MagicEngine.Engine.ECS.Extensions.Terrain;
 
 /// <summary>
 /// The engine extension system that acts as a fully featured terrain grid. This manages it's associated terrain chunk.
@@ -19,13 +19,14 @@ namespace MagicEngine.Engine.Extensions.Terrain;
 /// </summary>
 public class TerrainSystem : EntitySystem
 {
-    public override void Initialize()
+    public override void OnSceneLoad()
     {
         Events.Subscribe<TerrainComponent, EntityDeathRequestEvent>(OnTerrainDeathRequest);
         Events.Subscribe<TerrainComponent, ForcedEntityDeathRequestEvent>(OnTerrainForcedDeathRequest);
         Events.Subscribe<TerrainChunkComponent, EntityDeathEvent>(OnChunkDeath);
     }
 
+    #region Engine related housekeeping
     private void OnTerrainDeathRequest(Entity<TerrainComponent> ent, EntityDeathRequestEvent ev)
     {
         ev.IsCancelled = true;
@@ -48,10 +49,6 @@ public class TerrainSystem : EntitySystem
         terrain.Comp.Chunks.Remove(Where(terrain.Owner, ent.Owner)!.Value);
     }
     
-    public override void Update(Timing timing)
-    {
-    }
-
     /// <summary>
     /// Converts world global coordinates to grid specific chunk integer coordinates. Ie. which chunk does a given point
     /// belong to?
@@ -156,21 +153,18 @@ public class TerrainSystem : EntitySystem
             return null;
         }
 
-        if (!grid.TryGet<TerrainComponent>(out var terrainComp))
+        if (!chunk.TryGet<TerrainChunkComponent>(out var chunkC))
         {
             return null;
         }
-        
-        foreach (var pair in terrainComp.Comp.Chunks)
+
+        // not this grid
+        if (chunkC.Comp.Parent != grid)
         {
-            if (pair.Value.Equals(chunk))
-            {
-                return pair.Key;
-            }
+            return null;
         }
 
-        // No match found :/
-        return null;
+        return chunkC.Comp.GridPosition;
     }
 
     /// <summary>
@@ -216,7 +210,9 @@ public class TerrainSystem : EntitySystem
         
         return terrainComp.Owner.Equals(chunkComp.Comp.Parent);
     }
+    #endregion
 
+    #region Adding, Removing chunks
     /// <summary>
     /// Add a chunk to a grid safely.
     /// </summary>
@@ -248,6 +244,42 @@ public class TerrainSystem : EntitySystem
         }
         
         terrainComp.Comp.Chunks.Add(attachToPosition, chunk);
+        chunkComp.Comp.GridPosition = attachToPosition;
         chunkComp.Comp.Parent = terrainComp.Owner;
     }
+
+    public bool TryRemoveChunk(Entity grid, Entity chunk)
+    {
+        if (!HasChunk(grid, chunk))
+        {
+            return false;
+        }
+
+        if (!grid.TryGet<TerrainComponent>(out var terrain))
+        {
+            return false;
+        }
+        
+        terrain.Comp.Chunks.Remove(Where(grid, chunk)!.Value);
+        return true;
+    }
+
+    public bool TryRemoveChunk(Entity grid, Point2 chunkPosition)
+    {
+        if (!HasChunk(grid, chunkPosition))
+        {
+            return false;
+        }
+        
+        if (!grid.TryGet<TerrainComponent>(out var terrain))
+        {
+            return false;
+        }
+        
+        terrain.Comp.Chunks.Remove(chunkPosition);
+        return true;
+    }
+    #endregion
+    
+    
 }

@@ -1,0 +1,7 @@
+- id: BaseTerrain
+  name: "Base Terrain"
+  components:
+    - Drag:
+        amount: 1
+    - TerrainComponent:
+        chunkSize: 64

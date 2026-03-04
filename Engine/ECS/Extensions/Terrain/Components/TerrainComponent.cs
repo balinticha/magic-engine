@@ -2,7 +2,7 @@ using DefaultEcs;
 using MagicEngine.Engine.Base;
 using MagicEngine.Engine.Base.PrototypeComponentSystem;
 
-namespace MagicEngine.Engine.Extensions.Terrain;
+namespace MagicEngine.Engine.ECS.Extensions.Terrain.Components;
 
 /// <summary>
 /// Component for TerrainSystem
@@ -11,5 +11,7 @@ namespace MagicEngine.Engine.Extensions.Terrain;
 public struct TerrainComponent
 {
     public Dictionary<Point2, Entity> Chunks;
-    public int ChunkSize;
+    [DataField] public int ChunkSize;
+    
+    
 }
