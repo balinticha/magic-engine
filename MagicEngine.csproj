@@ -36,5 +36,9 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Data\Engine\" />
+    </ItemGroup>
 
 </Project>

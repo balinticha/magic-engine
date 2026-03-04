@@ -1,0 +1,7 @@
+- type: TerrainTileDataDefinition
+  id: TestTileset
+  tiles:
+    - color: green
+      name: grass
+    - color: red
+      name: lava

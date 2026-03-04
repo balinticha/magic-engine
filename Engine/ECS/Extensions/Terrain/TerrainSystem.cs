@@ -84,7 +84,7 @@ public class TerrainSystem : EntitySystem
     /// Returns null if no chunk is at a given position.
     /// </summary>
     /// <param name="grid">The entity being queried</param>
-    /// <param name="position">The WORLD COORDINATES of the queried position</param>
+    /// <param name="queryGlobalPosition">The WORLD COORDINATES of the queried position</param>
     /// <returns></returns>
     public Entity? GetChunkAt(Entity grid, Vector2 queryGlobalPosition)
     {
@@ -214,7 +214,7 @@ public class TerrainSystem : EntitySystem
 
     #region Adding, Removing chunks
     /// <summary>
-    /// Add a chunk to a grid safely.
+    /// Add a chunk to a grid safely. Sets parent and grid position on the chunk.
     /// </summary>
     public void AddChunk(Entity grid, Entity chunk, Point2 attachToPosition)
     {
@@ -281,5 +281,46 @@ public class TerrainSystem : EntitySystem
     }
     #endregion
     
-    
+    /// <summary>
+    /// Generates and attaches a chunk to the grid at a given position.
+    /// This is meant to be a sample implementation to be completely overridden by user systems implementing
+    /// a terrain. This assumes that the terrain's tileset has at least two tiles defined.
+    /// </summary>
+    /// <param name="grid">The terrain we are generating a chunk on</param>
+    /// <param name="chunkPosition">The terrain</param>
+    /// <returns></returns>
+    public bool TryGenerateChunk(Entity grid, Point2 chunkPosition)
+    {
+        if (!grid.TryGet<TerrainComponent>(out var terrain))
+        {
+            return false;
+        }
+        
+        if (HasChunk(grid, chunkPosition))
+        {
+            return false;
+        }
+        
+        // This demo implementation assumes there are at least two items in the tileset
+        Entity chunkEnt = Prototypes.SpawnEntity("TerrainChunk");
+        
+        TerrainChunkComponent chunkCmp = new TerrainChunkComponent(terrain.Comp.ChunkSize);
+        chunkCmp[0, 0] = 0;
+        for (int i = 1; i < chunkCmp.Tiles.Length; i++)
+        {
+            if (Random.Next() % 100 > 50)
+            {
+                chunkCmp.Tiles[i] = 1;
+            }
+            else
+            {
+                chunkCmp.Tiles[i] = 0;
+            }
+        }
+        
+        chunkEnt.Set(chunkCmp);
+        AddChunk(grid, chunkEnt, chunkPosition);
+        return true;
+
+    }
 }

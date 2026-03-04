@@ -49,8 +49,18 @@ public class DataDefinitionManager
     {
         _content = content;
         
-        _deserializer = new DeserializerBuilder()
+        _deserializer = BuildDeserializer();
+    }
+
+    /// <summary>
+    /// Builds a YamlDotNet deserializer that knows how to map read-only collection
+    /// interfaces (IReadOnlyList, IReadOnlyDictionary, …) to their concrete equivalents.
+    /// </summary>
+    private static IDeserializer BuildDeserializer()
+    {
+        return new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .WithNodeTypeResolver(new ReadOnlyCollectionTypeResolver())
             .Build();
     }
 
@@ -98,7 +108,9 @@ public class DataDefinitionManager
             if (!Directory.Exists(path)) continue;
 
             var files = Directory.GetFiles(path, "*.yaml", SearchOption.AllDirectories)
-                .Concat(Directory.GetFiles(path, "*.yml", SearchOption.AllDirectories));
+                .Concat(Directory.GetFiles(path, "*.yml", SearchOption.AllDirectories)).ToArray();
+                
+            Console.WriteLine($"[DataDefinitionManager] Found {files.Length} files in {path}");
 
             foreach (var file in files)
             {
@@ -150,14 +162,12 @@ public class DataDefinitionManager
             var serializer = new SerializerBuilder().Build();
             var rawYaml = serializer.Serialize(rawDict);
             
-            var instance = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build()
-                .Deserialize(rawYaml, targetType);
+            var instance = BuildDeserializer().Deserialize(rawYaml, targetType);
 
             if (instance != null)
             {
                 _definitions[targetType][id] = instance;
+                Console.WriteLine($"[DataDefinitionManager] Successfully loaded {id} of type {typeName} from {Path.GetFileName(filePath)}");
             }
         }
     }

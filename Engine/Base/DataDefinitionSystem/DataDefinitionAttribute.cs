@@ -5,7 +5,7 @@ namespace MagicEngine.Engine.Base.DataDefinitionSystem;
 /// <summary>
 /// Marks a class or struct as a data definition that can be loaded from YAML files.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+[AttributeUsage(AttributeTargets.Class)]
 public class DataDefinitionAttribute : Attribute
 {
     /// <summary>

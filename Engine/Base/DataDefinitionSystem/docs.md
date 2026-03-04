@@ -8,9 +8,15 @@ This enables highly decoupled data architectures, such as creating `TerrainTiles
 
 ## 1. Creating a Data Definition (C#)
 
-To create a new data definition, define a class or struct and mark it with the `[DataDefinition]` attribute. Unlike entity components, this class exists independently of any entity.
+To create a new data definition, define a class and mark it with the `[DataDefinition]` attribute. Unlike entity components, this class exists independently of any entity.
 
 Mark any fields you want to set via YAML with `[DataField]`.
+
+> [!WARNING]
+> **Data Definitions are Read-Only Flyweights!**
+> The engine only creates **one** single instance of each data definition in memory. This means if 10,000 entities reference the same `OverworldTileset`, they all point to the exact same C# object.
+> **DO NOT mutate your data definitions at runtime!** Doing so will instantly alter the data for every other entity referencing it. Treat them as strictly read-only after they are loaded.
+> To help enforce this pattern, the `[DataDefinition]` attribute can only be applied to `class` types (never `structs`). We also highly recommend using read-only properties (like `get; init;`) or collections like `IReadOnlyList` for your fields.
 
 ```csharp
 using MagicEngine.Engine.Base.DataDefinitionSystem;

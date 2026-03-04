@@ -5,3 +5,5 @@
         amount: 1
     - TerrainComponent:
         chunkSize: 64
+        tileset: TestTileset
+        

@@ -178,9 +178,20 @@ public class ComponentViewerPanel : IDebugWindow
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var prop in properties)
             {
-                if (prop.PropertyType == typeof(Dictionary<string, object>))
+                if (!prop.CanRead) continue;
+                if (prop.GetIndexParameters().Length > 0) continue;
+                var value = prop.GetValue(component);
+
+                if (value is System.Collections.IDictionary dict)
                 {
-                    if (DrawDictionary(component, prop))
+                    if (DrawDictionary(prop.Name, dict))
+                    {
+                        componentModified = true;
+                    }
+                }
+                else if (value is System.Collections.IList list)
+                {
+                    if (DrawList(prop.Name, list))
                     {
                         componentModified = true;
                     }
@@ -304,48 +315,63 @@ public class ComponentViewerPanel : IDebugWindow
         // --- Read-Only Display for fields without attributes ---
         else
         {
-            ImGui.Text($"{field.Name}:");
-            ImGui.SameLine();
-            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.6f, 0.6f, 0.6f, 1.0f));
-
-            // Special handling for displaying entity references
-            if (value is Entity entityRef)
+            if (value is System.Collections.IDictionary dict)
             {
-                ImGui.Text($"{($"{entityRef}").Substring(7)}E");
+                if (DrawDictionary(field.Name, dict))
+                {
+                    valueChanged = true;
+                }
             }
-            else if (value is List<Entity> entityList)
+            else if (value is System.Collections.IList list)
             {
-                ImGui.Text($"List<Entity> ({entityList.Count} items)");
+                if (DrawList(field.Name, list))
+                {
+                    valueChanged = true;
+                }
             }
             else
             {
-                ImGui.Text(value?.ToString() ?? "null");
-            }
+                ImGui.Text($"{field.Name}:");
+                ImGui.SameLine();
+                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.6f, 0.6f, 0.6f, 1.0f));
 
-            ImGui.PopStyleColor();
+                // Special handling for displaying entity references
+                if (value is Entity entityRef)
+                {
+                    ImGui.Text($"{($"{entityRef}").Substring(7)}E");
+                }
+                else
+                {
+                    ImGui.Text(value?.ToString() ?? "null");
+                }
+
+                ImGui.PopStyleColor();
+            }
         }
 
         return valueChanged;
     }
 
-    private bool DrawDictionary(object component, PropertyInfo property)
+    private bool DrawDictionary(string name, System.Collections.IDictionary dict)
     {
-        var dict = (Dictionary<string, object>)property.GetValue(component);
         if (dict == null) return false;
 
         bool changed = false;
-        if (ImGui.TreeNode(property.Name))
+        if (ImGui.TreeNode(name))
         {
-            var keys = dict.Keys.ToList();
-            keys.Sort();
+            var keys = dict.Keys.Cast<object>().ToList();
+            if (keys.FirstOrDefault() is string)
+            {
+                keys = keys.OrderBy(k => k.ToString()).ToList();
+            }
 
             foreach (var key in keys)
             {
                 var val = dict[key];
-                ImGui.PushID(key);
+                ImGui.PushID(key.ToString());
 
                 ImGui.AlignTextToFramePadding();
-                ImGui.Text(key);
+                ImGui.Text(key.ToString());
                 ImGui.SameLine();
                 ImGui.SetNextItemWidth(200);
 
@@ -377,8 +403,6 @@ public class ComponentViewerPanel : IDebugWindow
                 {
                     ImGui.TextDisabled("null");
                 }
-                // If it was valid but we didn't have a widget (e.g. unknown object), DrawValueWidget returns false and no UI?
-                // We should handle the fallback in DrawValueWidget or here.
 
                 ImGui.PopID();
             }
@@ -386,9 +410,55 @@ public class ComponentViewerPanel : IDebugWindow
             ImGui.TreePop();
         }
 
-        if (changed)
+        return changed;
+    }
+
+    private bool DrawList(string name, System.Collections.IList list)
+    {
+        if (list == null) return false;
+
+        bool changed = false;
+        if (ImGui.TreeNode($"{name} ({list.Count} items)"))
         {
-            property.SetValue(component, dict);
+            for (int i = 0; i < list.Count; i++)
+            {
+                var val = list[i];
+                ImGui.PushID(i);
+
+                ImGui.AlignTextToFramePadding();
+                ImGui.Text($"[{i}]");
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(200);
+
+                object editableValue = val;
+                bool isParsedFromString = false;
+
+                if (val is string str)
+                {
+                    if (TryParseStringValue(str, out var parsed))
+                    {
+                        editableValue = parsed;
+                        isParsedFromString = true;
+                    }
+                }
+
+                if (DrawValueWidget($"##v{i}", ref editableValue))
+                {
+                    list[i] = editableValue;
+                    changed = true;
+                }
+                else if (!isParsedFromString && val is string)
+                {
+                    ImGui.TextDisabled($"\"{val}\"");
+                }
+                else if (val == null)
+                {
+                    ImGui.TextDisabled("null");
+                }
+
+                ImGui.PopID();
+            }
+            ImGui.TreePop();
         }
 
         return changed;
@@ -551,7 +621,14 @@ public class ComponentViewerPanel : IDebugWindow
         // Whatever, let's just draw the Disabled text HERE if it's an unknown type that isn't null.
         if (value != null)
         {
-            ImGui.TextDisabled($"{value.GetType().Name}: {value}");
+            if (value is Entity entityRef)
+            {
+                ImGui.TextDisabled($"{($"{entityRef}").Substring(7)}E");
+            }
+            else
+            {
+                ImGui.TextDisabled($"{value.GetType().Name}: {value}");
+            }
         }
 
         return false;

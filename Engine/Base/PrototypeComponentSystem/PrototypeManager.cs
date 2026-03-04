@@ -116,38 +116,51 @@ public class PrototypeManager
     }
 
     /// <summary>
+    /// Spawns a blank entity with required components, setting its name and prototype ID.
+    /// </summary>
+    public Entity SpawnEntity(string nameAndType)
+    {
+        return CreateBaseEntity(nameAndType, nameAndType, Vector2.Zero, Vector2.Zero);
+    }
+
+    /// <summary>
     /// Creates a new entity in the world based on a loaded prototype.
     /// </summary>
     public Entity SpawnEntity(string prototypeId, Vector2 position, Vector2? velocity = null)
     {
-        if (!Initialized)
-        {
-            throw new Exception(
-                $"[PrototypeManager] Too early! Tried to spawn entity {prototypeId} but PrototypeManager is not initialized yet");
-        }
-
         if (!_prototypes.TryGetValue(prototypeId, out var prototype))
         {
             throw new KeyNotFoundException($"Prototype with ID '{prototypeId}' not found.");
         }
 
-        var entity = _sceneManager.GetScene().EcsWorld.CreateEntity();
-
-        entity.Set(new PrototypeIDComponent { Value = prototypeId });
-
-        entity.Set(new Position { Value = position });
-        var vel = velocity ?? Vector2.Zero;
-        entity.Set(new Velocity { Value = vel });
-
-        if (!string.IsNullOrEmpty(prototype.Name))
-        {
-            // This assumes a component like: public struct NameComponent { public string Value; }
-            entity.Set(new NameComponent { Value = prototype.Name });
-        }
+        var entity = CreateBaseEntity(prototypeId, prototype.Name, position, velocity ?? Vector2.Zero);
 
         ApplyPrototypeRecursively(entity, prototypeId, new HashSet<string>());
 
         Console.WriteLine($"[PrototypeManager] Spawned entity from prototype '{prototypeId}'.");
+        return entity;
+    }
+
+    private Entity CreateBaseEntity(string prototypeId, string? name, Vector2 position, Vector2 velocity)
+    {
+        if (!Initialized)
+        {
+            throw new Exception(
+                $"[PrototypeManager] Too early! Tried to spawn entity '{prototypeId}' but PrototypeManager is not initialized yet");
+        }
+
+        var entity = _sceneManager.GetScene().EcsWorld.CreateEntity();
+
+        entity.Set(new PrototypeIDComponent { Value = prototypeId });
+        entity.Set(new Position { Value = position });
+        entity.Set(new Velocity { Value = velocity });
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            // This assumes a component like: public struct NameComponent { public string Value; }
+            entity.Set(new NameComponent { Value = name });
+        }
+
         return entity;
     }
 

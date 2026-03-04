@@ -107,6 +107,21 @@ To spawn an entity in the game world, use the `Spawn` command in the console or 
 Prototypes.SpawnEntity("Goblin", new Vector2(100, 200));
 ```
 
+You can also spawn "blank" entities that have no components other than the
+required minimal and expected (ie. position, name) with an overload:
+
+```csharp
+Entity ent = Prototypes.SpawnEntity("Goblin");
+```
+Here, the name specifies the entity's name as it shows up in the inspector rather than
+the prefab to load the composition from. The entity will be assigned the 0, 0 position
+
+You can then programmatically add components to it using DefaultECS's syntax:
+
+```csharp
+ent.Set(new SampleComponent(...));
+```
+
 ### Troubleshooting
 
 * **"Component not found"**: Ensure your C# struct has the `[Component]` attribute and the name matches exactly.

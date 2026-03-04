@@ -118,7 +118,7 @@ public class CommandManager
                 }
                 catch (Exception ex)
                 {
-                    return $"ERROR: {ex.Message}";
+                    return $"ERROR during command execution: {ex.Message} \nCall stack: {ex.StackTrace}";
                 }
             }
         }
