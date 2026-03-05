@@ -1,7 +1,8 @@
 - type: TerrainTileDataDefinition
   id: TestTileset
   tiles:
-    - color: green
+    - color: 1
       name: grass
-    - color: red
-      name: lava
+    - color: 2
+      name: air
+      isCollider: false

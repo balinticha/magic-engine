@@ -210,7 +210,7 @@ public class SpriteDrawSystem : EntitySystem
             if (sprite.Texture == null) continue;
 
             ProcessEntity(in entity, sprite.Texture, sprite.Color,
-                new Vector2(sprite.Texture.Width * 0.5f, sprite.Texture.Height * 0.5f),
+                new Vector2(sprite.Texture.Width * sprite.Anchor.X, sprite.Texture.Height * sprite.Anchor.Y),
                 sprite.Texture.Width, sprite.Texture.Height,
                 sprite.Layer, sprite.SortOffset);
         }

@@ -4,6 +4,7 @@ using MagicEngine.Engine.Base.EntitySystem;
 using MagicEngine.Engine.Base.EntitySystem.Time;
 using MagicEngine.Engine.Base.EntityWrappers;
 using MagicEngine.Engine.ECS.Core.Events.EntityDeath;
+using MagicEngine.Engine.ECS.Core.Physics.Bridge.Components;
 using MagicEngine.Engine.ECS.Core.Positioning.Components;
 using MagicEngine.Engine.ECS.Extensions.Terrain.Components;
 using Microsoft.Xna.Framework;
@@ -13,12 +14,14 @@ namespace MagicEngine.Engine.ECS.Extensions.Terrain;
 /// <summary>
 /// The engine extension system that acts as a fully featured terrain grid. This manages it's associated terrain chunk.
 /// The grid's internal grid coordinate grid starts at 0,0 at the top left, and y increases downwards.
-/// entities.
+/// The grid's Positon component's coordiante will specify the top left coordinate of the tile at the grid coordinate 0, 0
 ///
 /// An entity with a TerrainComponent cannot be destroyed naturally.
 /// </summary>
 public class TerrainSystem : EntitySystem
 {
+    [Dependency] private readonly TerrainChunkSystem _chunkSystem = null!;
+    
     public override void OnSceneLoad()
     {
         Events.Subscribe<TerrainComponent, EntityDeathRequestEvent>(OnTerrainDeathRequest);
@@ -218,7 +221,6 @@ public class TerrainSystem : EntitySystem
     /// </summary>
     public void AddChunk(Entity grid, Entity chunk, Point2 attachToPosition)
     {
-        // TODO might be needed to look which stuff we need to adjust on a component here
         if (chunk.Has<TerrainComponent>())
         {
             throw new InvalidOperationException("Tried to attach a terrain as a chunk to another terrain");
@@ -228,7 +230,7 @@ public class TerrainSystem : EntitySystem
             throw new InvalidOperationException("Tried to attach a chunk to itself");
         }
 
-        if (!grid.TryGet<TerrainComponent>(out var terrainComp))
+        if (!grid.TryGet<TerrainComponent>(out var terrain))
         {
             throw new InvalidOperationException("Tried to attach a chunk to a non-terrain component");
         }
@@ -238,14 +240,26 @@ public class TerrainSystem : EntitySystem
             throw new InvalidOperationException("Tried to attach a non-chunk to a terrain");
         }
 
-        if (terrainComp.Comp.Chunks.ContainsKey(attachToPosition))
+        if (terrain.Comp.Chunks.ContainsKey(attachToPosition))
         {
             throw new InvalidOperationException("Tried to attach a chunk to a taken position");
         }
         
-        terrainComp.Comp.Chunks.Add(attachToPosition, chunk);
+        terrain.Comp.Chunks.Add(attachToPosition, chunk);
         chunkComp.Comp.GridPosition = attachToPosition;
-        chunkComp.Comp.Parent = terrainComp.Owner;
+        chunkComp.Comp.Parent = terrain.Owner;
+
+        ref var gridPos = ref grid.Get<Position>();
+        
+        // how big a chunk is in game coordinates
+        var chunkLogicalSize = terrain.Comp.ChunkSize * terrain.Comp.TileSize;
+        Vector2 targetLogicalPosTopLeftRelative = new Vector2(
+            attachToPosition.X * chunkLogicalSize, attachToPosition.Y *  chunkLogicalSize);
+        
+        Vector2 targetLogicalPosTopLeftGlobal = gridPos.Value + targetLogicalPosTopLeftRelative;
+        
+        ref var chunkPos = ref chunk.Get<Position>();
+        chunkPos.Value = targetLogicalPosTopLeftGlobal;
     }
 
     public bool TryRemoveChunk(Entity grid, Entity chunk)
@@ -305,10 +319,11 @@ public class TerrainSystem : EntitySystem
         Entity chunkEnt = Prototypes.SpawnEntity("TerrainChunk");
         
         TerrainChunkComponent chunkCmp = new TerrainChunkComponent(terrain.Comp.ChunkSize);
+        chunkCmp.TileSize = terrain.Comp.TileSize;
         chunkCmp[0, 0] = 0;
         for (int i = 1; i < chunkCmp.Tiles.Length; i++)
         {
-            if (Random.Next() % 100 > 50)
+            if (Random.Next() % 100 > 95)
             {
                 chunkCmp.Tiles[i] = 1;
             }
@@ -319,7 +334,11 @@ public class TerrainSystem : EntitySystem
         }
         
         chunkEnt.Set(chunkCmp);
+        
+        // The chunk's own system will create and manage the physics body
+        chunkEnt.Set(new ExternallyManagedPhysicsBody());
         AddChunk(grid, chunkEnt, chunkPosition);
+        _chunkSystem.UpdateChunk(chunkEnt);
         return true;
 
     }

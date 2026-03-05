@@ -4,6 +4,7 @@
     - Drag:
         amount: 1
     - TerrainComponent:
-        chunkSize: 64
+        chunkSize: 32
+        tileSize: 16
         tileset: TestTileset
         

@@ -39,6 +39,11 @@ public class PhysicsBodyDeletionSystem : ISystem<float>
     /// <param name="removedComponent">The instance of the component that was removed.</param>
     private void OnPhysicsBodyRemoved(in Entity entity, in PhysicsBodyComponent removedComponent)
     {
+        if (entity.Has<ExternallyManagedPhysicsBodyCleanup>())
+        {
+            return;
+        }
+        
         if (removedComponent.Body != null)
         {
             _bodiesToRemove.Enqueue(removedComponent.Body);

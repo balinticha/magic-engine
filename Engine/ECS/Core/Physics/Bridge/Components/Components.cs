@@ -34,3 +34,18 @@ public struct RectangleColliderComponent
     [DataField] public Vector2 Offset;
     [DataField] public bool IsSensor;
 }
+
+/// <summary>
+/// An internal component that excludes the entity from being operated on by the physics bridge
+/// body creation, and status sync systems.
+/// This means that the physics body is externally managed by some other system.
+/// The bridge still handles position and velocity syncing, as well as the cleanup
+/// of the physics body if the component if the PhysicsBody component is dropped.
+/// </summary>
+public struct ExternallyManagedPhysicsBody { }
+
+/// <summary>
+/// An extension of ExternallyManagedPhysicsBody, this marker prevents
+/// the removal of a physics body whose component has been dropped. 
+/// </summary>
+public struct ExternallyManagedPhysicsBodyCleanup { }

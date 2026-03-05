@@ -23,6 +23,7 @@ public abstract class EntitySystem
     public CameraSystem Camera { get; internal set; } = null!;
     public LogManager LogManager { get; internal set; } = null!;
     public Microsoft.Xna.Framework.Content.ContentManager Content { get; internal set; } = null!;
+    public Microsoft.Xna.Framework.Graphics.GraphicsDevice Graphics { get; internal set; } = null!;
 
 
     /// <summary>

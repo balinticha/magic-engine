@@ -20,6 +20,7 @@ public class PhysicsBodyCreationSystem : AEntitySetSystem<float>
             // TODO not hardcode this
             .With<RectangleColliderComponent>()
             .Without<PhysicsBodyComponent>()
+            .Without<ExternallyManagedPhysicsBody>()
             .AsSet())
     {
         _physicsWorld = physicsWorld;

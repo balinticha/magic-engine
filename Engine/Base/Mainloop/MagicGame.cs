@@ -141,7 +141,7 @@ public abstract class MagicGame : Game
         CameraSystem = new CameraSystem();
 
         LogManager.Log("Startup: SystemManager", LogLevel.VerboseExtra);
-        SystemManager = new SystemManager(SceneManager, _random, PrototypeManager, CameraSystem, LogManager, Content);
+        SystemManager = new SystemManager(SceneManager, _random, PrototypeManager, CameraSystem, LogManager, Content, GraphicsDevice);
         SystemManager.Initialize();
 
         // Scene registration

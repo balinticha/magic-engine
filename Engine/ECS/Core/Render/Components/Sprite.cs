@@ -16,4 +16,6 @@ struct Sprite()
     [DataField] [InspectorEditable] public float SortOffset;
 
     [DataField] [InspectorSlider(0, 15)] public float Intensity = 1f;
+
+    [DataField] [InspectorEditable] public Vector2 Anchor = new Vector2(0.5f, 0.5f);
 }

@@ -16,6 +16,7 @@ public class ResyncBodyType : EntitySystem
         _query = World.GetEntities()
             .With<PhysicsBodyComponent>()
             .With<PhysicsMaterialComponent>()
+            .Without<ExternallyManagedPhysicsBody>()
             .AsSet();
     }
 

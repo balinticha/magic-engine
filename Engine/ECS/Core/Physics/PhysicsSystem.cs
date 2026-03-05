@@ -3,8 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace MagicEngine.Engine.ECS.Core.Physics;
 
-[UpdateInBucket(ExecutionBucket.Update)]
-public sealed class PhysicsSystem : EntitySystem
+public static class PhysicsSystem
 {
     /// <summary>
     /// Convert Vector2 into engine vectors

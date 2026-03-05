@@ -18,7 +18,8 @@ public class SystemManager(
     PrototypeManager prm,
     CameraSystem cs,
     LogManager lm,
-    Microsoft.Xna.Framework.Content.ContentManager content)
+    Microsoft.Xna.Framework.Content.ContentManager content,
+    Microsoft.Xna.Framework.Graphics.GraphicsDevice graphics)
 {
     private readonly SceneManager _sceneManager = sceneManager;
     private readonly PrototypeManager _prototypeManager = prm;
@@ -26,6 +27,7 @@ public class SystemManager(
     private readonly CameraSystem _cameraSystem = cs;
     private readonly LogManager _logManager = lm;
     private readonly Microsoft.Xna.Framework.Content.ContentManager _content = content;
+    private readonly Microsoft.Xna.Framework.Graphics.GraphicsDevice _graphics = graphics;
 
     public SystemProfiler Profiler = new();
 
@@ -62,6 +64,7 @@ public class SystemManager(
             systemInstance.SystemManager = this;
             systemInstance.LogManager = _logManager;
             systemInstance.Content = _content;
+            systemInstance.Graphics = _graphics;
 
             _systemsByType.Add(type, systemInstance);
 
